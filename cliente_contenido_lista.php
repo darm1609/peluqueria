@@ -91,6 +91,20 @@
 					</div>
 				</div>
 				<div class="w3-row w3-section">
+					<div class="w3-col" style="width:200px"><label for="">
+						<?php
+							$sql2 = "select (sum(id.monto) - sum(id.monto_pagado)) as total FROM ingreso i inner join cliente c on i.cliente_cedula = c.cliente_cedula inner join ingreso_deuda id on i.id_ingreso = id.id_ingreso where c.cliente_cedula = '".$row[0]['cliente_cedula']."';";
+							$result2 = $bd->mysql->query($sql2);
+							unset($sql2);
+							if($result2)
+							{
+								$row2 = $result2->fetch_all(MYSQLI_ASSOC);
+								echo "Deuda&nbsp;total: ".$row2[0]["total"];
+							}
+						?>
+					</label></div>
+				</div>
+				<div class="w3-row w3-section">
 					<p>
 					<div class="w3-half">
 						<input type="button" class="w3-button w3-block w3-red" onclick="return enviardatos_modificar();" value="Cancelar">
