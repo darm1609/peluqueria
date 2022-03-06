@@ -1,0 +1,101 @@
+.JStableOuter table {
+  position: relative;
+  width: 100%;
+  background-color: #fff;
+  border-collapse: collapse;
+  font-family: arial;
+  display: block;
+  overflow: scroll;
+  //text-align: left;
+}
+
+.JStableOuter { /*max-width:800px;*/ /*margin:auto;*/ /*Si quiero centrar*/ border:1px solid #999; }
+
+/*thead*/
+.JStableOuter thead {
+  position: relative;
+  /*display: block;*/ /*seperates the header from the body allowing it to be positioned*/
+  overflow: visible;
+}
+
+.JStableOuter thead th {
+  background-color: #063283;
+  color: #ffffff;
+ /* min-width: 120px;*/
+  height: 32px;
+  padding: 3px 15px 0;
+  font-size: 15px;
+  vertical-align: middle;
+  position: relative;
+  //box-shadow: 0px 1px 0px 1px #999;
+}
+.JStableOuter  thead th p { margin: 5px 0; font-weight: normal; }
+
+.JStableOuter  thead .th_primera {
+  //position: relative;
+  //background-color: #fff;
+  z-index: 1;
+  //box-shadow: 0px 1px 0px 1px #999;
+}
+
+.JStableOuter  thead tr {/*first cell in the header*/
+  //position: relative;
+}
+
+.JStableOuter tbody tr:nth-child(even)
+{
+  background-color:#dfe7ec;
+}
+
+.JStableOuter tbody tr:hover
+{
+  outline: 2px solid #063283;
+}
+
+.JStableOuter  tbody { /*border-top: 1px solid #999;*/}
+.JStableOuter  tbody td {
+  //background-color: #fff;
+  /*min-width: 120px;*/
+  //border: 1px solid #999;
+  padding-left: 5px;
+  padding-right: 5px;
+  //min-width: 100px;
+  //min-height: 50px;
+  font-size: 13px;
+  //box-shadow: 0 1px 0px 1px #999;
+}
+
+.JStableOuter .t_ico_eliminar
+{
+  font-size: 25px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.JStableOuter .t_ico_eliminar:hover
+{
+  color: red;
+}
+
+.JStableOuter tbody tr td:nth-child(1) {
+  //position: relative;
+  /*display: block;*/ /*seperates the first column from the tbody*/
+  //height: 40px;
+  //background-color: #fff;
+  //box-shadow: 1px 1px 1px 1px #999;
+}
+
+.tableOuter {
+    max-width: 800px;
+    overflow: auto;
+ }
+ .negativeCost { color: #f10; }
+ .profitCol { color: #81a65c; }
+ .revenueCol { color: #5484bf; }
+ .JStableOuter thead th.blueHead { background-color: #7b7b7b; color: #fff; }
+.JStableOuter thead th.lightBlueBox, .JStableOuter tbody td.lightBlueBox { background: #efefef; border-color: #999; }
+.JStableOuter p { margin: 5px 0; }
+.btnRed { background: #b51a01; color: #fff; border-radius: 50px; padding: 5px 15px; }
+.colorOrange { color: #f6984a; }
+.contBox { min-width: 150px; }
