@@ -1,0 +1,18 @@
+<?php
+	session_start();
+	require("head.php");
+	require("config.php");
+	require("librerias/basedatos.php");
+	require("funciones_generales.php");
+	if(isset($_SESSION["login"]))
+	{
+		require("superior.php");
+		$abono_empleado=true;
+		require_once("menu_lateral.php");
+		require_once("contenido_head.php");
+		echo"<br>";
+		require("abono_empleado_contenido.php");
+		unset($abono_empleado);
+	}
+	require("pie.php");
+?>

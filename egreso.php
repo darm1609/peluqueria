@@ -1,0 +1,18 @@
+<?php
+	session_start();
+	require("head.php");
+	require("config.php");
+	require("librerias/basedatos.php");
+	require("funciones_generales.php");
+	if(isset($_SESSION["login"]))
+	{
+		require("superior.php");
+		$egreso=true;
+		require_once("menu_lateral.php");
+		require_once("contenido_head.php");
+		echo"<br>";
+		require("egreso_contenido.php");
+		unset($egreso);
+	}
+	require("pie.php");
+?>
