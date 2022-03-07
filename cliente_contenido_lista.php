@@ -13,7 +13,18 @@
 		if($bd->actualizar_datos(1,1,$basedatos,"ingreso","cliente_cedula",$_POST["ocliente_cedula"],"cliente_cedula",$_POST["ocliente_cedula"],$_POST["mcliente_cedula"]))
 		{
 			if($bd->actualizar_datos(1,5,$basedatos,"cliente","cliente_cedula",$_POST["ocliente_cedula"],"cliente_cedula",$_POST["ocliente_cedula"],$_POST["mcliente_cedula"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"alias",$_POST["oalias"],$_POST["malias"],"telf",$_POST["otelf"],$_POST["mtelf"]))
+			{
+				$id_ingreso = "";
+				$abono = "";
+				foreach($_POST as $index => $value)
+				{
+					if (strstr($index, 'id_ingreso_'))
+						$id_ingreso = $value;
+					if (strstr($index, 'abono_') and strstr($index, $id_ingreso))
+						$abono = $value;
+				}
 				return true;
+			}
 			else
 				return false;
 		}
@@ -107,22 +118,32 @@
 					</div>
 				</div>
 				<div class="w3-row w3-section">
-					<div class="w3-col" style="width:200px"><label for="">
+					<div class="w3-col" style="width:300px"><label for="">
 						<?php
 							$sql2 = "select (sum(id.monto) - sum(id.monto_pagado)) as total FROM ingreso i inner join cliente c on i.cliente_cedula = c.cliente_cedula inner join ingreso_deuda id on i.id_ingreso = id.id_ingreso where c.cliente_cedula = '".$row[0]['cliente_cedula']."';";
 							$result2 = $bd->mysql->query($sql2);
+							$tieneDeuda = false;
 							unset($sql2);
 							if($result2)
 							{
 								$row2 = $result2->fetch_all(MYSQLI_ASSOC);
+								if ($row2[0]["total"] != null)
+									$tieneDeuda = true;
 								$result2->free();
-								echo "Deuda&nbsp;Total: ".$row2[0]["total"];
+								if ($tieneDeuda)
+									echo "Deuda&nbsp;Total: ".$row2[0]["total"];
+								else
+									echo "El cliente no posee deudas";
 							}
 							else
 								unset($result2);
 						?>
 					</label></div>
 				</div>
+				<?php
+					if ($tieneDeuda)
+					{
+				?>
 				<div class="w3-row w3-section">
 					<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
 						<thead>
@@ -167,7 +188,8 @@
 										echo $val['total'];
 										echo"</td>";
 										echo"<td align='center'>";
-										
+											echo "<input type='hidden' id='id_ingreso_".$val["id_ingreso"]."' name='id_ingreso_".$val["id_ingreso"]."' value='".$val["id_ingreso"]."'>";
+											echo "<input class='w3-input w3-border abono' type='number' id='abono_".$val["id_ingreso"]."' name='abono_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' data-total='".$val['total']."' min=1>";
 										echo"</td>";
 										echo"</tr>";
 									}
@@ -178,6 +200,9 @@
 						</tbody>
 					</table>
 				</div>
+				<?php
+					}
+				?>
 				<div class="w3-row w3-section">
 					<p>
 					<div class="w3-half">
