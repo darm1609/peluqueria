@@ -24,13 +24,29 @@
 	function eliminar_cliente($bd)
 	{
 		global $basedatos;
-		if($bd->actualizar_datos(1,1,$basedatos,"ingreso","cliente_cedula",$_POST["accion_eliminar"],"cliente_cedula","xxx","0"))
+		$sql = "select id_ingreso from ingreso where cliente_cedula = '".$_POST["accion_eliminar"]."';";
+		$result = $bd->mysql->query($sql);
+		unset($sql);
+		if ($result)
 		{
-			if($bd->eliminar_datos(1,$basedatos,"cliente","cliente_cedula",$_POST["accion_eliminar"]))
-				return true;
-			else
-				return false;	
+			$row = $result->fetch_all(MYSQLI_ASSOC);
+			$result->free();
+			if (is_array(($row)))
+			{
+				foreach ($row as $val)
+				{
+					$bd->eliminar_datos(1,$basedatos,"ingreso_debito","id_ingreso",$val["id_ingreso"]);
+					$bd->eliminar_datos(1,$basedatos,"ingreso_deuda","id_ingreso",$val["id_ingreso"]);
+					$bd->eliminar_datos(1,$basedatos,"ingreso_efectivo","id_ingreso",$val["id_ingreso"]);
+					$bd->eliminar_datos(1,$basedatos,"ingreso_transferencia","id_ingreso",$val["id_ingreso"]);
+					$bd->eliminar_datos(1,$basedatos,"ingreso","id_ingreso",$val["id_ingreso"]);
+				}
+			}
 		}
+		else
+			unset($result);
+		if($bd->eliminar_datos(1,$basedatos,"cliente","cliente_cedula",$_POST["accion_eliminar"]))
+			return true;
 		else
 			return false;
 	}
@@ -99,10 +115,68 @@
 							if($result2)
 							{
 								$row2 = $result2->fetch_all(MYSQLI_ASSOC);
-								echo "Deuda&nbsp;total: ".$row2[0]["total"];
+								$result2->free();
+								echo "Deuda&nbsp;Total: ".$row2[0]["total"];
 							}
+							else
+								unset($result2);
 						?>
 					</label></div>
+				</div>
+				<div class="w3-row w3-section">
+					<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+						<thead>
+							<tr class="w3-blue">
+								<th class='tableheadresul' align='center' nowarp>Fecha</th>
+								<th class='tableheadresul' align='center' nowarp>Tipo De Trabajo</th>
+								<th class='tableheadresul' align='center' nowarp>Realizado Por</th>
+								<th class='tableheadresul' align='center' nowarp>Debe</th>
+								<th class='tableheadresul' align='center' nowarp>Pagado</th>
+								<th class='tableheadresul' align='center' nowarp>Deuda total</th>
+								<th class='tableheadresul' align='center' nowarp>Abono</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+								$sql3 = "select i.id_ingreso, i.fecha, mi.motivo as 'tipo_de_trabajo', concat(e.nombre,' ',e.apellido) as 'realizado_por', id.monto as 'debe', id.monto_pagado as 'pagado', (id.monto - ifnull(id.monto_pagado,0)) as 'total' FROM empleado e inner join ingreso i on e.empleado_cedula = i.empleado_cedula inner join ingreso_deuda id on i.id_ingreso = id.id_ingreso inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso where i.cliente_cedula = '".$row[0]['cliente_cedula']."';";
+								$result3 = $bd->mysql->query($sql3);
+								unset($sql3);
+								if($result3)
+								{
+									$row3 = $result3->fetch_all(MYSQLI_ASSOC);
+									$result3->free();
+									foreach ($row3 as $val)
+									{
+										echo"<tr>";
+										echo"<td align='center'>";
+										echo $val['fecha'][8].$val['fecha'][9].'-'.$val['fecha'][5].$val['fecha'][6].'-'.$val['fecha'][0].$val['fecha'][1].$val['fecha'][2].$val['fecha'][3];
+										echo"</td>";
+										echo"<td align='center'>";
+										echo $val['tipo_de_trabajo'];
+										echo"</td>";
+										echo"<td align='center'>";
+										echo $val['realizado_por'];
+										echo"</td>";
+										echo"<td align='center'>";
+										echo $val['debe'];
+										echo"</td>";
+										echo"<td align='center'>";
+										echo $val['pagado'];
+										echo"</td>";
+										echo"<td align='center'>";
+										echo $val['total'];
+										echo"</td>";
+										echo"<td align='center'>";
+										
+										echo"</td>";
+										echo"</tr>";
+									}
+								}
+								else
+									unset($result3);
+							?>
+						</tbody>
+					</table>
 				</div>
 				<div class="w3-row w3-section">
 					<p>
