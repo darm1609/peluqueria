@@ -1,4 +1,14 @@
 <script type="text/javascript">
+	
+	$(document).ready(function(){
+		$(function() {
+			$(".abono-fecha").datepicker({
+				dateFormat:"dd-mm-yy",
+				dayNamesMin:[ "Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab" ],
+				monthNames:[ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" ]
+			});
+		});
+	});
 
 </script>
 <?php
@@ -14,14 +24,37 @@
 		{
 			if($bd->actualizar_datos(1,5,$basedatos,"cliente","cliente_cedula",$_POST["ocliente_cedula"],"cliente_cedula",$_POST["ocliente_cedula"],$_POST["mcliente_cedula"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"alias",$_POST["oalias"],$_POST["malias"],"telf",$_POST["otelf"],$_POST["mtelf"]))
 			{
-				$id_ingreso = "";
-				$abono = "";
+				print_r($_POST);
 				foreach($_POST as $index => $value)
 				{
+					$id_ingreso = "";
+					$abono = "";
+					$pagado = 0;
+					$monto_pagado = 0;
 					if (strstr($index, 'id_ingreso_'))
+					{
 						$id_ingreso = $value;
-					if (strstr($index, 'abono_') and strstr($index, $id_ingreso))
-						$abono = $value;
+						$abono = $_POST["abono_".$id_ingreso];
+						echo "<br>id_ingreso: ".$id_ingreso."<br>abono: ".$abono;
+						$sql = "select id.monto, id.monto_pagado, id.pagada from ingreso i inner join ingreso_deuda id on i.id_ingreso = id.id_ingreso where i.id_ingreso = '".$id_ingreso."';";
+						$result = $bd->mysql->query($sql);
+						unset($sql);
+						if ($result)
+						{
+							$rows = $result->fetch_all(MYSQLI_ASSOC);
+							$result->free();
+							foreach ($rows as $row)
+							{
+								$abono += $row["monto_pagado"];
+								if ($abono >= $row["monto"])
+									$pagado = 1;
+							}
+							unset ($rows);
+						}
+						else
+							unset($result);
+						$bd->actualizar_datos(1,2,$basedatos,"ingreso_deuda","id_ingreso",$id_ingreso,"monto_pagado","",$abono,"pagada","",$pagado);
+					}					
 				}
 				return true;
 			}
@@ -159,7 +192,7 @@
 						</thead>
 						<tbody>
 							<?php
-								$sql3 = "select i.id_ingreso, i.fecha, mi.motivo as 'tipo_de_trabajo', concat(e.nombre,' ',e.apellido) as 'realizado_por', id.monto as 'debe', id.monto_pagado as 'pagado', (id.monto - ifnull(id.monto_pagado,0)) as 'total' FROM empleado e inner join ingreso i on e.empleado_cedula = i.empleado_cedula inner join ingreso_deuda id on i.id_ingreso = id.id_ingreso inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso where i.cliente_cedula = '".$row[0]['cliente_cedula']."';";
+								$sql3 = "select i.id_ingreso, i.fecha, mi.motivo as 'tipo_de_trabajo', concat(e.nombre,' ',e.apellido) as 'realizado_por', id.monto as 'debe', id.monto_pagado as 'pagado', (id.monto - ifnull(id.monto_pagado,0)) as 'total', id.pagada FROM empleado e inner join ingreso i on e.empleado_cedula = i.empleado_cedula inner join ingreso_deuda id on i.id_ingreso = id.id_ingreso inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso where i.cliente_cedula = '".$row[0]['cliente_cedula']."';";
 								$result3 = $bd->mysql->query($sql3);
 								unset($sql3);
 								if($result3)
@@ -188,8 +221,18 @@
 										echo $val['total'];
 										echo"</td>";
 										echo"<td align='center'>";
-											echo "<input type='hidden' id='id_ingreso_".$val["id_ingreso"]."' name='id_ingreso_".$val["id_ingreso"]."' value='".$val["id_ingreso"]."'>";
-											echo "<input class='w3-input w3-border abono' type='number' id='abono_".$val["id_ingreso"]."' name='abono_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' data-total='".$val['total']."' min=1>";
+											if ($val['pagada'] == 0) 
+											{
+												echo "<input type='hidden' id='id_ingreso_".$val["id_ingreso"]."' name='id_ingreso_".$val["id_ingreso"]."' value='".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' data-total='".$val['total']."'>";
+												$hoy=date("d-m-Y",time());
+												echo "<input class='w3-input w3-border abono-fecha' placeholder='dd-mm-aaaa' type='text' id='abono_fecha_".$val["id_ingreso"]."' name='abono_fecha_".$val["id_ingreso"]."' value='".$hoy."'><br>";
+												echo "<input class='w3-input w3-border abono-efectivo' placeholder='Efectivo' type='number' id='abono_efectivo_".$val["id_ingreso"]."' name='abono_efectivo_".$val["id_ingreso"]."' min=1><br>";
+												echo "<input class='w3-input w3-border abono-transferencia' placeholder='Transferencia' type='number' id='abono_transferencia_".$val["id_ingreso"]."' name='abono_transferencia_".$val["id_ingreso"]."' min=1>";
+												echo "<input class='w3-input w3-border abono-referencia' placeholder='Referencia' type='text' id='abono_referencia_".$val["id_ingreso"]."' name='abono_referencia_".$val["id_ingreso"]."'><br>";
+												echo "<input class='w3-input w3-border abono-datafono' placeholder='Datáfono' type='number' id='abono_datafono_".$val["id_ingreso"]."' name='abono_datanofno_".$val["id_ingreso"]."' min=1>";
+											}
+											else
+												echo "&nbsp;";
 										echo"</td>";
 										echo"</tr>";
 									}

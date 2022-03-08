@@ -257,7 +257,8 @@
 	function guardar($bd)
 	{
 		global $basedatos;
-		$fecha=$_POST["fecha_ingreso"][6].$_POST["fecha_ingreso"][7].$_POST["fecha_ingreso"][8].$_POST["fecha_ingreso"][9]."-".$_POST["fecha_ingreso"][3].$_POST["fecha_ingreso"][4]."-".$_POST["fecha_ingreso"][0].$_POST["fecha_ingreso"][1];
+		//$fecha=$_POST["fecha_ingreso"][6].$_POST["fecha_ingreso"][7].$_POST["fecha_ingreso"][8].$_POST["fecha_ingreso"][9]."-".$_POST["fecha_ingreso"][3].$_POST["fecha_ingreso"][4]."-".$_POST["fecha_ingreso"][0].$_POST["fecha_ingreso"][1];
+		$fecha = $_POST["fecha_ingreso"];
 		$fecha_num=time();
 		$efectivo = 0;
 		$transferencia = 0;
@@ -298,7 +299,7 @@
 			}
 			if ($deuda == 1)
 			{
-				if ($bd->insertar_datos(5,$basedatos,"ingreso_deuda","id_ingreso","monto","fecha","monto_pagado","pagada",$insert_id,$_POST["monto_deuda"],$_POST["fecha_ingreso"],0,0))
+				if ($bd->insertar_datos(4,$basedatos,"ingreso_deuda","id_ingreso","monto","monto_pagado","pagada",$insert_id,$_POST["monto_deuda"],0,0))
 					$valido = true;
 				else
 					$valido = false;

@@ -25,7 +25,6 @@
 			if(isset($_POST["chbfecha"]) and !empty($_POST["bfecha"]))
 				$where.="i.fecha='".$_POST["bfecha"][6].$_POST["bfecha."][7].$_POST["bfecha"][8].$_POST["bfecha"][9]."-".$_POST["bfecha"][3].$_POST["bfecha"][4]."-".$_POST["bfecha"][0].$_POST["bfecha"][1]."' AND ";
 			$where[strlen($where)-1]=" ";
-			//prueba
 			$where[strlen($where)-2]=" ";
 			$where[strlen($where)-3]=" ";
 			$where[strlen($where)-4]=" ";
