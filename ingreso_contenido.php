@@ -257,7 +257,6 @@
 	function guardar($bd)
 	{
 		global $basedatos;
-		//$fecha=$_POST["fecha_ingreso"][6].$_POST["fecha_ingreso"][7].$_POST["fecha_ingreso"][8].$_POST["fecha_ingreso"][9]."-".$_POST["fecha_ingreso"][3].$_POST["fecha_ingreso"][4]."-".$_POST["fecha_ingreso"][0].$_POST["fecha_ingreso"][1];
 		$fecha = $_POST["fecha_ingreso"];
 		$fecha_num=time();
 		$efectivo = 0;

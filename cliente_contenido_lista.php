@@ -24,18 +24,43 @@
 		{
 			if($bd->actualizar_datos(1,5,$basedatos,"cliente","cliente_cedula",$_POST["ocliente_cedula"],"cliente_cedula",$_POST["ocliente_cedula"],$_POST["mcliente_cedula"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"alias",$_POST["oalias"],$_POST["malias"],"telf",$_POST["otelf"],$_POST["mtelf"]))
 			{
-				print_r($_POST);
 				foreach($_POST as $index => $value)
 				{
 					$id_ingreso = "";
-					$abono = "";
+					$abono_efectivo = "";
+					$abono_transferencia = "";
+					$abono_referencia = "";
+					$abono_datafono = "";
 					$pagado = 0;
 					$monto_pagado = 0;
 					if (strstr($index, 'id_ingreso_'))
 					{
 						$id_ingreso = $value;
-						$abono = $_POST["abono_".$id_ingreso];
-						echo "<br>id_ingreso: ".$id_ingreso."<br>abono: ".$abono;
+						$abono_efectivo = $_POST["abono_efectivo_".$id_ingreso];
+						$abono_transferencia = $_POST["abono_transferencia_".$id_ingreso];
+						$abono_referencia = $_POST["abono_referencia_".$id_ingreso];
+						$abono_datafono = $_POST["abono_datafono_".$id_ingreso];
+						$id_motivo_ingreso = $_POST["id_motivo_ingreso_".$id_ingreso];
+						$fecha = $_POST["abono_fecha_".$id_ingreso];
+						$fecha_num = time();
+						$efectivo = 0;
+						$transferencia = 0;
+						$debito = 0;
+						$pagada = 0;
+						if (!empty($abono_efectivo))
+							$efectivo = 1;
+						if (!empty($abono_transferencia))
+							$transferencia = 1;
+						if (!empty($abono_datafono))
+							$debito = 1;
+						$bd->insertar_datos(11,$basedatos,"ingreso","id_ingreso_padre","id_motivo_ingreso","cliente_cedula","fecha","fecha_num","efectivo","transferencia","debito","deuda","empleado_cedula","login",$id_ingreso,$id_motivo_ingreso,$_POST["mcliente_cedula"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,0,$_POST["mcliente_cedula"],$_SESSION["login"]);
+						$id_ingreso_nuevo = $bd->ultimo_result;
+						if ($efectivo == 1)
+							$bd->insertar_datos(2,$basedatos,"ingreso_efectivo","id_ingreso","monto",$id_ingreso_nuevo,$abono_efectivo);
+						if ($transferencia == 1)
+							$bd->insertar_datos(3,$basedatos,"ingreso_transferencia","id_ingreso","monto","referencia",$id_ingreso_nuevo,$abono_transferencia,$abono_referencia);
+						if ($debito == 1)
+							$bd->insertar_datos(2,$basedatos,"ingreso_debito","id_ingreso","monto",$id_ingreso_nuevo,$abono_datafono);
 						$sql = "select id.monto, id.monto_pagado, id.pagada from ingreso i inner join ingreso_deuda id on i.id_ingreso = id.id_ingreso where i.id_ingreso = '".$id_ingreso."';";
 						$result = $bd->mysql->query($sql);
 						unset($sql);
@@ -43,18 +68,25 @@
 						{
 							$rows = $result->fetch_all(MYSQLI_ASSOC);
 							$result->free();
+							$monto_abonado = 0;
 							foreach ($rows as $row)
 							{
-								$abono += $row["monto_pagado"];
-								if ($abono >= $row["monto"])
-									$pagado = 1;
+								if (!empty($abono_efectivo))
+									$monto_abonado += $abono_efectivo;
+								if (!empty($abono_transferencia))
+									$monto_abonado += $abono_transferencia;
+								if (!empty($abono_datafono))
+									$monto_abonado += $abono_datafono;
+								$monto_abonado += $row["monto_pagado"];
+								if ($monto_abonado >= $row["monto"])
+									$pagada = 1;
 							}
-							unset ($rows);
+							unset($rows);
 						}
 						else
 							unset($result);
-						$bd->actualizar_datos(1,2,$basedatos,"ingreso_deuda","id_ingreso",$id_ingreso,"monto_pagado","",$abono,"pagada","",$pagado);
-					}					
+						$bd->actualizar_datos(1,2,$basedatos,"ingreso_deuda","id_ingreso",$id_ingreso,"monto_pagado","",$monto_abonado,"pagada","",$pagada);
+					}
 				}
 				return true;
 			}
@@ -192,7 +224,7 @@
 						</thead>
 						<tbody>
 							<?php
-								$sql3 = "select i.id_ingreso, i.fecha, mi.motivo as 'tipo_de_trabajo', concat(e.nombre,' ',e.apellido) as 'realizado_por', id.monto as 'debe', id.monto_pagado as 'pagado', (id.monto - ifnull(id.monto_pagado,0)) as 'total', id.pagada FROM empleado e inner join ingreso i on e.empleado_cedula = i.empleado_cedula inner join ingreso_deuda id on i.id_ingreso = id.id_ingreso inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso where i.cliente_cedula = '".$row[0]['cliente_cedula']."';";
+								$sql3 = "select i.id_ingreso, i.fecha, mi.id_motivo_ingreso ,mi.motivo as 'tipo_de_trabajo', concat(e.nombre,' ',e.apellido) as 'realizado_por', id.monto as 'debe', id.monto_pagado as 'pagado', (id.monto - ifnull(id.monto_pagado,0)) as 'total', id.pagada FROM empleado e inner join ingreso i on e.empleado_cedula = i.empleado_cedula inner join ingreso_deuda id on i.id_ingreso = id.id_ingreso inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso where i.cliente_cedula = '".$row[0]['cliente_cedula']."';";
 								$result3 = $bd->mysql->query($sql3);
 								unset($sql3);
 								if($result3)
@@ -203,7 +235,7 @@
 									{
 										echo"<tr>";
 										echo"<td align='center'>";
-										echo $val['fecha'][8].$val['fecha'][9].'-'.$val['fecha'][5].$val['fecha'][6].'-'.$val['fecha'][0].$val['fecha'][1].$val['fecha'][2].$val['fecha'][3];
+										echo $val['fecha'];
 										echo"</td>";
 										echo"<td align='center'>";
 										echo $val['tipo_de_trabajo'];
@@ -223,13 +255,14 @@
 										echo"<td align='center'>";
 											if ($val['pagada'] == 0) 
 											{
+												echo "<input type='hidden' id='id_motivo_ingreso_".$val["id_ingreso"]."' name='id_motivo_ingreso_".$val["id_ingreso"]."' value='".$val["id_motivo_ingreso"]."'>";
 												echo "<input type='hidden' class='id-ingreso' id='id_ingreso_".$val["id_ingreso"]."' name='id_ingreso_".$val["id_ingreso"]."' value='".$val["id_ingreso"]."' data-total='".$val['total']."'>";
 												$hoy=date("d-m-Y",time());
 												echo "<input class='w3-input w3-border abono-fecha-".$val["id_ingreso"]."' placeholder='dd-mm-aaaa' type='text' id='abono_fecha_".$val["id_ingreso"]."' name='abono_fecha_".$val["id_ingreso"]."' value='".$hoy."'><br>";
 												echo "<input class='w3-input w3-border abono-efectivo-".$val["id_ingreso"]."' placeholder='Efectivo' type='number' id='abono_efectivo_".$val["id_ingreso"]."' name='abono_efectivo_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1><br>";
 												echo "<input class='w3-input w3-border abono-transferencia-".$val["id_ingreso"]."' placeholder='Transferencia' type='number' id='abono_transferencia_".$val["id_ingreso"]."' name='abono_transferencia_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1>";
 												echo "<input class='w3-input w3-border abono-referencia-".$val["id_ingreso"]."' placeholder='Referencia' type='text' id='abono_referencia_".$val["id_ingreso"]."' name='abono_referencia_".$val["id_ingreso"]."'><br>";
-												echo "<input class='w3-input w3-border abono-datafono-".$val["id_ingreso"]."' placeholder='Datáfono' type='number' id='abono_datafono_".$val["id_ingreso"]."' name='abono_datanofno_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1>";
+												echo "<input class='w3-input w3-border abono-datafono-".$val["id_ingreso"]."' placeholder='Datáfono' type='number' id='abono_datafono_".$val["id_ingreso"]."' name='abono_datafono_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1>";
 											}
 											else
 												echo "&nbsp;";
