@@ -217,92 +217,113 @@
 		if(document.getElementById('otelf').value!=document.getElementById('mtelf').value)
 			cambio=true;
 		let validoAbono = true;
-		$(".abono").each(function(e){
+		let validoFecha = true;
+		$(".abono-fecha").each(function(e){
 			let el = $(this);
-			let abono = el.val().trim(el.val());
-			let total = Number(el.data("total"));
-			if (abono.length)
+			if(!validaFechaDDMMAAAA(el.val()))
 			{
-				cambio = true;
-				if (isNaN(abono)) {
-					validoAbono = false;
-					el.css("border-color: #FF0000;");
-				}
-				else {
-					abono = Number(abono);
-					if (abono > total) {
-						validoAbono = false;
-						el.css("border-color: #FF0000 !important;");
-					}
-				}
+				validoFecha=false;
 			}
 		});
-		if (validoAbono)
-		{
-			if(cambio)
+		if (!validoFecha)
+			alertify.alert("","LA FECHA NO ES VALIDA").set('label', 'Aceptar');
+		else {
+			let totalAbono = 0;
+			$(".id-ingreso").each(function(e){
+				let id_ingreso = $(this).val();
+				let total = Number($(this).data("total"));
+				let abono_efectivo = $("#abono_efectivo_" + id_ingreso).val($("#abono_efectivo_" + id_ingreso).val().trim());
+				let abono_transferencia = $("#abono_transferencia_" + id_ingreso).val($("#abono_transferencia_" + id_ingreso).val().trim());
+				let abono_datafono = $("#abono_datafono_" + id_ingreso).val($("#abono_datafono_" + id_ingreso).val().trim());
+				if (validoAbono)
+				{
+					if (abono_efectivo.length)
+						if (isNaN(abono_efectivo))
+							validoAbono = false;
+					if (abono_transferencia.length)
+						if (isNaN(abono_transferencia))
+							validoAbono = false;
+					if (abono_datafono.length)
+						if (isNaN(abono_datafono))
+							validoAbono = false;
+					if (validoAbono)
+					{
+						let totalAbono = 0;
+						if (abono_efectivo.length) totalAbono += Number(abono_efectivo);
+						if (abono_transferencia.length) totalAbono += Number(abono_transferencia);
+						if (abono_datafono.length) totalAbono += Number(abono_datafono);
+						if (totalAbono > total)
+							validoAbono = false;
+					}
+				}
+			});
+			if (validoAbono)
 			{
-				var valido;
-				valido=true;
-				if(document.getElementById('ocliente_cedula').value!=document.getElementById('mcliente_cedula').value)
+				if(cambio)
 				{
-					if(document.getElementById('mcliente_cedula').value=='')
+					var valido;
+					valido=true;
+					if(document.getElementById('ocliente_cedula').value!=document.getElementById('mcliente_cedula').value)
 					{
-						valido=false;
-						alertify.alert("","LA CÉDULA NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
-					}
-					else
-					{
-						if (!/^([0-9])*$/.test(document.getElementById('mcliente_cedula').value))
+						if(document.getElementById('mcliente_cedula').value=='')
 						{
 							valido=false;
-							alertify.alert("","LA CÉDULA NO ES VALIDA").set('label', 'Aceptar');
+							alertify.alert("","LA CÉDULA NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
 						}
-					}
-				}
-				if(valido)
-				{
-					if(document.getElementById('onombre').value!=document.getElementById('mnombre').value)
-					{
-						if(document.getElementById('mnombre').value=='')
+						else
 						{
-							valido=false;
-							alertify.alert("","EL NOMBRE NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
-						}
-					}
-				}
-				if(valido)
-				{
-					if(document.getElementById('oapellido').value!=document.getElementById('mapellido').value)
-					{
-						if(document.getElementById('mapellido').value=='')
-						{
-							valido=false;
-							alertify.alert("","EL APELLIDO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
-						}
-					}
-				}
-				if(valido)
-				{
-					if(document.getElementById('otelf').value!=document.getElementById('mtelf').value)
-					{
-						if(document.getElementById('mtelf').value!='')
-						{
-							if (!/^([0-9])*$/.test(document.getElementById('mtelf').value))
+							if (!/^([0-9])*$/.test(document.getElementById('mcliente_cedula').value))
 							{
 								valido=false;
-								alertify.alert("","EL TELÉFONO NO ES VALIDO").set('label', 'Aceptar');
+								alertify.alert("","LA CÉDULA NO ES VALIDA").set('label', 'Aceptar');
 							}
 						}
 					}
+					if(valido)
+					{
+						if(document.getElementById('onombre').value!=document.getElementById('mnombre').value)
+						{
+							if(document.getElementById('mnombre').value=='')
+							{
+								valido=false;
+								alertify.alert("","EL NOMBRE NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+							}
+						}
+					}
+					if(valido)
+					{
+						if(document.getElementById('oapellido').value!=document.getElementById('mapellido').value)
+						{
+							if(document.getElementById('mapellido').value=='')
+							{
+								valido=false;
+								alertify.alert("","EL APELLIDO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+							}
+						}
+					}
+					if(valido)
+					{
+						if(document.getElementById('otelf').value!=document.getElementById('mtelf').value)
+						{
+							if(document.getElementById('mtelf').value!='')
+							{
+								if (!/^([0-9])*$/.test(document.getElementById('mtelf').value))
+								{
+									valido=false;
+									alertify.alert("","EL TELÉFONO NO ES VALIDO").set('label', 'Aceptar');
+								}
+							}
+						}
+					}
+					if(valido)
+						alertify.confirm('','¿Desea Guardar los cambios?', function(){ alertify.success('Sí');document.getElementById('guardar_modificar').value="true";enviardatos_modificar(); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
 				}
-				if(valido)
-					alertify.confirm('','¿Desea Guardar los cambios?', function(){ alertify.success('Sí');document.getElementById('guardar_modificar').value="true";enviardatos_modificar(); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
+				else
+					alertify.alert("","NO HUBO CAMBIO EN LOS DATOS").set('label', 'Aceptar');
 			}
 			else
-				alertify.alert("","NO HUBO CAMBIO EN LOS DATOS").set('label', 'Aceptar');
+				alertify.alert("","ABONO NO VALIDO").set('label', 'Aceptar');
 		}
-		else
-			alertify.alert("","ABONO NO VALIDO").set('label', 'Aceptar');
 	}
 
 </script>
