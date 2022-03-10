@@ -47,13 +47,25 @@
 						$transferencia = 0;
 						$debito = 0;
 						$pagada = 0;
+						$empleado_cedula = "";
 						if (!empty($abono_efectivo))
 							$efectivo = 1;
 						if (!empty($abono_transferencia))
 							$transferencia = 1;
 						if (!empty($abono_datafono))
 							$debito = 1;
-						$bd->insertar_datos(11,$basedatos,"ingreso","id_ingreso_padre","id_motivo_ingreso","cliente_cedula","fecha","fecha_num","efectivo","transferencia","debito","deuda","empleado_cedula","login",$id_ingreso,$id_motivo_ingreso,$_POST["mcliente_cedula"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,0,$_POST["mcliente_cedula"],$_SESSION["login"]);
+						$sql = "select empleado_cedula from ingreso where id_ingreso = '".$id_ingreso."';";
+						$result = $bd->mysql->query($sql);
+						unset($sql);
+						if ($result)
+						{
+							$row = $result->fetch_row();
+							$result->free();
+							$empleado_cedula = $row[0];
+						}
+						else
+							unset($result);
+						$bd->insertar_datos(11,$basedatos,"ingreso","id_ingreso_padre","id_motivo_ingreso","cliente_cedula","fecha","fecha_num","efectivo","transferencia","debito","deuda","empleado_cedula","login",$id_ingreso,$id_motivo_ingreso,$_POST["mcliente_cedula"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,0,$empleado_cedula,$_SESSION["login"]);
 						$id_ingreso_nuevo = $bd->ultimo_result;
 						if ($efectivo == 1)
 							$bd->insertar_datos(2,$basedatos,"ingreso_efectivo","id_ingreso","monto",$id_ingreso_nuevo,$abono_efectivo);
