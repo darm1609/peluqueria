@@ -57,6 +57,7 @@
     <a href="abono_peluqueria.php" class="w3-bar-item w3-button w3-padding <?php if(isset($abono_peluqueria)) echo "w3-blue"; ?>">Abono Peluquer&iacute;a</a>
     <a href="abono_empleado.php" class="w3-bar-item w3-button w3-padding <?php if(isset($abono_empleado)) echo "w3-blue"; ?>">Abono Empleado</a>
     <a href="ingreso.php" class="w3-bar-item w3-button w3-padding <?php if(isset($ingreso)) echo "w3-blue"; ?>">Ingreso</a>
+    <a href="cuadre_de_caja.php" class="w3-bar-item w3-button w3-padding <?php if(isset($cuadre)) echo "w3-blue"; ?>">Cuadre de caja</a>
     <!--<a href="#" class="w3-bar-item w3-button w3-padding">Agregar&nbsp;Tablas</a>-->
     <!--<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw"></i>  Views</a>
     <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Traffic</a>
