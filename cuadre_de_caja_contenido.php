@@ -13,20 +13,17 @@
     function enviardatos_busqueda()
 	{
 		let valido=true;
-		if(document.getElementById('especificar').checked)
+		if(document.getElementById('bfecha').value=='')
 		{
-			if(document.getElementById('bfecha').value=='')
+			valido=false;
+			alertify.alert("","LA FECHA DE CONSULTA NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+		}
+		else
+		{
+			if(!validaFechaDDMMAAAA(document.getElementById('bfecha').value))
 			{
 				valido=false;
-				alertify.alert("","LA FECHA DE CONSULTA NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
-			}
-			else
-			{
-				if(!validaFechaDDMMAAAA(document.getElementById('bfecha').value))
-				{
-					valido=false;
-					alertify.alert("","LA FECHA DE BUSQUEDA NO ES VALIDA").set('label', 'Aceptar');
-				}
+				alertify.alert("","LA FECHA DE BUSQUEDA NO ES VALIDA").set('label', 'Aceptar');
 			}
 		}
 		if (valido)
@@ -94,6 +91,7 @@
         if(usuario_admin())
         {
             formulario_busqueda();
+			echo"<div id='divformulariolista'></div>";
         }
         else
         {
