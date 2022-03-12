@@ -499,7 +499,7 @@
 		</div>
 		<?php
 		echo"<div id='divfagregar' class='w3-container' style='display:none;'>";
-			formulario_agregar_ingreso($bd);
+		formulario_agregar_ingreso($bd);
 		echo"</div>";
 		formulario_busqueda($bd);
 		if(isset($_POST["fecha_ingreso"]))

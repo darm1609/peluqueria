@@ -6,7 +6,8 @@
 
     function mostrar_busqueda($bd)
     {
-        $sql = "select i.id_ingreso, i.fecha, mi.motivo, i.efectivo, i.transferencia, i.debito, i.deuda, i.observacion, case when i.efectivo = 1 then ie.monto else '' end efectivo_monto, case when i.transferencia = 1 then it.monto else '' end transferencia_monto, case when i.transferencia = 1 then it.referencia else '' end transferencia_referencia, case when i.debito = 1 then id.monto else '' end debito_monto from ingreso i inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso left join ingreso_debito id on id.id_ingreso = i.id_ingreso where i.fecha = '".$_POST["bfecha"]."' and i.deuda = 0 order by i.fecha_num asc;";
+        //Ingresos netos del dia
+        $sql = "select i.id_ingreso, i.fecha, mi.motivo, i.efectivo, i.transferencia, i.debito, i.deuda, i.observacion, case when i.efectivo = 1 then ie.monto else '' end efectivo_monto, case when i.transferencia = 1 then it.monto else '' end transferencia_monto, case when i.transferencia = 1 then it.referencia else '' end transferencia_referencia, case when i.debito = 1 then id.monto else '' end debito_monto, concat(e.nombre,' ',e.apellido) empleado, concat(c.nombre,' ',c.apellido) cliente, case when i.id_ingreso_padre is not null then 1 else 0 end por_pago_de_deuda from ingreso i inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso inner join empleado e on i.empleado_cedula = e.empleado_cedula inner join cliente c on i.cliente_cedula = c.cliente_cedula left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso left join ingreso_debito id on id.id_ingreso = i.id_ingreso where i.fecha = '".$_POST["bfecha"]."' and i.deuda = 0 order by i.fecha_num asc;";
         $result = $bd->mysql->query($sql);
         unset($sql);
         if ($result)
@@ -20,9 +21,10 @@
                 <form class="w3-container w3-card-4 w3-light-grey w3-margin" method="post">
                     <div class="w3-row  w3-section" style='font-weight: bolder;'>Ingresos netos</div>
                     <div class="w3-row w3-section">    
-                        <table border='1' cellpadding='5' cellspacing='0'>
+                        <table border='1' cellpadding='5' cellspacing='0' style='border-color: floralwhite;'>
                             <thead>
                                 <tr>
+                                    <th align="center">Empleado</th>
                                     <th align="center">Tipo De Trabajo</th>
                                     <th align="center">Efectivo</th>
                                     <th align="center">Dat&aacute;fono</th>
@@ -35,6 +37,11 @@
                                 <?php
                                     $total_ingreso_del_dia = 0;
                                     $total_ingreso_trabajo = 0;
+                                    $total_ingreso_efectivo = 0;
+                                    $total_ingreso_datafono = 0;
+                                    $total_ingreso_transferencia = 0;
+                                    $por_pago_de_deuda = 0;
+                                    $por_pago_de_deuda_encontrado = 0;
                                     foreach ($rows as $row)
                                     {
                                         $total_ingreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
@@ -43,7 +50,18 @@
                                         $total_ingreso_trabajo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
                                         $total_ingreso_trabajo += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
                                         $total_ingreso_trabajo += $row["debito_monto"] ? $row["debito_monto"] : 0;
-                                        echo"<tr>";
+                                        $total_ingreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                                        $total_ingreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                                        $total_ingreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                                        $por_pago_de_deuda = $row["por_pago_de_deuda"];
+                                        if ($por_pago_de_deuda_encontrado == 0 and $por_pago_de_deuda == 1) $por_pago_de_deuda_encontrado = 1;
+                                        echo"<tr style='";
+                                        if ($por_pago_de_deuda == 1) 
+                                        {
+                                            echo"background-color: #C8A2C8";
+                                        }
+                                        echo"'>";
+                                        echo"<td>".$row["empleado"]."</td>";
                                         echo"<td>".$row["motivo"]."</td>";
                                         echo"<td align='right'>".$row["efectivo_monto"]."</td>";
                                         echo"<td align='right'>".$row["debito_monto"]."</td>";
@@ -53,17 +71,31 @@
                                         echo"</tr>";
                                         $total_ingreso_trabajo = 0;
                                     }
-                                    echo "<tr><td colspan='5'>&nbsp;</td>";
-                                    echo "<td align='right'>".$total_ingreso_del_dia."</td></tr>";
-                                    unset($total_ingreso_del_dia,$total_ingreso_trabajo);
+                                    echo "<tr>";
+                                    echo "<td>&nbsp;</td>";
+                                    echo "<td>&nbsp;</td>";
+                                    echo "<td align='right' style='font-weight: bolder;'>".$total_ingreso_efectivo."</td>";
+                                    echo "<td align='right' style='font-weight: bolder;'>".$total_ingreso_datafono."</td>";
+                                    echo "<td align='right' style='font-weight: bolder;'>".$total_ingreso_transferencia."</td>";
+                                    echo "<td>&nbsp;</td>";
+                                    echo "<td align='right' style='font-weight: bolder;'>".$total_ingreso_del_dia."</td>";
+                                    echo "</tr>";
+                                    unset($total_ingreso_del_dia,$total_ingreso_trabajo,$total_ingreso_efectivo,$total_ingreso_datafono,$total_ingreso_transferencia);
                                 ?>
                             </tbody>
                         </table>
+                        <?php
+                            if ($por_pago_de_deuda_encontrado == 1)
+                            {
+                                echo"<table border=0><tr><td style='background-color: #C8A2C8' width='25em'></td><td>Pago por deuda</td></tr></table>";
+                            }
+                        ?>
                     </div>
                 </form>
                 <?php
             }
-            else {
+            else 
+            {
                 ?>
                 <form class="w3-container w3-card-4 w3-light-grey w3-margin" method="post">
                     <div class="w3-row  w3-section" style='font-weight: bolder;'>Ingresos netos: <i style='color:crimson;'>No hubo ingresos</i></div>
@@ -73,8 +105,32 @@
             unset($rows);
         }
         else
-            unset ($result);
+            unset($result);
         
+        //Ingresos x Egresos - Ventas - Pagos - Vales
+        $sql = "";
+        $result = $bd->mysql->query($sql);
+        unset($sql);
+        if ($result)
+        {
+            $n = $result->num_rows;
+            if (!empty($n))
+            {
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+            }
+            else
+            {
+                ?>
+                <form class="w3-container w3-card-4 w3-light-grey w3-margin" method="post">
+                    <div class="w3-row  w3-section" style='font-weight: bolder;'>Ingresos x Pagos / Vales / Egresos: <i style='color:crimson;'>No hubo ingresos</i></div>
+                </form>
+                <?php
+            }
+            unset($rows);
+        }
+        else
+            unset($result);
     }
 
     global $servidor, $puerto, $usuario, $pass, $basedatos;
