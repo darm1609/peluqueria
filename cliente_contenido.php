@@ -22,17 +22,17 @@
 	function submit_cliente()
 	{
 		var valido=new Boolean(true);
-		if(document.getElementById('cliente_cedula').value=='')
+		if(document.getElementById('telf').value=='')
 		{
 			valido=false;
-			alertify.alert("","LA CÉDULA NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+			alertify.alert("","LA TEL\u00C9FONO NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
 		}
 		else
 		{
-			if (!/^([0-9])*$/.test(document.getElementById('cliente_cedula').value))
+			if (!/^([0-9])*$/.test(document.getElementById('telf').value))
 			{
 				valido=false;
-				alertify.alert("","LA CÉDULA NO ES VALIDA").set('label', 'Aceptar');
+				alertify.alert("","LA TEL\u00C9FONO NO ES VALIDA").set('label', 'Aceptar');
 			}
 		}
 		if(valido)
@@ -52,17 +52,6 @@
 			}
 		}
 		if(valido)
-		{
-			if(document.getElementById('telf').value!='')
-			{
-				if (!/^([0-9])*$/.test(document.getElementById('telf').value))
-				{
-					valido=false;
-					alertify.alert("","EL TELÉFONO NO ES VALIDO").set('label', 'Aceptar');
-				}
-			}
-		}
-		if(valido)
 			document.getElementById('fagregar').submit();
 	}
 
@@ -72,17 +61,17 @@
 		valido=true;
 		if(document.getElementById('especificar').checked)
 		{
-			if(!document.getElementById('chbcedula').checked && !document.getElementById('chbnombre').checked)
+			if(!document.getElementById('chbtelf').checked && !document.getElementById('chbnombre').checked)
 			{
 				valido=false;
 				alertify.alert("","DEBE ESPECIFICAR UNA OPCIÓN DE BUSQUEDA").set('label', 'Aceptar');
 			}
-			if(document.getElementById('chbcedula').checked)
+			if(document.getElementById('chbtelf').checked)
 			{
-				if(document.getElementById('bcedula').value=="")
+				if(document.getElementById('btelf').value=="")
 				{
 					valido=false;
-					alertify.alert("","LA CÉDULA A BUSCAR NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+					alertify.alert("","EL TEL\u00C9FONO A BUSCAR NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
 				}
 			}
 			if(document.getElementById('chbnombre').checked)
@@ -127,11 +116,11 @@
 
 	function habilitar_especificar()
 	{
-		document.getElementById('chbcedula').disabled=false;
-		if(document.getElementById('chbcedula').checked)
-			document.getElementById('bcedula').disabled=false;
+		document.getElementById('chbtelf').disabled=false;
+		if(document.getElementById('chbtelf').checked)
+			document.getElementById('btelf').disabled=false;
 		else
-			document.getElementById('bcedula').disabled=true;
+			document.getElementById('btelf').disabled=true;
 		document.getElementById('chbnombre').disabled=false;
 		if(document.getElementById('chbnombre').checked)
 			document.getElementById('bnombre').disabled=false;
@@ -141,8 +130,8 @@
 
 	function deshabilitar_especificar()
 	{
-		document.getElementById('chbcedula').disabled=true;
-		document.getElementById('bcedula').disabled=true;
+		document.getElementById('chbtelf').disabled=true;
+		document.getElementById('btelf').disabled=true;
 		document.getElementById('chbnombre').disabled=true;
 		document.getElementById('bnombre').disabled=true;	
 	}
@@ -206,8 +195,6 @@
 	{
 		var cambio=new Boolean(false);
 		cambio=false;
-		if(document.getElementById('ocliente_cedula').value!=document.getElementById('mcliente_cedula').value)
-			cambio=true;
 		if(document.getElementById('onombre').value!=document.getElementById('mnombre').value)
 			cambio=true;
 		if(document.getElementById('oapellido').value!=document.getElementById('mapellido').value)
@@ -265,6 +252,44 @@
 					}
 				}
 			});
+			$(".id-ingreso-v").each(function(e){
+				let id_ingreso = $(this).val();
+				let total = Number($(this).data("total"));
+				let abono_efectivo = $("#abono_efectivo_v_" + id_ingreso).val($("#abono_efectivo_v_" + id_ingreso).val().trim()).val();
+				let abono_transferencia = $("#abono_transferencia_v_" + id_ingreso).val($("#abono_transferencia_v_" + id_ingreso).val().trim()).val();
+				let abono_referencia = $("#abono_referencia_v_" + id_ingreso).val($("#abono_referencia_v_" + id_ingreso).val().trim()).val();
+				let abono_datafono = $("#abono_datafono_v_" + id_ingreso).val($("#abono_datafono_v_" + id_ingreso).val().trim()).val();
+				if (validoAbono && validoTransferenciaConReferencia)
+				{
+					if (abono_efectivo.length)
+						if (isNaN(abono_efectivo))
+							validoAbono = false;
+						else
+							cambio = true;
+					if (abono_transferencia.length)
+						if (isNaN(abono_transferencia))
+							validoAbono = false;
+						else
+							if (!abono_referencia.length)
+								validoTransferenciaConReferencia = false;
+							else
+								cambio = true;
+					if (abono_datafono.length)
+						if (isNaN(abono_datafono))
+							validoAbono = false;
+						else
+							cambio = true;
+					if (validoAbono)
+					{
+						let totalAbono = 0;
+						if (abono_efectivo.length) totalAbono += Number(abono_efectivo);
+						if (abono_transferencia.length) totalAbono += Number(abono_transferencia);
+						if (abono_datafono.length) totalAbono += Number(abono_datafono);
+						if (totalAbono > total)
+							validoAbono = false;
+					}
+				}
+			});
 			if (!validoTransferenciaConReferencia)
 				alertify.alert("","FALTA UNA REFERENCIA PARA UN ABONO DE TRANSFERENCIA").set('label', 'Aceptar');
 			else
@@ -275,22 +300,6 @@
 					{
 						var valido;
 						valido=true;
-						if(document.getElementById('ocliente_cedula').value!=document.getElementById('mcliente_cedula').value)
-						{
-							if(document.getElementById('mcliente_cedula').value=='')
-							{
-								valido=false;
-								alertify.alert("","LA CÉDULA NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
-							}
-							else
-							{
-								if (!/^([0-9])*$/.test(document.getElementById('mcliente_cedula').value))
-								{
-									valido=false;
-									alertify.alert("","LA CÉDULA NO ES VALIDA").set('label', 'Aceptar');
-								}
-							}
-						}
 						if(valido)
 						{
 							if(document.getElementById('onombre').value!=document.getElementById('mnombre').value)
@@ -317,12 +326,20 @@
 						{
 							if(document.getElementById('otelf').value!=document.getElementById('mtelf').value)
 							{
-								if(document.getElementById('mtelf').value!='')
+								if(document.getElementById('mtelf').value=='')
 								{
-									if (!/^([0-9])*$/.test(document.getElementById('mtelf').value))
+									valido=false;
+									alertify.alert("","EL TEL\u00C9FONO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+								}
+								else
+								{
+									if(document.getElementById('mtelf').value!='')
 									{
-										valido=false;
-										alertify.alert("","EL TELÉFONO NO ES VALIDO").set('label', 'Aceptar');
+										if (!/^([0-9])*$/.test(document.getElementById('mtelf').value))
+										{
+											valido=false;
+											alertify.alert("","EL TEL\u00C9FONO NO ES VALIDO").set('label', 'Aceptar');
+										}
 									}
 								}
 							}
@@ -344,14 +361,14 @@
 	<h5><b>Administraci&oacute;n de Clientes</b></h5>
 </header>
 <form id="flistac" name="flistac" method="post">
-	<input type="hidden" id="cedula_eliminar" name="cedula_eliminar">
-	<input type="hidden" id="cedula_editar" name="cedula_editar">
+	<input type="hidden" id="telf_eliminar" name="telf_eliminar">
+	<input type="hidden" id="telf_editar" name="telf_editar">
 </form>
 <?php
 	function guardar($bd)
 	{
 		global $basedatos;
-		if($bd->insertar_datos(6,$basedatos,"cliente","cliente_cedula","nombre","apellido","alias","telf","login",$_POST["cliente_cedula"],$_POST["nombre"],$_POST["apellido"],$_POST["alias"],$_POST["telf"],$_SESSION["login"]))
+		if($bd->insertar_datos(5,$basedatos,"cliente","nombre","apellido","alias","telf","login",$_POST["nombre"],$_POST["apellido"],$_POST["alias"],$_POST["telf"],$_SESSION["login"]))
 			return true;
 		else
 			return false;
@@ -359,7 +376,7 @@
 
 	function validar_exite($bd)
 	{
-		if($bd->existe(1,"cliente","cliente_cedula",$_POST["cliente_cedula"]))
+		if($bd->existe(1,"cliente","telf",$_POST["telf"]))
 			return true;
 		else
 			return false;
@@ -371,9 +388,9 @@
 		<form class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin" id="fagregar" name="fagregar" method="post">
 			<h2 class="w3-center">Nuevo Cliente</h2>
 			<div class="w3-row w3-section">
-				<div class="w3-col" style="width:50px"><label for="cliente_cedula"><i class="icon-drivers-license-o" style="font-size:37px;"></i></label></div>
+				<div class="w3-col" style="width:50px"><label for="telf"><i class=" icon-phone" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
-					<input class="w3-input w3-border" id="cliente_cedula" name="cliente_cedula" type="text" placeholder="C&eacute;dula" onkeypress="return NumCheck2(event, this)" tabindex="1">
+					<input class="w3-input w3-border" id="telf" name="telf" type="text" placeholder="Tel&eacute;fono" maxlength="11" onkeypress="return NumCheck3(event, this)" tabindex="5">
 				</div>
 			</div>
 			<div class="w3-row w3-section">
@@ -392,12 +409,6 @@
 				<div class="w3-col" style="width:50px"><label for="alias"><i class="icon-pencil" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
 					<input class="w3-input w3-border" id="alias" name="alias" type="text" placeholder="Alias" maxlength="30" tabindex="4">
-				</div>
-			</div>
-			<div class="w3-row w3-section">
-				<div class="w3-col" style="width:50px"><label for="telf"><i class=" icon-phone" style="font-size:37px;"></i></label></div>
-				<div class="w3-rest">
-					<input class="w3-input w3-border" id="telf" name="telf" type="text" placeholder="Tel&eacute;fono" maxlength="11" onkeypress="return NumCheck3(event, this)" tabindex="5">
 				</div>
 			</div>
 			<div class="w3-row w3-section">
@@ -422,12 +433,12 @@
 				<table border="0" style="width: 100%;">
 					<tr>
 						<td align="right">
-							<input class="w3-check" type="checkbox" id="chbcedula" name="chbcedula" disabled onclick="if(document.getElementById('chbcedula').checked){document.getElementById('bcedula').disabled=false;}else{document.getElementById('bcedula').disabled=true;}">
+							<input class="w3-check" type="checkbox" id="chbtelf" name="chbtelf" disabled onclick="if(document.getElementById('chbtelf').checked){document.getElementById('btelf').disabled=false;}else{document.getElementById('btelf').disabled=true;}">
 						</td>
 						<td>
 							<label>
-								C&eacute;dula
-								<input class="w3-input w3-border" type="text" id="bcedula" name="bcedula" onkeypress="return NumCheck2(event, this)" disabled>
+								Tel&eacute;fono
+								<input class="w3-input w3-border" type="text" id="btelf" name="btelf" onkeypress="return NumCheck2(event, this)" disabled>
 							</label>
 						</td>
 					</tr>
@@ -473,7 +484,7 @@
 			echo"</div>";
 			formulario_busqueda($bd);
 			echo"<div id='loader'></div>";
-			if(isset($_POST["cliente_cedula"]))
+			if(isset($_POST["telf"]))
 			{
 				if(!validar_exite($bd))
 				{

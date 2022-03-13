@@ -8,10 +8,34 @@
 	function eliminar_venta($bd)
 	{
 		global $basedatos;
-		if($bd->eliminar_datos(1,$basedatos,"venta","id_venta",$_POST["accion_eliminar"]))
-			return true;
+		$bd->eliminar_datos(1,$basedatos,"venta_debito","id_venta",$_POST["accion_eliminar"]);
+		$bd->eliminar_datos(1,$basedatos,"venta_deuda","id_venta",$_POST["accion_eliminar"]);
+		$bd->eliminar_datos(1,$basedatos,"venta_efectivo","id_venta",$_POST["accion_eliminar"]);
+		$bd->eliminar_datos(1,$basedatos,"venta_transferencia","id_venta",$_POST["accion_eliminar"]);
+		$bd->eliminar_datos(1,$basedatos,"venta","id_venta",$_POST["accion_eliminar"]);
+		$sql = "select id_venta from venta where id_venta_padre = '".$_POST["accion_eliminar"]."';";
+		$result = $bd->mysql->query($sql);
+		unset($sql);
+		if ($result)
+		{
+			$row = $result->fetch_all(MYSQLI_ASSOC);
+			$result->free();
+			if (is_array(($row)))
+			{
+				foreach ($row as $val)
+				{
+					$bd->eliminar_datos(1,$basedatos,"venta_debito","id_venta",$val["id_venta"]);
+					$bd->eliminar_datos(1,$basedatos,"venta_deuda","id_venta",$val["id_venta"]);
+					$bd->eliminar_datos(1,$basedatos,"venta_efectivo","id_venta",$val["id_venta"]);
+					$bd->eliminar_datos(1,$basedatos,"venta_transferencia","id_venta",$val["id_venta"]);
+					$bd->eliminar_datos(1,$basedatos,"venta","id_venta",$val["id_venta"]);
+				}
+			}
+			unset($row);
+		}
 		else
-			return false;
+			unset($result);
+		return true;
 	}
 
 	function mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag=1,$cantxpag=20)
@@ -134,13 +158,13 @@
 		{
 			$where=" ";
 			if(isset($_POST["bfecha"]) and !empty($_POST["bfecha"]))
-				$where="fecha='".$_POST["bfecha"][6].$_POST["bfecha"][7].$_POST["bfecha"][8].$_POST["bfecha"][9]."-".$_POST["bfecha"][3].$_POST["bfecha"][4]."-".$_POST["bfecha"][0].$_POST["bfecha"][1]."' ";
-			$sql="SELECT id_venta, fecha, motivo, monto FROM venta WHERE ".$where."ORDER BY id_venta DESC;";
+				$where="fecha='".$_POST["bfecha"]."' ";
+			$sql="select v.id_venta, v.fecha, v.motivo as 'venta', case when v.efectivo = 1 then vff.monto else '' end as 'efectivo', case when v.transferencia = 1 then vt.monto else '' end as 'transferencia', case when v.transferencia = 1 then vt.referencia else '' end as 'referencia', case when v.debito = 1 then vd.monto else '' end as 'datáfono', case when v.deuda = 1 then vdd.monto else '' end as 'deuda', case when v.deuda = 1 then vdd.monto_pagado else '' end as 'pagado', (ifnull(vff.monto,0) + ifnull(vt.monto,0) + ifnull(vd.monto,0) + ifnull(vdd.monto_pagado,0)) as 'total', case when c.nombre is null then '' else concat(c.nombre,' ',c.apellido) end as 'cliente' from venta v left join venta_debito vd on v.id_venta = vd.id_venta left join venta_transferencia vt on vt.id_venta = v.id_venta left join venta_efectivo vff on vff.id_venta = v.id_venta left join venta_deuda vdd on vdd.id_venta = v.id_venta left join cliente c on v.cliente_cedula = c.cliente_cedula where v.fecha = '".$_POST["bfecha"]."' and v.id_venta_padre is null ORDER BY v.fecha_num ASC;";
 			unset($where);
 		}
 		elseif(isset($_POST["sel_opcion"]) and $_POST["sel_opcion"]=="todo")
 		{
-			$sql="SELECT id_venta, fecha, motivo, monto FROM venta ORDER BY id_venta DESC;";
+			$sql="select v.id_venta, v.fecha, v.motivo as 'venta', case when v.efectivo = 1 then vff.monto else '' end as 'efectivo', case when v.transferencia = 1 then vt.monto else '' end as 'transferencia', case when v.transferencia = 1 then vt.referencia else '' end as 'referencia', case when v.debito = 1 then vd.monto else '' end as 'datáfono', case when v.deuda = 1 then vdd.monto else '' end as 'deuda', case when v.deuda = 1 then vdd.monto_pagado else '' end as 'pagado', (ifnull(vff.monto,0) + ifnull(vt.monto,0) + ifnull(vd.monto,0) + ifnull(vdd.monto_pagado,0)) as 'total', case when c.nombre is null then '' else concat(c.nombre,' ',c.apellido) end as 'cliente' from venta v left join venta_debito vd on v.id_venta = vd.id_venta left join venta_transferencia vt on vt.id_venta = v.id_venta left join venta_efectivo vff on vff.id_venta = v.id_venta left join venta_deuda vdd on vdd.id_venta = v.id_venta left join cliente c on v.cliente_cedula = c.cliente_cedula where v.id_venta_padre is null ORDER BY v.fecha_num ASC;";
 		}
 		$result = $bd->mysql->query($sql);
 		unset($sql);
@@ -191,7 +215,8 @@
 		}
 		if($result=crear_sql_busqueda($bd))
 		{
-			$colespeciales=array(1=>"fecha_dd_mm_yy");
+			//$colespeciales=array(1=>"fecha_dd_mm_yy");
+			$colespeciales=array();
 			$colocultar = array();
 			if(isset($_POST["pag"]) and !empty($_POST["pag"]))
 				$pag=$_POST["pag"];

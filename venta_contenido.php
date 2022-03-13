@@ -7,6 +7,15 @@
 			else
 				$("#divfagregar").show("swing");
 		});
+
+		$("#cliente_cedula").on("change",function(){
+			let el = $(this);
+			if (el.val().length)
+				$("#monto_deuda_div").show();
+			else
+				$("#monto_deuda_div").hide();
+		});
+
 		$(function() {
 			$("#fecha").datepicker({
 				dateFormat:"dd-mm-yy",
@@ -48,6 +57,8 @@
 		$("#monto_transferencia").val($("#monto_transferencia").val().trim());
 		$("#monto_datafono").val($("#monto_datafono").val().trim());
 		$("#monto_efectivo").val($("#monto_efectivo").val().trim());
+		if (!$("#cliente_cedula").val().length)
+			$("#monto_deuda").val("");
 		$("#monto_deuda").val($("#monto_deuda").val().trim());
 		$("#referencia").val($("#referencia").val().trim());
 		if (valido)
@@ -281,18 +292,68 @@
 	function guardar($bd)
 	{
 		global $basedatos;
-		//$fecha=$_POST["fecha"][6].$_POST["fecha"][7].$_POST["fecha"][8].$_POST["fecha"][9]."-".$_POST["fecha"][3].$_POST["fecha"][4]."-".$_POST["fecha"][0].$_POST["fecha"][1];
 		$fecha = $_POST["fecha"];
-		$fecha_num = strtotime($_POST["fecha"]);
-		if($bd->insertar_datos(5,$basedatos,"venta","fecha","monto","motivo","fecha_num","login",$fecha,$_POST["monto"],$_POST["motivo"],$fecha_num,$_SESSION["login"]))
+		$fecha_num = time();
+		$efectivo = 0;
+		$transferencia = 0;
+		$debito = 0;
+		$deuda = 0;
+		if (!empty($_POST["monto_transferencia"]))
+			$transferencia = 1;
+		if (!empty($_POST["monto_datafono"]))
+			$debito = 1;
+		if (!empty($_POST["monto_efectivo"]))
+			$efectivo = 1;
+		if (!empty($_POST["monto_deuda"]))
+			$deuda = 1;
+		if($bd->insertar_datos(9,$basedatos,"venta","fecha","motivo","cliente_cedula","efectivo","debito","transferencia","deuda","fecha_num","login",$fecha,trim($_POST["motivo"]),$_POST["cliente_cedula"],$efectivo,$debito,$transferencia,$deuda,$fecha_num,$_SESSION["login"]))
 		{
+			$insert_id = $bd->ultimo_result;
+			$valido = false;
+			if ($transferencia == 1)
+			{
+				if ($bd->insertar_datos(3,$basedatos,"venta_transferencia","id_venta","monto","referencia",$insert_id,$_POST["monto_transferencia"],$_POST["referencia"]))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if ($debito == 1)
+			{
+				if ($bd->insertar_datos(2,$basedatos,"venta_debito","id_venta","monto",$insert_id,$_POST["monto_datafono"]))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if ($efectivo == 1)
+			{
+				if ($bd->insertar_datos(2,$basedatos,"venta_efectivo","id_venta","monto",$insert_id,$_POST["monto_efectivo"]))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if ($deuda == 1)
+			{
+				if ($bd->insertar_datos(4,$basedatos,"venta_deuda","id_venta","monto","monto_pagado","pagada",$insert_id,$_POST["monto_deuda"],0,0))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if (!$valido) //Devolver todos los cambios
+			{
+				$bd->eliminar_datos(1,$basedatos,"venta_transferencia","id_venta",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"venta_debito","id_venta",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"venta_efectivo","id_venta",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"venta_deuda","id_venta",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"venta","id_venta",$insert_id);
+				return false;
+			}
 			return true;
 		}
 		else
 			return false;
 	}
 
-	function formulario_agregar_venta()
+	function formulario_agregar_venta($bd)
 	{
 		?>
 		<form class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin" id="fagregar" name="fagregar" method="post">
@@ -310,6 +371,33 @@
 				<div class="w3-col" style="width:50px"><label for="motivo"><i class="icon-pencil" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
 					<input class="w3-input w3-border" id="motivo" name="motivo" type="text" placeholder="Motivo">
+				</div>
+			</div>
+			<div class="w3-row w3-section">
+				<div class="w3-col" style="width:50px"><label for="cliente_cedula"><i class="icon-menu" style="font-size:37px;"></i></label></div>
+				<div class="w3-rest">
+					<select class="w3-select" id="cliente_cedula" name="cliente_cedula">
+						<option value="">Cliente</option>
+						<?php
+							$sql="SELECT cliente_cedula, nombre, apellido, alias FROM cliente;";
+							$result = $bd->mysql->query($sql);
+							unset($sql);
+							if($result)
+							{
+								while($row = $result->fetch_array())
+								{
+									if(empty($row["alias"]))
+										echo"<option value='".$row["cliente_cedula"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
+									else
+										echo"<option value='".$row["cliente_cedula"]."'>".$row["alias"]." - ".$row["nombre"]." ".$row["apellido"]."</option>";
+								}
+								unset($row);
+								$result->free();
+							}
+							else
+								unset($result);
+						?>
+					</select>
 				</div>
 			</div>
 			<label for="monto_transferencia"><b>Transferencia</b></label>
@@ -333,10 +421,12 @@
 					<input type="number" class="w3-input w3-border" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
 				</div>
 			</div>
-			<label for="monto_deuda"><b>Deuda</b></label>
-			<div class="w3-row">
-				<div class="w3-rest">
-					<input type="number" class="w3-input w3-border" id="monto_deuda" name="monto_deuda" placeholder="Monto" min=1>
+			<div id="monto_deuda_div" style="display:none;">
+				<label for="monto_deuda"><b>Deuda</b></label>
+				<div class="w3-row">
+					<div class="w3-rest">
+						<input type="number" class="w3-input w3-border" id="monto_deuda" name="monto_deuda" placeholder="Monto" min=1>
+					</div>
 				</div>
 			</div>
 			<div class="w3-row w3-section">
@@ -358,7 +448,7 @@
 			</div>
 			<?php
 			echo"<div id='divfagregar' class='w3-container' style='display:none;'>";
-				formulario_agregar_venta();
+				formulario_agregar_venta($bd);
 			echo"</div>";
 			formulario_busqueda($bd);
 			echo"<div id='loader'></div>";

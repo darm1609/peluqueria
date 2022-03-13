@@ -7,6 +7,15 @@
 			else
 				$("#divfagregar").show("swing");
 		});
+		
+		$("#cliente_cedula").on("change",function(){
+			let el = $(this);
+			if (el.val().length)
+				$("#monto_deuda_div").show();
+			else
+				$("#monto_deuda_div").hide();
+		});
+		
 		$(function() {
 			$("#fecha_ingreso").datepicker({
 				dateFormat:"dd-mm-yy",
@@ -148,6 +157,8 @@
 		$("#monto_transferencia").val($("#monto_transferencia").val().trim());
 		$("#monto_datafono").val($("#monto_datafono").val().trim());
 		$("#monto_efectivo").val($("#monto_efectivo").val().trim());
+		if (!$("#cliente_cedula").val().length)
+			$("#monto_deuda").val("");
 		$("#monto_deuda").val($("#monto_deuda").val().trim());
 		$("#referencia").val($("#referencia").val().trim());
 		if (valido)
@@ -428,10 +439,12 @@
 					<input type="number" class="w3-input w3-border" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
 				</div>
 			</div>
-			<label for="monto_deuda"><b>Deuda</b></label>
-			<div class="w3-row">
-				<div class="w3-rest">
-					<input type="number" class="w3-input w3-border" id="monto_deuda" name="monto_deuda" placeholder="Monto" min=1>
+			<div id="monto_deuda_div" style="display:none;">
+				<label for="monto_deuda"><b>Deuda</b></label>
+				<div class="w3-row">
+					<div class="w3-rest">
+						<input type="number" class="w3-input w3-border" id="monto_deuda" name="monto_deuda" placeholder="Monto" min=1>
+					</div>
 				</div>
 			</div>
 			<label for="observacion"><b>Comentario</b></label>
