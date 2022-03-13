@@ -8,7 +8,7 @@
 				$("#divfagregar").show("swing");
 		});
 
-		$("#cliente_cedula").on("change",function(){
+		$("#cliente_telf").on("change",function(){
 			let el = $(this);
 			if (el.val().length)
 				$("#monto_deuda_div").show();
@@ -57,7 +57,7 @@
 		$("#monto_transferencia").val($("#monto_transferencia").val().trim());
 		$("#monto_datafono").val($("#monto_datafono").val().trim());
 		$("#monto_efectivo").val($("#monto_efectivo").val().trim());
-		if (!$("#cliente_cedula").val().length)
+		if (!$("#cliente_telf").val().length)
 			$("#monto_deuda").val("");
 		$("#monto_deuda").val($("#monto_deuda").val().trim());
 		$("#referencia").val($("#referencia").val().trim());
@@ -306,7 +306,7 @@
 			$efectivo = 1;
 		if (!empty($_POST["monto_deuda"]))
 			$deuda = 1;
-		if($bd->insertar_datos(9,$basedatos,"venta","fecha","motivo","cliente_cedula","efectivo","debito","transferencia","deuda","fecha_num","login",$fecha,trim($_POST["motivo"]),$_POST["cliente_cedula"],$efectivo,$debito,$transferencia,$deuda,$fecha_num,$_SESSION["login"]))
+		if($bd->insertar_datos(9,$basedatos,"venta","fecha","motivo","cliente_telf","efectivo","debito","transferencia","deuda","fecha_num","login",$fecha,trim($_POST["motivo"]),$_POST["cliente_telf"],$efectivo,$debito,$transferencia,$deuda,$fecha_num,$_SESSION["login"]))
 		{
 			$insert_id = $bd->ultimo_result;
 			$valido = false;
@@ -374,12 +374,12 @@
 				</div>
 			</div>
 			<div class="w3-row w3-section">
-				<div class="w3-col" style="width:50px"><label for="cliente_cedula"><i class="icon-menu" style="font-size:37px;"></i></label></div>
+				<div class="w3-col" style="width:50px"><label for="cliente_telf"><i class="icon-menu" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
-					<select class="w3-select" id="cliente_cedula" name="cliente_cedula">
+					<select class="w3-select" id="cliente_telf" name="cliente_telf">
 						<option value="">Cliente</option>
 						<?php
-							$sql="SELECT cliente_cedula, nombre, apellido, alias FROM cliente;";
+							$sql="SELECT telf as cliente_telf, nombre, apellido, alias FROM cliente;";
 							$result = $bd->mysql->query($sql);
 							unset($sql);
 							if($result)
@@ -387,9 +387,9 @@
 								while($row = $result->fetch_array())
 								{
 									if(empty($row["alias"]))
-										echo"<option value='".$row["cliente_cedula"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
+										echo"<option value='".$row["cliente_telf"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
 									else
-										echo"<option value='".$row["cliente_cedula"]."'>".$row["alias"]." - ".$row["nombre"]." ".$row["apellido"]."</option>";
+										echo"<option value='".$row["cliente_telf"]."'>".$row["alias"]." - ".$row["nombre"]." ".$row["apellido"]."</option>";
 								}
 								unset($row);
 								$result->free();
