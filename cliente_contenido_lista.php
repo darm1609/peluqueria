@@ -69,7 +69,8 @@
 								}
 								else
 									unset($result);
-								$bd->insertar_datos(11,$basedatos,"ingreso","id_ingreso_padre","id_motivo_ingreso","cliente_telf","fecha","fecha_num","efectivo","transferencia","debito","deuda","empleado_cedula","login",$id_ingreso,$id_motivo_ingreso,$_POST["mtelf"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,0,$empleado_cedula,$_SESSION["login"]);
+								if ($efectivo == 1 or $transferencia == 1 or $debito == 1)
+									$bd->insertar_datos(11,$basedatos,"ingreso","id_ingreso_padre","id_motivo_ingreso","cliente_telf","fecha","fecha_num","efectivo","transferencia","debito","deuda","empleado_cedula","login",$id_ingreso,$id_motivo_ingreso,$_POST["mtelf"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,0,$empleado_cedula,$_SESSION["login"]);
 								$id_ingreso_nuevo = $bd->ultimo_result;
 								if ($efectivo == 1)
 									$bd->insertar_datos(2,$basedatos,"ingreso_efectivo","id_ingreso","monto",$id_ingreso_nuevo,$abono_efectivo);
@@ -127,7 +128,8 @@
 									$transferencia = 1;
 								if (!empty($abono_datafono))
 									$debito = 1;
-								$bd->insertar_datos(10,$basedatos,"venta","id_venta_padre","motivo","cliente_telf","fecha","fecha_num","efectivo","transferencia","debito","deuda","login",$id_ingreso,$motivo_ingreso,$_POST["mcliente_telf"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,0,$_SESSION["login"]);
+								if ($efectivo == 1 or $transferencia == 1 or $debito == 1)
+									$bd->insertar_datos(10,$basedatos,"venta","id_venta_padre","motivo","cliente_telf","fecha","fecha_num","efectivo","transferencia","debito","deuda","login",$id_ingreso,$motivo_ingreso,$_POST["mtelf"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,0,$_SESSION["login"]);
 								$id_ingreso_nuevo = $bd->ultimo_result;
 								if ($efectivo == 1)
 									$bd->insertar_datos(2,$basedatos,"venta_efectivo","id_venta","monto",$id_ingreso_nuevo,$abono_efectivo);
