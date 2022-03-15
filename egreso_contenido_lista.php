@@ -8,10 +8,19 @@
 	function eliminar_egreso($bd)
 	{
 		global $basedatos;
-		if($bd->eliminar_datos(1,$basedatos,"egreso","id_egreso",$_POST["accion_eliminar"]))
-			return true;
-		else
-			return false;
+		$valida = true;
+		if (!$bd->eliminar_datos(1,$basedatos,"egreso_efectivo","id_egreso",$_POST["accion_eliminar"]))
+			$valida = false;
+		if ($valida)
+			if(!$bd->eliminar_datos(1,$basedatos,"egreso_transferencia","id_egreso",$_POST["accion_eliminar"]))
+				$valida = false;
+		if ($valida)
+			if(!$bd->eliminar_datos(1,$basedatos,"egreso_debito","id_egreso",$_POST["accion_eliminar"]))
+					$valida = false;
+		if ($valida)
+			if(!$bd->eliminar_datos(1,$basedatos,"egreso","id_egreso",$_POST["accion_eliminar"]))
+				$valida = false;
+		return $valida;
 	}
 
 	function mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag=1,$cantxpag=20)
@@ -133,14 +142,14 @@
 		if(isset($_POST["sel_opcion"]) and $_POST["sel_opcion"]=="fecha")
 		{
 			$where=" ";
-			if(isset($_POST["bfecha"]) and !empty($_POST["bfecha"]))
-				$where="fecha='".$_POST["bfecha"][6].$_POST["bfecha"][7].$_POST["bfecha"][8].$_POST["bfecha"][9]."-".$_POST["bfecha"][3].$_POST["bfecha"][4]."-".$_POST["bfecha"][0].$_POST["bfecha"][1]."' ";
-			$sql="SELECT id_egreso, fecha, motivo, monto FROM egreso WHERE ".$where."ORDER BY id_egreso DESC;";
+			if(isset($_POST["bfecha"]) and !empty($_POST["bfecha"])) 
+				$where="fecha='".$_POST["bfecha"]."' ";
+			$sql="select e.id_egreso, e.fecha, case when e.efectivo = 1 then ee.monto else '' end as 'efectivo', case when e.debito = 1 then ed.monto else '' end as 'datáfono', case when e.transferencia = 1 then et.monto else '' end as 'transferencia', case when e.transferencia = 1 then et.referencia else '' end as 'referencia', ifnull(ee.monto,0) + ifnull(et.monto,0) + ifnull(ed.monto,0) total from egreso e left join egreso_efectivo ee on e.id_egreso = ee.id_egreso left join egreso_transferencia et on e.id_egreso = et.id_egreso left join egreso_debito ed on e.id_egreso = ed.id_egreso where ".$where." order by e.fecha_num asc;";
 			unset($where);
 		}
 		elseif(isset($_POST["sel_opcion"]) and $_POST["sel_opcion"]=="todo")
 		{
-			$sql="SELECT id_egreso, fecha, motivo, monto FROM egreso ORDER BY id_egreso DESC;";
+			$sql="select e.id_egreso, e.fecha, case when e.efectivo = 1 then ee.monto else '' end as 'efectivo', case when e.debito = 1 then ed.monto else '' end as 'datáfono', case when e.transferencia = 1 then et.monto else '' end as 'transferencia', case when e.transferencia = 1 then et.referencia else '' end as 'referencia', ifnull(ee.monto,0) + ifnull(et.monto,0) + ifnull(ed.monto,0) total from egreso e left join egreso_efectivo ee on e.id_egreso = ee.id_egreso left join egreso_transferencia et on e.id_egreso = et.id_egreso left join egreso_debito ed on e.id_egreso = ed.id_egreso order by e.fecha_num asc;";
 		}
 		$result = $bd->mysql->query($sql);
 		unset($sql);

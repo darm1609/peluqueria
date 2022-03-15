@@ -185,6 +185,25 @@
 				}
 			}
 		}
+		if (valido)
+		{
+			if ($("#monto_efectivo").val().length)
+			{
+				if (isNaN($("#monto_efectivo").val()))
+				{
+					valido=false;
+					alertify.alert("","MONTO DE EFECTIVO NO VALIDO").set('label', 'Aceptar');
+				}
+				else
+				{
+					if (Number($("#monto_efectivo").val()) < 1)
+					{
+						valido=false;
+						alertify.alert("","MONTO DE EFECTIVO NO VALIDO").set('label', 'Aceptar');
+					}
+				}
+			}
+		}
 		if(valido)
 		{
 			document.getElementById('vale_pago_correcto').value="true";

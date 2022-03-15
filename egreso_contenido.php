@@ -45,19 +45,80 @@
 				alertify.alert("","EL MOTIVO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
 			}
 		}
+		$("#monto_transferencia").val($("#monto_transferencia").val().trim());
+		$("#monto_efectivo").val($("#monto_efectivo").val().trim());
+		$("#monto_datafono").val($("#monto_datafono").val().trim());
+		$("#referencia").val($("#referencia").val().trim());
 		if(valido)
 		{
-			if(document.getElementById('monto').value=='')
+			if (!$("#monto_transferencia").val().length && !$("#monto_efectivo").val().length && !$("#monto_debito").val().length)
 			{
 				valido=false;
-				alertify.alert("","EL MONTO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+				alertify.alert("","DEBE COLOCAR UN MONTO").set('label', 'Aceptar');
 			}
-			else
+		}
+		if (valido)
+		{
+			if ($("#monto_transferencia").val().length && !$("#referencia").val().length)
 			{
-				if(!/^[0-9]+([.][0-9]+)?$/.test(document.getElementById('monto').value))
+				valido=false;
+				alertify.alert("","DEBE COLOCAR EL N\u00DAMERO DE REFERENCIA DE LA TRANSFERENCIA").set('label', 'Aceptar');
+			}
+		}
+		if (valido)
+		{
+			if ($("#monto_transferencia").val().length)
+			{
+				if (isNaN($("#monto_transferencia").val()))
 				{
 					valido=false;
-					alertify.alert("","MONTO NO VALIDO").set('label', 'Aceptar');
+					alertify.alert("","MONTO DE TRANSFERENCIA NO VALIDO").set('label', 'Aceptar');
+				}
+				else
+				{
+					if (Number($("#monto_transferencia").val()) < 1)
+					{
+						valido=false;
+						alertify.alert("","MONTO DE TRANSFERENCIA NO VALIDO").set('label', 'Aceptar');
+					}
+				}
+			}
+		}
+		if (valido)
+		{
+			if ($("#monto_datafono").val().length)
+			{
+				if (isNaN($("#monto_datafono").val()))
+				{
+					valido=false;
+					alertify.alert("","MONTO DE DEBITO/DAT\u00C1FONO NO VALIDO").set('label', 'Aceptar');
+				}
+				else
+				{
+					if (Number($("#monto_datafono").val()) < 1)
+					{
+						valido=false;
+						alertify.alert("","MONTO DE DEBITO/DAT\u00C1FONO NO VALIDO").set('label', 'Aceptar');
+					}
+				}
+			}
+		}
+		if (valido)
+		{
+			if ($("#monto_efectivo").val().length)
+			{
+				if (isNaN($("#monto_efectivo").val()))
+				{
+					valido=false;
+					alertify.alert("","MONTO DE EFECTIVO NO VALIDO").set('label', 'Aceptar');
+				}
+				else
+				{
+					if (Number($("#monto_efectivo").val()) < 1)
+					{
+						valido=false;
+						alertify.alert("","MONTO DE EFECTIVO NO VALIDO").set('label', 'Aceptar');
+					}
 				}
 			}
 		}
@@ -200,11 +261,52 @@
 	function guardar($bd)
 	{
 		global $basedatos;
-		//$fecha=$_POST["fecha"][6].$_POST["fecha"][7].$_POST["fecha"][8].$_POST["fecha"][9]."-".$_POST["fecha"][3].$_POST["fecha"][4]."-".$_POST["fecha"][0].$_POST["fecha"][1];
 		$fecha=$_POST["fecha"];
-		$fecha_num=strtotime($_POST["fecha"]);
-		if($bd->insertar_datos(5,$basedatos,"egreso","fecha","monto","motivo","fecha_num","login",$fecha,$_POST["monto"],$_POST["motivo"],$fecha_num,$_SESSION["login"]))
+		$fecha_num=time();
+		$efectivo = 0;
+		$transferencia = 0;
+		$datafono = 0;
+		if (!empty($_POST["monto_transferencia"]))
+			$transferencia = 1;
+		if (!empty($_POST["monto_efectivo"]))
+			$efectivo = 1;
+		if (!empty($_POST["monto_datafono"]))
+			$datafono = 1;
+		if($bd->insertar_datos(7,$basedatos,"egreso","fecha","motivo","fecha_num","login","efectivo","transferencia","debito",$fecha,$_POST["motivo"],$fecha_num,$_SESSION["login"],$efectivo,$transferencia,$datafono))
+		{
+			$insert_id = $bd->ultimo_result;
+			$valido = false;
+			if ($transferencia == 1)
+			{
+				if ($bd->insertar_datos(3,$basedatos,"egreso_transferencia","id_egreso","monto","referencia",$insert_id,$_POST["monto_transferencia"],$_POST["referencia"]))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if ($efectivo == 1)
+			{
+				if ($bd->insertar_datos(2,$basedatos,"egreso_efectivo","id_egreso","monto",$insert_id,$_POST["monto_efectivo"]))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if ($datafono == 1)
+			{
+				if ($bd->insertar_datos(2,$basedatos,"egreso_debito","id_egreso","monto",$insert_id,$_POST["monto_datafono"]))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if (!$valido) //Devolver todos los cambios
+			{
+				$bd->eliminar_datos(1,$basedatos,"egreso_debito","id_egreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"egreso_transferencia","id_egreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"egreso_efectivo","id_egreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"egreso","id_egreso",$insert_id);
+				return false;
+			}
 			return true;
+		}
 		else
 			return false;
 	}
@@ -229,10 +331,25 @@
 					<input class="w3-input w3-border" id="motivo" name="motivo" type="text" placeholder="Motivo">
 				</div>
 			</div>
-			<div class="w3-row w3-section">
-				<div class="w3-col" style="width:50px"><label for="monto"><i class="icon-sort-numerically-outline" style="font-size:37px;"></i></label></div>
+			<label for="monto_transferencia"><b>Transferencia</b></label>
+			<div class="w3-row">
+				<div class="w3-col s6">
+					<input type="number" class="w3-input w3-border" id="monto_transferencia" name="monto_transferencia" placeholder="Monto" min=1>
+				</div>
+				<div class="w3-col s6">
+					<input type="text" class="w3-input w3-border" id="referencia" name="referencia" placeholder="Referencia">
+				</div>
+			</div>
+			<label for="monto_datafono"><b>Debito/Dat&aacute;fono</b></label>
+			<div class="w3-row">
 				<div class="w3-rest">
-					<input class="w3-input w3-border" id="monto" name="monto" type="text" placeholder="Monto" onkeypress="return NumCheck(event, this)">
+					<input type="number" class="w3-input w3-border" id="monto_datafono" name="monto_datafono" placeholder="Monto" min=1>
+				</div>
+			</div>
+			<label for="monto_efectivo"><b>Efectivo</b></label>
+			<div class="w3-row">
+				<div class="w3-rest">
+					<input type="number" class="w3-input w3-border" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
 				</div>
 			</div>
 			<div class="w3-row w3-section">
@@ -259,7 +376,7 @@
 			formulario_busqueda($bd);
 			echo"<div id='loader'></div>";
 			echo"<div id='divformulariolista'></div>";
-			if(isset($_POST["fecha"]) and isset($_POST["motivo"]) and isset($_POST["monto"]))
+			if(isset($_POST["fecha"]) and isset($_POST["motivo"]))
 			{
 				if(guardar($bd))
 				{
