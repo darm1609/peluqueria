@@ -134,13 +134,13 @@
 		{
 			$where=" ";
 			if(isset($_POST["bfecha"]) and !empty($_POST["bfecha"]))
-				$where="abono_empleado.empleado_cedula=empleado.empleado_cedula AND abono_empleado.fecha='".$_POST["bfecha"][6].$_POST["bfecha"][7].$_POST["bfecha"][8].$_POST["bfecha"][9]."-".$_POST["bfecha"][3].$_POST["bfecha"][4]."-".$_POST["bfecha"][0].$_POST["bfecha"][1]."' ";
-			$sql="SELECT abono_empleado.id_abono_empleado, abono_empleado.fecha, empleado.nombre, empleado.apellido, abono_empleado.monto FROM abono_empleado, empleado WHERE ".$where."ORDER BY abono_empleado.fecha_num DESC;";
+				$where="ae.fecha='".$_POST["bfecha"]."' ";
+			$sql="select ae.id_abono_empleado, ae.fecha, concat(e.nombre,' ',e.apellido) empleado, case when ae.efectivo = 1 then aee.monto else '' end as 'efectivo', case when ae.transferencia = 1 then aet.monto else '' end as 'transferencia', case when ae.transferencia = 1 then aet.referencia else '' end as 'referencia', ifnull(aee.monto,0) + ifnull(aet.monto,0) total from abono_empleado ae inner join empleado e on ae.empleado_cedula = e.empleado_cedula left join abono_empleado_efectivo aee on ae.id_abono_empleado = aee.id_abono_empleado left join abono_empleado_transferencia aet on ae.id_abono_empleado = aet.id_abono_empleado where ".$where." order by ae.fecha_num asc;";
 			unset($where);
 		}
 		elseif(isset($_POST["sel_opcion"]) and $_POST["sel_opcion"]=="todo")
 		{
-			$sql="SELECT abono_empleado.id_abono_empleado, abono_empleado.fecha, empleado.nombre, empleado.apellido, abono_empleado.monto FROM abono_empleado, empleado WHERE abono_empleado.empleado_cedula=empleado.empleado_cedula ORDER BY abono_empleado.fecha_num DESC;";
+			$sql="select ae.id_abono_empleado, ae.fecha, concat(e.nombre,' ',e.apellido) empleado, case when ae.efectivo = 1 then aee.monto else '' end as 'efectivo', case when ae.transferencia = 1 then aet.monto else '' end as 'transferencia', case when ae.transferencia = 1 then aet.referencia else '' end as 'referencia', ifnull(aee.monto,0) + ifnull(aet.monto,0) total from abono_empleado ae inner join empleado e on ae.empleado_cedula = e.empleado_cedula left join abono_empleado_efectivo aee on ae.id_abono_empleado = aee.id_abono_empleado left join abono_empleado_transferencia aet on ae.id_abono_empleado = aet.id_abono_empleado order by ae.fecha_num asc;";
 		}
 		$result = $bd->mysql->query($sql);
 		unset($sql);
