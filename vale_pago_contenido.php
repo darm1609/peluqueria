@@ -147,19 +147,41 @@
 				alertify.alert("","LA FECHA NO ES VALIDA").set('label', 'Aceptar');
 			}
 		}
-		if(valido)
+		$("#monto_transferencia").val($("#monto_transferencia").val().trim());
+		$("#monto_efectivo").val($("#monto_efectivo").val().trim());
+		$("#referencia").val($("#referencia").val().trim());
+		if (valido)
 		{
-			if(document.getElementById('monto').value=='')
+			if (!$("#monto_transferencia").val().length && !$("#monto_efectivo").val().length)
 			{
 				valido=false;
-				alertify.alert("","EL MONTO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+				alertify.alert("","DEBE COLOCAR UN MONTO").set('label', 'Aceptar');
 			}
-			else
+		}
+		if (valido)
+		{
+			if ($("#monto_transferencia").val().length && !$("#referencia").val().length)
 			{
-				if(!/^[0-9]+([.][0-9]+)?$/.test(document.getElementById('monto').value))
+				valido=false;
+				alertify.alert("","DEBE COLOCAR EL N\u00DAMERO DE REFERENCIA DE LA TRANSFERENCIA").set('label', 'Aceptar');
+			}
+		}
+		if (valido)
+		{
+			if ($("#monto_transferencia").val().length)
+			{
+				if (isNaN($("#monto_transferencia").val()))
 				{
 					valido=false;
-					alertify.alert("","MONTO NO VALIDO").set('label', 'Aceptar');
+					alertify.alert("","MONTO DE TRANSFERENCIA NO VALIDO").set('label', 'Aceptar');
+				}
+				else
+				{
+					if (Number($("#monto_transferencia").val()) < 1)
+					{
+						valido=false;
+						alertify.alert("","MONTO DE TRANSFERENCIA NO VALIDO").set('label', 'Aceptar');
+					}
 				}
 			}
 		}

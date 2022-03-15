@@ -19,10 +19,16 @@
 	function eliminar_vale_pago($bd)
 	{
 		global $basedatos;
-		if($bd->eliminar_datos(1,$basedatos,"vale_pago","id_vale_pago",$_POST["accion_eliminar"]))
-			return true;
-		else
-			return false;
+		$valida = true;
+		if (!$bd->eliminar_datos(1,$basedatos,"vale_pago_efectivo","id_vale_pago",$_POST["accion_eliminar"]))
+			$valida = false;
+		if ($valida)
+			if(!$bd->eliminar_datos(1,$basedatos,"vale_pago_transferencia","id_vale_pago",$_POST["accion_eliminar"]))
+				$valida = false;
+		if ($valida)
+			if(!$bd->eliminar_datos(1,$basedatos,"vale_pago","id_vale_pago",$_POST["accion_eliminar"]))
+				$valida = false;
+		return $valida;
 	}
 
 	function mostrar_busqueda2($result,$colespeciales,$colocultar,$bd,$pag=1,$cantxpag=20)
@@ -145,7 +151,7 @@
 
 	function crear_sql_busqueda2($bd)
 	{
-		$sql="SELECT vale_pago.id_vale_pago, vale_pago.fecha, vale_pago.vale_pago, vale_pago.monto, vale_pago.comentario FROM empleado, vale_pago WHERE empleado.empleado_cedula=vale_pago.empleado_cedula AND empleado.empleado_cedula='".$_POST["accion_mostrar"]."';";
+		$sql = "select vp.id_vale_pago, vp.fecha, vp.vale_pago, case when vp.efectivo = 1 then vpe.monto else '' end as 'efectivo', case when vp.transferencia = 1 then vpt.monto else '' end as 'transferencia', case when vp.transferencia = 1 then vpt.referencia else '' end as 'referencia', ifnull(vpe.monto,0) + ifnull(vpt.monto,0) total, vp.comentario from empleado e inner join vale_pago vp on e.empleado_cedula = vp.empleado_cedula left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago where e.empleado_cedula = '".$_POST["accion_mostrar"]."' order by vp.fecha_num asc;";
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if($result)
@@ -175,7 +181,8 @@
 	{
 		if($result=crear_sql_busqueda2($bd))
 		{
-			$colespeciales=array(1=>"fecha_dd_mm_yy");
+			//$colespeciales=array(1=>"fecha_dd_mm_yy");
+			$colespeciales=array();
 			$colocultar=array();
 			if(isset($_POST["pag2"]) and !empty($_POST["pag2"]))
 				$pag=$_POST["pag2"];
@@ -200,10 +207,41 @@
 	function guardar_vale_pago($bd)
 	{
 		global $basedatos;
-		$fecha=$_POST["fecha"][6].$_POST["fecha"][7].$_POST["fecha"][8].$_POST["fecha"][9]."-".$_POST["fecha"][3].$_POST["fecha"][4]."-".$_POST["fecha"][0].$_POST["fecha"][1];
-		$fecha_num=strtotime($_POST["fecha"]);
-		if($bd->insertar_datos(7,$basedatos,"vale_pago","empleado_cedula","fecha","monto","comentario","vale_pago","fecha_num","login",$_POST["empleado_cedula"],$fecha,$_POST["monto"],$_POST["comentario"],$_POST["vale_pago"],$fecha_num,$_SESSION["login"]))
+		$fecha = $_POST["fecha"];
+		$fecha_num=time();
+		$efectivo = 0;
+		$transferencia = 0;
+		if (!empty($_POST["monto_transferencia"]))
+			$transferencia = 1;
+		if (!empty($_POST["monto_efectivo"]))
+			$efectivo = 1;
+		if($bd->insertar_datos(8,$basedatos,"vale_pago","empleado_cedula","fecha","comentario","vale_pago","fecha_num","login","efectivo","transferencia",$_POST["empleado_cedula"],$fecha,$_POST["comentario"],$_POST["vale_pago"],$fecha_num,$_SESSION["login"],$efectivo,$transferencia))
+		{
+			$insert_id = $bd->ultimo_result;
+			$valido = false;
+			if ($transferencia == 1)
+			{
+				if ($bd->insertar_datos(3,$basedatos,"vale_pago_transferencia","id_vale_pago","monto","referencia",$insert_id,$_POST["monto_transferencia"],$_POST["referencia"]))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if ($efectivo == 1)
+			{
+				if ($bd->insertar_datos(2,$basedatos,"vale_pago_efectivo","id_vale_pago","monto",$insert_id,$_POST["monto_efectivo"]))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if (!$valido) //Devolver todos los cambios
+			{
+				$bd->eliminar_datos(1,$basedatos,"vale_pago_transferencia","id_ingreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"vale_pago_efectivo","id_ingreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"vale_pago","id_ingreso",$insert_id);
+				return false;
+			}
 			return true;
+		}
 		else
 			return false;
 	}
@@ -239,10 +277,19 @@
 					<input class="w3-input w3-border" id="comentario" name="comentario" type="text" placeholder="Comentario">
 				</div>
 			</div>
-			<div class="w3-row w3-section">
-				<div class="w3-col" style="width:50px"><label for="monto"><i class="icon-sort-numerically-outline" style="font-size:37px;"></i></label></div>
+			<label for="monto_transferencia"><b>Transferencia</b></label>
+			<div class="w3-row">
+				<div class="w3-col s6">
+					<input type="number" class="w3-input w3-border" id="monto_transferencia" name="monto_transferencia" placeholder="Monto" min=1>
+				</div>
+				<div class="w3-col s6">
+					<input type="text" class="w3-input w3-border" id="referencia" name="referencia" placeholder="Referencia">
+				</div>
+			</div>
+			<label for="monto_efectivo"><b>Efectivo</b></label>
+			<div class="w3-row">
 				<div class="w3-rest">
-					<input class="w3-input w3-border" id="monto" name="monto" type="text" placeholder="Monto" onkeypress="return NumCheck(event, this)">
+					<input type="number" class="w3-input w3-border" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
 				</div>
 			</div>
 			<div class="w3-row w3-section">

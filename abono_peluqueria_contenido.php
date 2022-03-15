@@ -192,7 +192,8 @@
 	function guardar($bd)
 	{
 		global $basedatos;
-		$fecha=$_POST["fecha"][6].$_POST["fecha"][7].$_POST["fecha"][8].$_POST["fecha"][9]."-".$_POST["fecha"][3].$_POST["fecha"][4]."-".$_POST["fecha"][0].$_POST["fecha"][1];
+		//$fecha=$_POST["fecha"][6].$_POST["fecha"][7].$_POST["fecha"][8].$_POST["fecha"][9]."-".$_POST["fecha"][3].$_POST["fecha"][4]."-".$_POST["fecha"][0].$_POST["fecha"][1];
+		$fecha=$_POST["fecha"];
 		$fecha_num=strtotime($_POST["fecha"]);
 		if($bd->insertar_datos(4,$basedatos,"abono_peluqueria","fecha","monto","fecha_num","login",$fecha,$_POST["monto"],$fecha_num,$_SESSION["login"]))
 			return true;

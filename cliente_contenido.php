@@ -368,7 +368,7 @@
 	function guardar($bd)
 	{
 		global $basedatos;
-		if($bd->insertar_datos(5,$basedatos,"cliente","nombre","apellido","alias","telf","login",$_POST["nombre"],$_POST["apellido"],$_POST["alias"],$_POST["telf"],$_SESSION["login"]))
+		if($bd->insertar_datos(6,$basedatos,"cliente","nombre","apellido","alias","telf","login","fecha_num",$_POST["nombre"],$_POST["apellido"],$_POST["alias"],$_POST["telf"],$_SESSION["login"],time()))
 			return true;
 		else
 			return false;

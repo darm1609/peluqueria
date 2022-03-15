@@ -191,7 +191,8 @@
 		}
 		if($result=crear_sql_busqueda($bd))
 		{
-			$colespeciales=array(1=>"fecha_dd_mm_yy");
+			//$colespeciales=array(1=>"fecha_dd_mm_yy");
+			$colespeciales=array();
 			$colocultar = array();
 			if(isset($_POST["pag"]) and !empty($_POST["pag"]))
 				$pag=$_POST["pag"];
