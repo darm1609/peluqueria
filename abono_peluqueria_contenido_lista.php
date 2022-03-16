@@ -8,10 +8,16 @@
 	function eliminar_abono_peluqueria($bd)
 	{
 		global $basedatos;
-		if($bd->eliminar_datos(1,$basedatos,"abono_peluqueria","id_abono_peluqueria",$_POST["accion_eliminar"]))
-			return true;
-		else
-			return false;
+		$valida = true;
+		if (!$bd->eliminar_datos(1,$basedatos,"abono_peluqueria_efectivo","id_abono_peluqueria",$_POST["accion_eliminar"]))
+			$valida = false;
+		if ($valida)
+			if(!$bd->eliminar_datos(1,$basedatos,"abono_peluqueria_transferencia","id_abono_peluqueria",$_POST["accion_eliminar"]))
+				$valida = false;
+		if ($valida)
+			if(!$bd->eliminar_datos(1,$basedatos,"abono_peluqueria","id_abono_peluqueria",$_POST["accion_eliminar"]))
+				$valida = false;
+		return $valida;
 	}
 
 	function mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag=1,$cantxpag=20)
@@ -134,13 +140,13 @@
 		{
 			$where=" ";
 			if(isset($_POST["bfecha"]) and !empty($_POST["bfecha"]))
-				$where="fecha='".$_POST["bfecha"][6].$_POST["bfecha"][7].$_POST["bfecha"][8].$_POST["bfecha"][9]."-".$_POST["bfecha"][3].$_POST["bfecha"][4]."-".$_POST["bfecha"][0].$_POST["bfecha"][1]."' ";
-			$sql="SELECT id_abono_peluqueria, fecha, monto FROM abono_peluqueria WHERE ".$where."ORDER BY fecha_num DESC;";
+				$where="fecha='".$_POST["bfecha"]."' ";
+			$sql="select ae.id_abono_peluqueria, ae.fecha, case when ae.efectivo = 1 then aee.monto else '' end as 'efectivo', case when ae.transferencia = 1 then aet.monto else '' end as 'transferencia', case when ae.transferencia = 1 then aet.referencia else '' end as 'referencia', ifnull(aee.monto,0) + ifnull(aet.monto,0) total from abono_peluqueria ae left join abono_peluqueria_efectivo aee on ae.id_abono_peluqueria = aee.id_abono_peluqueria left join abono_peluqueria_transferencia aet on ae.id_abono_peluqueria = aet.id_abono_peluqueria where ".$where." order by ae.fecha_num asc;";
 			unset($where);
 		}
 		elseif(isset($_POST["sel_opcion"]) and $_POST["sel_opcion"]=="todo")
 		{
-			$sql="SELECT id_abono_peluqueria, fecha, monto FROM abono_peluqueria ORDER BY fecha_num DESC;";
+			$sql="select ae.id_abono_peluqueria, ae.fecha, case when ae.efectivo = 1 then aee.monto else '' end as 'efectivo', case when ae.transferencia = 1 then aet.monto else '' end as 'transferencia', case when ae.transferencia = 1 then aet.referencia else '' end as 'referencia', ifnull(aee.monto,0) + ifnull(aet.monto,0) total from abono_peluqueria ae left join abono_peluqueria_efectivo aee on ae.id_abono_peluqueria = aee.id_abono_peluqueria left join abono_peluqueria_transferencia aet on ae.id_abono_peluqueria = aet.id_abono_peluqueria order by ae.fecha_num asc;";
 		}
 		$result = $bd->mysql->query($sql);
 		unset($sql);

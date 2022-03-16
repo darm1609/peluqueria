@@ -8,10 +8,16 @@
 	function eliminar_abono_empleado($bd)
 	{
 		global $basedatos;
-		if($bd->eliminar_datos(1,$basedatos,"abono_empleado","id_abono_empleado",$_POST["accion_eliminar"]))
-			return true;
-		else
-			return false;
+		$valida = true;
+		if (!$bd->eliminar_datos(1,$basedatos,"abono_empleado_efectivo","id_abono_empleado",$_POST["accion_eliminar"]))
+			$valida = false;
+		if ($valida)
+			if(!$bd->eliminar_datos(1,$basedatos,"abono_empleado_transferencia","id_abono_empleado",$_POST["accion_eliminar"]))
+				$valida = false;
+		if ($valida)
+			if(!$bd->eliminar_datos(1,$basedatos,"abono_empleado","id_abono_empleado",$_POST["accion_eliminar"]))
+				$valida = false;
+		return $valida;
 	}
 
 	function mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag=1,$cantxpag=20)
