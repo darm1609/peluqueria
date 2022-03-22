@@ -236,11 +236,11 @@
             e.debito, 
             case 
                 when e.efectivo = 1 then ee.monto 
-                else '' 
+                else 0 
             end efectivo_monto, 
             case 
                 when e.transferencia = 1 then et.monto 
-                else '' 
+                else 0 
             end transferencia_monto, 
             case 
                 when e.transferencia = 1 then et.referencia 
@@ -248,7 +248,7 @@
             end transferencia_referencia, 
             case 
                 when e.debito = 1 then ed.monto 
-                else '' 
+                else 0 
             end debito_monto, 
             '' empleado
         from
@@ -258,8 +258,38 @@
             left join egreso_transferencia et on e.id_egreso = et.id_egreso
         where 
             e.fecha = '".$_POST["bfecha"]."'
+        union all
+        select
+            vp.fecha_num,
+            vp.id_vale_pago id,
+            vp.fecha,
+            vp.vale_pago motivo,
+            vp.efectivo,
+            vp.transferencia,
+            0 debito,
+            case 
+                when vp.efectivo = 1 then vpe.monto 
+                else 0 
+            end efectivo_monto, 
+            case 
+                when vp.transferencia = 1 then vpt.monto 
+                else 0 
+            end transferencia_monto, 
+            case 
+                when vp.transferencia = 1 then vpt.referencia 
+                else '' 
+            end transferencia_referencia, 
+            0 debito_monto, 
+            concat(e.nombre,' ',e.apellido) empleado
+        from
+            vale_pago vp
+            inner join empleado e on vp.empleado_cedula = e.empleado_cedula
+            left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago
+            left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago
+        where 
+            vp.fecha = '".$_POST["bfecha"]."'
         order by 
-            fecha_num asc;";
+        fecha_num asc;";
         $result = $bd->mysql->query($sql);
         unset($sql);
         if ($result)
