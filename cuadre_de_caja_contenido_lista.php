@@ -106,7 +106,7 @@
             end efectivo_monto,
             case
                 when ap.transferencia = 1 then apt.monto
-                else ''
+                else 0
             end transferencia_monto,
             case 
                 when ap.transferencia = 1 then apt.referencia 
@@ -120,7 +120,7 @@
             abono_peluqueria ap
             left join abono_peluqueria_efectivo ape on ap.id_abono_peluqueria = ape.id_abono_peluqueria
             left join abono_peluqueria_transferencia apt on ap.id_abono_peluqueria = apt.id_abono_peluqueria
-        where ap.fecha = '".$_POST["bfecha"]."' and (ap.efectivo != 0 or ap.transferencia)
+        where ap.fecha = '".$_POST["bfecha"]."' and (ap.efectivo != 0 or ap.transferencia != 0)
         order by fecha_num asc;";
         $result = $bd->mysql->query($sql);
         unset($sql);
@@ -288,6 +288,36 @@
             left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago
         where 
             vp.fecha = '".$_POST["bfecha"]."'
+        union all
+        select 
+            ae.fecha_num,
+            ae.id_abono_empleado id,
+            ae.fecha,
+            'Abono a empleado' motivo,
+            ae.efectivo,
+            ae.transferencia,
+            0 debito,
+            case 
+                when ae.efectivo = 1 then aee.monto 
+                else 0 
+            end efectivo_monto, 
+            case 
+                when ae.transferencia = 1 then aet.monto 
+                else 0 
+            end transferencia_monto, 
+            case 
+                when ae.transferencia = 1 then aet.referencia 
+                else '' 
+            end transferencia_referencia, 
+            0 debito_monto, 
+            concat(e.nombre,' ',e.apellido) empleado
+        from
+            abono_empleado ae
+            inner join empleado e on ae.empleado_cedula = e.empleado_cedula
+            left join abono_empleado_efectivo aee on ae.id_abono_empleado = aee.id_abono_empleado
+            left join abono_empleado_transferencia aet on ae.id_abono_empleado = aet.id_abono_empleado
+        where
+            ae.fecha = '".$_POST["bfecha"]."'
         order by fecha_num asc;";
         $result = $bd->mysql->query($sql);
         unset($sql);
@@ -378,6 +408,59 @@
             unset($result);
 
         //Acumulados por empleado
+        $sql = "select e.empleado_cedula from empleado e";
+        $result_empleado = $bd->mysql->query($sql);
+        unset($sql);
+        if ($result_empleado)
+        {
+            if (!empty($result_empleado->num_rows))
+            {
+                $rows_empleado = $result_empleado->fetch_all(MYSQLI_ASSOC);
+                $result_empleado->free();
+                foreach ($rows_empleado as $row_empleado)
+                {
+                    $sql = "select
+                        concat(pg.nombre,' ',pg.apellido) nombre,
+                        pg.porcentaje_empleado,
+                        pg.porcentaje_peluqueria,
+                        pg.porcentaje_dueño
+                    from 
+                        porcentaje_ganancia pg 
+                    where 
+                        pg.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and 
+                        pg.fecha = '".$_POST["bfecha"]."'
+                    order by pg.fecha_num desc limit 1;";
+                    $result_porcentajes = $bd->mysql->query($sql);
+                    unset($sql);
+                    if ($result_porcentajes)
+                    {
+                        if (!empty($result_porcentajes->num_rows))
+                        {
+                            $porcentaje_empleado = 0;
+                            $porcentaje_dueño = 0;
+                            $porcentaje_peluqueria = 0;
+                            $acumulado_a_pagar = 0;
+                            $acumulado_pagado = 0;
+                            
+                            $rows_porcentajes = $result_porcentajes->fetch_all(MYSQLI_ASSOC);
+                            $result_porcentajes->free();
+                            
+                            $porcentaje_empleado = $rows_porcentajes[0]["porcentaje_empleado"];
+                            $porcentaje_peluqueria = $rows_porcentajes[0]["porcentaje_peluqueria"];
+                            $porcentaje_dueño = $rows_porcentajes[0]["porcentaje_dueño"];
+                            
+
+                            unset($porcentaje_empleado,$porcentaje_dueño,$porcentaje_peluqueria);
+                        }
+                    }
+                    else
+                        unset($result_porcentajes);
+                }
+                unset($rows_empleado);
+            }
+        }
+        else
+            unset($result_empleado);
     }
 
     global $servidor, $puerto, $usuario, $pass, $basedatos;
