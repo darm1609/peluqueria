@@ -288,8 +288,7 @@
             left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago
         where 
             vp.fecha = '".$_POST["bfecha"]."'
-        order by 
-        fecha_num asc;";
+        order by fecha_num asc;";
         $result = $bd->mysql->query($sql);
         unset($sql);
         if ($result)
@@ -377,6 +376,8 @@
         }
         else
             unset($result);
+
+        //Acumulados por empleado
     }
 
     global $servidor, $puerto, $usuario, $pass, $basedatos;

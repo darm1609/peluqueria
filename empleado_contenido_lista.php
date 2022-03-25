@@ -11,12 +11,12 @@
 	function guardar_porcentajes($bd)
 	{
 		global $basedatos;
-		if($bd->insertar_datos(7,$basedatos,"porcentaje_ganancia","empleado_cedula","fecha","porcentaje_peluqueria","porcentaje_dueño","porcentaje_empleado","fecha_num","login",$_POST["empleado_cedula"],date("Y-m-d",time()),$_POST["porcentaje_peluqueria"],$_POST["porcentaje_dueño"],$_POST["porcentaje_empleado"],time(),$_SESSION["login"]))
+		if($bd->insertar_datos(7,$basedatos,"porcentaje_ganancia","empleado_cedula","fecha","porcentaje_peluqueria","porcentaje_dueño","porcentaje_empleado","fecha_num","login",$_POST["empleado_cedula"],date("d-m-Y",time()),$_POST["porcentaje_peluqueria"],$_POST["porcentaje_dueño"],$_POST["porcentaje_empleado"],time(),$_SESSION["login"]))
 		{
 			$n=$_POST["porcentajes_motivos"];
 			for($i=1;$i<=$n;$i++)
 			{
-				if(!$bd->insertar_datos(8,$basedatos,"motivo_porcentaje_ganancia","id_motivo_ingreso","empleado_cedula","fecha","porcentaje_empleado","porcentaje_dueño","porcentaje_peluqueria","fecha_num","login",$_POST["sel_motivo_".$i],$_POST["empleado_cedula"],date("Y-m-d",time()),$_POST["porcentaje_empleado_motivo_".$i],$_POST["porcentaje_dueño_motivo_".$i],$_POST["porcentaje_peluqueria_motivo_".$i],time(),$_SESSION["login"]))
+				if(!$bd->insertar_datos(8,$basedatos,"motivo_porcentaje_ganancia","id_motivo_ingreso","empleado_cedula","fecha","porcentaje_empleado","porcentaje_dueño","porcentaje_peluqueria","fecha_num","login",$_POST["sel_motivo_".$i],$_POST["empleado_cedula"],date("d-m-Y",time()),$_POST["porcentaje_empleado_motivo_".$i],$_POST["porcentaje_dueño_motivo_".$i],$_POST["porcentaje_peluqueria_motivo_".$i],time(),$_SESSION["login"]))
 				{
 					unset($n);
 					return false;
@@ -61,8 +61,30 @@
 	function eliminar_empleado($bd)
 	{
 		global $basedatos;
-		if($bd->eliminar_datos(1,$basedatos,"empleado","empleado_cedula",$_POST["accion_eliminar"]))
-			return true;
+		if ($bd->eliminar_datos(1,$basedatos,"ingreso","empleado_cedula",$_POST["accion_eliminar"]))
+		{
+			if ($bd->eliminar_datos(1,$basedatos,"porcentaje_ganancia","empleado_cedula",$_POST["accion_eliminar"]))
+			{
+				if ($bd->eliminar_datos(1,$basedatos,"motivo_porcentaje_ganancia","empleado_cedula",$_POST["accion_eliminar"]))
+				{
+					if ($bd->eliminar_datos(1,$basedatos,"vale_pago","empleado_cedula",$_POST["accion_eliminar"]))
+					{
+						if($bd->eliminar_datos(1,$basedatos,"empleado","empleado_cedula",$_POST["accion_eliminar"]))
+						{
+							return true;
+						}
+						else
+							return false;
+					}
+					else
+						return false;
+				}
+				else
+					return false;
+			}
+			else
+				return false;
+		}
 		else
 			return false;
 	}
@@ -79,7 +101,7 @@
 	{
 		?>
 		<form class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin" id="fporcentaje" name="fporcentaje" method="post">
-			<h2 class="w3-center">Porcentajes de Ganancia</h2>
+			<h2 class="w3-center">Porcentajes De Ganancia</h2>
 			<div class="w3-row w3-section" style="border:1px solid #cccccc;font-size:12px;">
 				<?php
 					$sql="SELECT id_porcentaje_ganancia, empleado_cedula, fecha, porcentaje_peluqueria, porcentaje_dueño, porcentaje_empleado, fecha_num, login FROM porcentaje_ganancia WHERE empleado_cedula='".$_POST["accion_porcentaje"]."' ORDER BY fecha_num DESC;";
@@ -92,7 +114,8 @@
 						{
 							while($row = $result->fetch_array())
 							{
-								echo "<b>".$row["fecha"][8].$row["fecha"][9]."-".$row["fecha"][5].$row["fecha"][6]."-".$row["fecha"][0].$row["fecha"][1].$row["fecha"][2].$row["fecha"][3]."</b>";
+								//echo "<b>".$row["fecha"][8].$row["fecha"][9]."-".$row["fecha"][5].$row["fecha"][6]."-".$row["fecha"][0].$row["fecha"][1].$row["fecha"][2].$row["fecha"][3]."</b>";
+								echo "<b>".$row["fecha"]."</b>";
 								echo " ".$row["porcentaje_empleado"]."% Empleado ".$row["porcentaje_peluqueria"]."% Peluquer&iacute;a ".$row["porcentaje_dueño"]."% Due&ntilde;o";
 								$porcentaje_empleado=$row["porcentaje_empleado"];
 								$porcentaje_peluqueria=$row["porcentaje_peluqueria"];
@@ -168,7 +191,7 @@
 				$n=count($arreglo);
 				$arreglo=json_encode($arreglo);
 			?>
-			<div class="w3-row w3-section">
+			<!-- <div class="w3-row w3-section">
 				<div class="w3-rest">
 					<b>Agregar Porcentajes Por Tipo de Trabajo:&nbsp;</b>
 					<?php
@@ -178,7 +201,7 @@
 					<i class="icon-minus3 icon_menos" onclick="eliminar_campos();"></i>
 				</div>
 			</div>
-			<div id="div_por_motivo"></div>
+			<div id="div_por_motivo"></div> -->
 			<div class="w3-row w3-section">
 				<p>
 				<div class="w3-half">
