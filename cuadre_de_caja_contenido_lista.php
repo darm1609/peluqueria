@@ -420,7 +420,6 @@
                 foreach ($rows_empleado as $row_empleado)
                 {
                     $sql = "select
-                        concat(pg.nombre,' ',pg.apellido) nombre,
                         pg.porcentaje_empleado,
                         pg.porcentaje_peluqueria,
                         pg.porcentaje_dueño
@@ -448,7 +447,55 @@
                             $porcentaje_empleado = $rows_porcentajes[0]["porcentaje_empleado"];
                             $porcentaje_peluqueria = $rows_porcentajes[0]["porcentaje_peluqueria"];
                             $porcentaje_dueño = $rows_porcentajes[0]["porcentaje_dueño"];
-                            
+
+                            if (!empty($porcentaje_empleado))
+                            {
+                                $sql = "select 
+                                i.fecha_num, 
+                                i.id_ingreso, 
+                                i.fecha, 
+                                mi.motivo, 
+                                i.efectivo, 
+                                i.transferencia, 
+                                i.debito, 
+                                i.deuda, 
+                                i.observacion, 
+                                case 
+                                    when i.efectivo = 1 then ie.monto 
+                                    else '' 
+                                end efectivo_monto, 
+                                case 
+                                    when i.transferencia = 1 then it.monto 
+                                    else '' 
+                                end transferencia_monto, 
+                                case 
+                                    when i.transferencia = 1 then it.referencia 
+                                    else '' 
+                                end transferencia_referencia, 
+                                case 
+                                    when i.debito = 1 then id.monto 
+                                    else '' 
+                                end debito_monto, 
+                                concat(e.nombre,' ',e.apellido) empleado, 
+                                concat(c.nombre,' ',c.apellido) cliente, 
+                                case 
+                                    when i.id_ingreso_padre is not null then 1 
+                                    else 0 
+                                end por_pago_de_deuda 
+                                from 
+                                    ingreso i 
+                                    inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso 
+                                    inner join empleado e on i.empleado_cedula = e.empleado_cedula 
+                                    left join cliente c on i.cliente_telf = c.telf 
+                                    left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso 
+                                    left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso 
+                                    left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
+                                where 
+                                    i.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and (i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1);";
+                                echo $sql;
+                                unset($sql);
+                            }
+                                                        
 
                             unset($porcentaje_empleado,$porcentaje_dueño,$porcentaje_peluqueria);
                         }
