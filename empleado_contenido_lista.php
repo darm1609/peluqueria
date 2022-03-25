@@ -195,7 +195,7 @@
 				<div class="w3-rest">
 					<b>Agregar Porcentajes Por Tipo de Trabajo:&nbsp;</b>
 					<?php
-						echo"<i class='icon-plus4 icon_mas' onclick='agregar_campos(".$arreglo.",".$n.");'></i>";
+						//echo"<i class='icon-plus4 icon_mas' onclick='agregar_campos(".$arreglo.",".$n.");'></i>";
 					?>
 					&nbsp;
 					<i class="icon-minus3 icon_menos" onclick="eliminar_campos();"></i>
