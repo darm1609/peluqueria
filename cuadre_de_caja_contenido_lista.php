@@ -462,11 +462,11 @@
                                 i.observacion, 
                                 case 
                                     when i.efectivo = 1 then ie.monto 
-                                    else '' 
+                                    else 0 
                                 end efectivo_monto, 
                                 case 
                                     when i.transferencia = 1 then it.monto 
-                                    else '' 
+                                    else 0 
                                 end transferencia_monto, 
                                 case 
                                     when i.transferencia = 1 then it.referencia 
@@ -474,8 +474,9 @@
                                 end transferencia_referencia, 
                                 case 
                                     when i.debito = 1 then id.monto 
-                                    else '' 
-                                end debito_monto, 
+                                    else 0 
+                                end debito_monto,
+                                e.empleado_cedula, 
                                 concat(e.nombre,' ',e.apellido) empleado, 
                                 concat(c.nombre,' ',c.apellido) cliente, 
                                 case 
@@ -492,8 +493,41 @@
                                     left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
                                 where 
                                     i.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and (i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1);";
-                                echo $sql;
+                                $result_ingreso = $bd->mysql->query($sql);
+                                echo $sql."<br><br>";
                                 unset($sql);
+                                if ($result_ingreso)
+                                {
+                                    if (!empty($result_ingreso->num_rows))
+                                    {
+                                        $rows_ingreso = $result_ingreso->fetch_all(MYSQLI_ASSOC);
+                                        $result_ingreso->free();
+                                        $total_ingreso = 0;
+                                        $total_ingreso_linea = 0;
+                                        $total_ingreso_linea_empleado_porcentaje = 0;
+                                        $total_ingreso_linea_peluqueria_porcentaje = 0;
+                                        $total_ingreso_linea_dueño_porcentaje = 0;
+                                        foreach ($rows_ingreso as $row_ingreso)
+                                        {
+                                            $total_ingreso_linea = 0;
+                                            $total_ingreso_linea += $row_ingreso["efectivo_monto"];
+                                            $total_ingreso_linea += $row_ingreso["transferencia_monto"];
+                                            $total_ingreso_linea += $row_ingreso["debito_monto"];
+                                            $total_ingreso += $total_ingreso_linea;
+                                            $total_ingreso_linea_empleado_porcentaje += ($porcentaje_empleado * $total_ingreso_linea) / 100;
+                                            $total_ingreso_linea_peluqueria_porcentaje += ($porcentaje_peluqueria * $total_ingreso_linea) / 100;
+                                            $total_ingreso_linea_dueño_porcentaje += ($porcentaje_dueño * $total_ingreso_linea) / 100;
+                                        }
+                                        $sql = "";
+                                        // echo "Total del empleado: ".$total_ingreso."<br>";
+                                        // echo "Total % del empleado: ".$porcentaje_empleado." Total con porcentaje: ".$total_ingreso_linea_empleado_porcentaje."<br>";
+                                        // echo $total_ingreso_linea_peluqueria_porcentaje."<br>";
+                                        // echo $total_ingreso_linea_dueño_porcentaje."<br>";
+                                        unset($rows_ingreso, $total_ingreso, $total_ingreso_linea, $total_ingreso_linea_empleado_porcentaje, $total_ingreso_linea_peluqueria_porcentaje, $total_ingreso_linea_dueño_porcentaje);
+                                    }
+                                }
+                                else
+                                    unset($sql);
                             }
                                                         
 
