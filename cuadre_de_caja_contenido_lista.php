@@ -4,6 +4,26 @@
 	require("config.php");
 	require("librerias/basedatos.php");
 
+    function crear_modal_detalle($empleado, $ingresos, $pagos)
+    {
+        //Modal de detalles pagos a empleados
+        echo "<div id='modal_detalle_empleado_".$empleado["empleado_cedula"]."' class='w3-modal'>";
+        echo "<div class='w3-modal-content'>";
+        echo "<span onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_cedula"]."').style.display='none'\" class='w3-button w3-display-topright'>&times;</span>";
+        echo "<br>";
+        echo "<div style='padding: 1em;'>";
+        echo "<p>".$empleado["nombre"]."</p>";
+        foreach ($ingresos as $row)
+        {
+            echo $row["fecha"]." ".$row["fecha_num"]."<br>";
+        }
+        print_r($pagos);
+        echo "</div>";
+        echo "</div>";
+        echo "</div>";
+        //Fin de modal de detalles pagos a empleados
+    }
+
     function mostrar_busqueda($bd)
     {
         //Ingresos netos del dia
@@ -434,6 +454,8 @@
                 </thead>
                 <tbody>
                 <?php
+                $arreglo_ingresos = array();
+                $arreglo_vales_pagos = array();
                 foreach ($rows_empleado as $row_empleado)
                 {
                     $sql = "select 
@@ -487,6 +509,7 @@
                         if (!empty($result_ingresos->num_rows))
                         {
                             $rows_ingresos = $result_ingresos->fetch_all(MYSQLI_ASSOC);
+                            $arreglo_ingresos = $rows_ingresos;
                             $result_ingresos->free();
                             $total_ingreso = 0;
                             $total_ingreso_linea = 0;
@@ -581,6 +604,8 @@
                         {
                             $rows_vale_pago = $result_vale_pago->fetch_all(MYSQLI_ASSOC);
                             $result_vale_pago->free();
+                            $arreglo_vales_pagos = $rows_vale_pago;
+                            
                             foreach ($rows_vale_pago as $row_vale_pago)
                             {
                                 $total_pagado_a_empleado += $row_vale_pago["efectivo_monto"];
@@ -591,6 +616,8 @@
                     }
                     else
                         unset($result_vale_pago);
+
+                    crear_modal_detalle($row_empleado, $arreglo_ingresos, $arreglo_vales_pagos);
                     
                     $total_ingreso_empleado -= $total_pagado_a_empleado;
                     //echo "<br><br>".$row_empleado["nombre"]." Total ingreso empleado: ".$total_ingreso_empleado." Total ingreso peluqueria: ".$total_ingreso_peluqueria." Total ingreso dueño: ".$total_ingreso_dueño."<br>";
@@ -606,20 +633,7 @@
                 </form>
 
                 <?php
-                //Modal de detalles pagos a empleados
-                foreach ($rows_empleado as $row_empleado)
-                {
-                    echo "<div id='modal_detalle_empleado_".$row_empleado["empleado_cedula"]."' class='w3-modal'>";
-                    echo "<div class='w3-modal-content'>";
-                    echo "<span onclick=\"document.getElementById('modal_detalle_empleado_".$row_empleado["empleado_cedula"]."').style.display='none'\" class='w3-button w3-display-topright'>&times;</span>";
-                    echo "<br>";
-                    echo "<div style='padding: 1em;'>";
-                    echo "<p>".$row_empleado["nombre"]."</p>";
-                    echo "</div>";
-                    echo "</div>";
-                    echo "</div>";
-                }
-                //Fin de modal de detalles pagos a empleados
+                
                 
                 unset($rows_empleado);
             }
