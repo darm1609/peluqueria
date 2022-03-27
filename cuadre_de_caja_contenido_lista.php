@@ -10,9 +10,9 @@
         echo "<div id='modal_detalle_empleado_".$empleado["empleado_cedula"]."' class='w3-modal'>";
         echo "<div class='w3-modal-content'>";
         echo "<span onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_cedula"]."').style.display='none'\" class='w3-button w3-display-topright'>&times;</span>";
+        echo "<span class='w3-display-topleft' style='padding: 1em;'><b>".$empleado["nombre"]."</b></span><br>";
         echo "<br>";
         echo "<div style='padding: 1em;'>";
-        echo "<p>".$empleado["nombre"]."</p>";
         foreach ($ingresos as $row)
         {
             echo $row["fecha"]." ".$row["fecha_num"]."<br>";
@@ -633,8 +633,7 @@
                 </form>
 
                 <?php
-                
-                
+
                 unset($rows_empleado);
             }
         }
