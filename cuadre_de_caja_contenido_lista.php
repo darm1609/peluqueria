@@ -408,7 +408,7 @@
             unset($result);
 
         //Acumulados por empleado
-        $sql = "select e.empleado_cedula from empleado e";
+        $sql = "select concat(e.nombre,' ',e.apellido) nombre, e.empleado_cedula from empleado e";
         $result_empleado = $bd->mysql->query($sql);
         unset($sql);
         $fecha_num_consulta = strtotime($_POST["bfecha"][6].$_POST["bfecha"][7].$_POST["bfecha"][8].$_POST["bfecha"][9]."-".$_POST["bfecha"][3].$_POST["bfecha"][4]."-".$_POST["bfecha"][0].$_POST["bfecha"][1]);
@@ -418,6 +418,9 @@
             {
                 $rows_empleado = $result_empleado->fetch_all(MYSQLI_ASSOC);
                 $result_empleado->free();
+                $total_ingreso_empleado = 0;
+                $total_ingreso_peluqueria = 0;
+                $total_ingreso_dueño = 0;
                 foreach ($rows_empleado as $row_empleado)
                 {
                     $sql = "select 
@@ -472,6 +475,11 @@
                         {
                             $rows_ingresos = $result_ingresos->fetch_all(MYSQLI_ASSOC);
                             $result_ingresos->free();
+                            $total_ingreso = 0;
+                            $total_ingreso_linea = 0;
+                            $total_ingreso_linea_empleado_porcentaje = 0;
+                            $total_ingreso_linea_peluqueria_porcentaje = 0;
+                            $total_ingreso_linea_dueño_porcentaje = 0;
                             foreach ($rows_ingresos as $row_ingreso)
                             {
                                 $fecha_num_ingreso = strtotime($row_ingreso["fecha"][6].$row_ingreso["fecha"][7].$row_ingreso["fecha"][8].$row_ingreso["fecha"][9]."-".$row_ingreso["fecha"][3].$row_ingreso["fecha"][4]."-".$row_ingreso["fecha"][0].$row_ingreso["fecha"][1]);                                
@@ -486,7 +494,6 @@
                                     pg.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and
                                     pg.fecha_num <= $fecha_num_ingreso
                                 order by pg.fecha_num desc limit 1;";
-                                echo $sql."<br>";
                                 $result_porcentajes = $bd->mysql->query($sql);
                                 unset($sql);
                                 if ($result_porcentajes)
@@ -508,7 +515,19 @@
 
                                         if (!empty($porcentaje_empleado))
                                         {
-                                            echo "% empleado: ".$porcentaje_empleado." Fecha: ".$row_ingreso["fecha"]."<br>";
+                                            //echo "% empleado: ".$porcentaje_empleado." Fecha: ".$row_ingreso["fecha"]."<br>";
+                                            $total_ingreso_linea = 0;
+                                            $total_ingreso_linea += $row_ingreso["efectivo_monto"];
+                                            $total_ingreso_linea += $row_ingreso["transferencia_monto"];
+                                            $total_ingreso_linea += $row_ingreso["debito_monto"];
+                                            $total_ingreso += $total_ingreso_linea;
+                                            $total_ingreso_linea_empleado_porcentaje += ($porcentaje_empleado * $total_ingreso_linea) / 100;
+                                            $total_ingreso_linea_peluqueria_porcentaje += ($porcentaje_peluqueria * $total_ingreso_linea) / 100;
+                                            $total_ingreso_linea_dueño_porcentaje += ($porcentaje_dueño * $total_ingreso_linea) / 100;
+
+                                            $total_ingreso_empleado += $total_ingreso_linea_empleado_porcentaje;
+                                            $total_ingreso_peluqueria += $total_ingreso_linea_peluqueria_porcentaje;
+                                            $total_ingreso_dueño += $total_ingreso_linea_dueño_porcentaje;
                                         }
                                     }
                                 }
@@ -519,6 +538,8 @@
                     }
                     else
                         unset($result_ingreso);
+
+                    echo $row_empleado["nombre"]." Total ingreso empleado: ".$total_ingreso_empleado." Total ingreso peluqueria: ".$total_ingreso_empleado."<br>";
                 }
 
                 // foreach ($rows_empleado as $row_empleado)
