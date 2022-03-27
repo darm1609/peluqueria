@@ -491,9 +491,26 @@
                                 unset($sql);
                                 if ($result_porcentajes)
                                 {
-                                    $rows_porcentajes = $result_porcentajes->fetch_all(MYSQLI_ASSOC);
-                                    $result_porcentajes->free();
-                                    
+                                    if (!empty($result_porcentajes->num_rows))
+                                    {
+                                        $porcentaje_empleado = 0;
+                                        $porcentaje_dueño = 0;
+                                        $porcentaje_peluqueria = 0;
+                                        $acumulado_a_pagar = 0;
+                                        $acumulado_pagado = 0;
+                                        
+                                        $rows_porcentajes = $result_porcentajes->fetch_all(MYSQLI_ASSOC);
+                                        $result_porcentajes->free();
+                                        
+                                        $porcentaje_empleado = $rows_porcentajes[0]["porcentaje_empleado"];
+                                        $porcentaje_peluqueria = $rows_porcentajes[0]["porcentaje_peluqueria"];
+                                        $porcentaje_dueño = $rows_porcentajes[0]["porcentaje_dueño"];
+
+                                        if (!empty($porcentaje_empleado))
+                                        {
+                                            echo "% empleado: ".$porcentaje_empleado." Fecha: ".$row_ingreso["fecha"]."<br>";
+                                        }
+                                    }
                                 }
                                 else
                                     unset($result_porcentajes);
