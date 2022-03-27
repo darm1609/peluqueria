@@ -269,7 +269,8 @@
 	{
 		global $basedatos;
 		$fecha = $_POST["fecha_ingreso"];
-		$fecha_num=time();
+		//$fecha_num=time();
+		$fecha_num = strtotime($_POST["fecha_ingreso"][6].$_POST["fecha_ingreso"][7].$_POST["fecha_ingreso"][8].$_POST["fecha_ingreso"][9]."-".$_POST["fecha_ingreso"][3].$_POST["fecha_ingreso"][4]."-".$_POST["fecha_ingreso"][0].$_POST["fecha_ingreso"][1]);
 		$efectivo = 0;
 		$transferencia = 0;
 		$debito = 0;

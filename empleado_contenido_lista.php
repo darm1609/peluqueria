@@ -1,5 +1,13 @@
 <script type="text/javascript">
-
+	$(document).ready(function(){
+		$(function() {
+			$("#fecha_porcentaje").datepicker({
+				dateFormat:"dd-mm-yy",
+				dayNamesMin:[ "Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab" ],
+				monthNames:[ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" ]
+			});
+		});
+	});
 </script>
 <?php
 	session_start();
@@ -11,7 +19,9 @@
 	function guardar_porcentajes($bd)
 	{
 		global $basedatos;
-		if($bd->insertar_datos(7,$basedatos,"porcentaje_ganancia","empleado_cedula","fecha","porcentaje_peluqueria","porcentaje_dueño","porcentaje_empleado","fecha_num","login",$_POST["empleado_cedula"],date("d-m-Y",time()),$_POST["porcentaje_peluqueria"],$_POST["porcentaje_dueño"],$_POST["porcentaje_empleado"],time(),$_SESSION["login"]))
+		$fecha_porcentaje = $_POST["fecha_porcentaje"];
+		$fecha_num_porcentaje = strtotime($fecha_porcentaje[6].$fecha_porcentaje[7].$fecha_porcentaje[8].$fecha_porcentaje[9]."-".$fecha_porcentaje[3].$fecha_porcentaje[4]."-".$fecha_porcentaje[0].$fecha_porcentaje[1]);
+		if($bd->insertar_datos(7,$basedatos,"porcentaje_ganancia","empleado_cedula","fecha","porcentaje_peluqueria","porcentaje_dueño","porcentaje_empleado","fecha_num","login",$_POST["empleado_cedula"],$fecha_porcentaje,$_POST["porcentaje_peluqueria"],$_POST["porcentaje_dueño"],$_POST["porcentaje_empleado"],$fecha_num_porcentaje,$_SESSION["login"]))
 		{
 			$n=$_POST["porcentajes_motivos"];
 			for($i=1;$i<=$n;$i++)
@@ -107,6 +117,7 @@
 					$sql="SELECT id_porcentaje_ganancia, empleado_cedula, fecha, porcentaje_peluqueria, porcentaje_dueño, porcentaje_empleado, fecha_num, login FROM porcentaje_ganancia WHERE empleado_cedula='".$_POST["accion_porcentaje"]."' ORDER BY fecha_num DESC;";
 					$result = $bd->mysql->query($sql);
 					unset($sql);
+					$ultima_fecha_porcentaje = "";
 					if($result)
 					{
 						$n = $result->num_rows;
@@ -116,6 +127,7 @@
 							{
 								//echo "<b>".$row["fecha"][8].$row["fecha"][9]."-".$row["fecha"][5].$row["fecha"][6]."-".$row["fecha"][0].$row["fecha"][1].$row["fecha"][2].$row["fecha"][3]."</b>";
 								echo "<b>".$row["fecha"]."</b>";
+								$ultima_fecha_porcentaje = $row["fecha"];
 								echo " ".$row["porcentaje_empleado"]."% Empleado ".$row["porcentaje_peluqueria"]."% Peluquer&iacute;a ".$row["porcentaje_dueño"]."% Due&ntilde;o";
 								$porcentaje_empleado=$row["porcentaje_empleado"];
 								$porcentaje_peluqueria=$row["porcentaje_peluqueria"];
@@ -157,6 +169,15 @@
 					else
 						unset($result);
 				?>
+			</div>
+			<div class="w3-row w3-section">
+				<div class="w3-col" style="width:50px"><label><i class="icon-calendar" style="font-size:37px;"></i></label></div>
+				<div class="w3-rest">
+					<?php
+						$hoy=$ultima_fecha_porcentaje;
+					?>
+					<input type="text" class="w3-input w3-border" id="fecha_porcentaje" name="fecha_porcentaje" placeholder="dd-mm-aaaa" value="<?php echo $ultima_fecha_porcentaje; ?>">
+				</div>
 			</div>
 			<div class="w3-row w3-section">
 				<label for="porcentaje_empleado" class="w3-text-blue"><b>% Empleado</b></label>

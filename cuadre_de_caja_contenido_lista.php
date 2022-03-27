@@ -411,6 +411,7 @@
         $sql = "select e.empleado_cedula from empleado e";
         $result_empleado = $bd->mysql->query($sql);
         unset($sql);
+        $fecha_num_consulta = strtotime($_POST["bfecha"][6].$_POST["bfecha"][7].$_POST["bfecha"][8].$_POST["bfecha"][9]."-".$_POST["bfecha"][3].$_POST["bfecha"][4]."-".$_POST["bfecha"][0].$_POST["bfecha"][1]);
         if ($result_empleado)
         {
             if (!empty($result_empleado->num_rows))
@@ -419,124 +420,227 @@
                 $result_empleado->free();
                 foreach ($rows_empleado as $row_empleado)
                 {
-                    $sql = "select
-                        pg.porcentaje_empleado,
-                        pg.porcentaje_peluqueria,
-                        pg.porcentaje_dueño
+                    $sql = "select 
+                    i.fecha_num, 
+                    i.id_ingreso, 
+                    i.fecha, 
+                    mi.motivo, 
+                    i.efectivo, 
+                    i.transferencia, 
+                    i.debito, 
+                    i.deuda, 
+                    i.observacion, 
+                    case 
+                        when i.efectivo = 1 then ie.monto 
+                        else 0 
+                    end efectivo_monto, 
+                    case 
+                        when i.transferencia = 1 then it.monto 
+                        else 0 
+                    end transferencia_monto, 
+                    case 
+                        when i.transferencia = 1 then it.referencia 
+                        else '' 
+                    end transferencia_referencia, 
+                    case 
+                        when i.debito = 1 then id.monto 
+                        else 0 
+                    end debito_monto,
+                    e.empleado_cedula, 
+                    concat(e.nombre,' ',e.apellido) empleado, 
+                    concat(c.nombre,' ',c.apellido) cliente, 
+                    case 
+                        when i.id_ingreso_padre is not null then 1 
+                        else 0 
+                    end por_pago_de_deuda 
                     from 
-                        porcentaje_ganancia pg 
+                        ingreso i 
+                        inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso 
+                        inner join empleado e on i.empleado_cedula = e.empleado_cedula 
+                        left join cliente c on i.cliente_telf = c.telf 
+                        left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso 
+                        left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso 
+                        left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
                     where 
-                        pg.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and 
-                        pg.fecha = '".$_POST["bfecha"]."'
-                    order by pg.fecha_num desc limit 1;";
-                    $result_porcentajes = $bd->mysql->query($sql);
+                        i.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and (i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1) and
+                        i.fecha_num <= ".$fecha_num_consulta.";";
+                    $result_ingresos = $bd->mysql->query($sql);
                     unset($sql);
-                    if ($result_porcentajes)
+                    if ($result_ingresos)
                     {
-                        if (!empty($result_porcentajes->num_rows))
+                        if (!empty($result_ingresos->num_rows))
                         {
-                            $porcentaje_empleado = 0;
-                            $porcentaje_dueño = 0;
-                            $porcentaje_peluqueria = 0;
-                            $acumulado_a_pagar = 0;
-                            $acumulado_pagado = 0;
-                            
-                            $rows_porcentajes = $result_porcentajes->fetch_all(MYSQLI_ASSOC);
-                            $result_porcentajes->free();
-                            
-                            $porcentaje_empleado = $rows_porcentajes[0]["porcentaje_empleado"];
-                            $porcentaje_peluqueria = $rows_porcentajes[0]["porcentaje_peluqueria"];
-                            $porcentaje_dueño = $rows_porcentajes[0]["porcentaje_dueño"];
-
-                            if (!empty($porcentaje_empleado))
+                            $rows_ingresos = $result_ingresos->fetch_all(MYSQLI_ASSOC);
+                            $result_ingresos->free();
+                            foreach ($rows_ingresos as $row_ingreso)
                             {
-                                $sql = "select 
-                                i.fecha_num, 
-                                i.id_ingreso, 
-                                i.fecha, 
-                                mi.motivo, 
-                                i.efectivo, 
-                                i.transferencia, 
-                                i.debito, 
-                                i.deuda, 
-                                i.observacion, 
-                                case 
-                                    when i.efectivo = 1 then ie.monto 
-                                    else 0 
-                                end efectivo_monto, 
-                                case 
-                                    when i.transferencia = 1 then it.monto 
-                                    else 0 
-                                end transferencia_monto, 
-                                case 
-                                    when i.transferencia = 1 then it.referencia 
-                                    else '' 
-                                end transferencia_referencia, 
-                                case 
-                                    when i.debito = 1 then id.monto 
-                                    else 0 
-                                end debito_monto,
-                                e.empleado_cedula, 
-                                concat(e.nombre,' ',e.apellido) empleado, 
-                                concat(c.nombre,' ',c.apellido) cliente, 
-                                case 
-                                    when i.id_ingreso_padre is not null then 1 
-                                    else 0 
-                                end por_pago_de_deuda 
+                                $fecha_num_ingreso = strtotime($row_ingreso["fecha"][6].$row_ingreso["fecha"][7].$row_ingreso["fecha"][8].$row_ingreso["fecha"][9]."-".$row_ingreso["fecha"][3].$row_ingreso["fecha"][4]."-".$row_ingreso["fecha"][0].$row_ingreso["fecha"][1]);                                
+                                $sql = "select
+                                    pg.fecha,
+                                    pg.porcentaje_empleado,
+                                    pg.porcentaje_peluqueria,
+                                    pg.porcentaje_dueño
                                 from 
-                                    ingreso i 
-                                    inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso 
-                                    inner join empleado e on i.empleado_cedula = e.empleado_cedula 
-                                    left join cliente c on i.cliente_telf = c.telf 
-                                    left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso 
-                                    left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso 
-                                    left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
+                                    porcentaje_ganancia pg 
                                 where 
-                                    i.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and (i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1);";
-                                $result_ingreso = $bd->mysql->query($sql);
-                                echo $sql."<br><br>";
+                                    pg.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and
+                                    pg.fecha_num <= $fecha_num_ingreso
+                                order by pg.fecha_num desc limit 1;";
+                                echo $sql."<br>";
+                                $result_porcentajes = $bd->mysql->query($sql);
                                 unset($sql);
-                                if ($result_ingreso)
+                                if ($result_porcentajes)
                                 {
-                                    if (!empty($result_ingreso->num_rows))
-                                    {
-                                        $rows_ingreso = $result_ingreso->fetch_all(MYSQLI_ASSOC);
-                                        $result_ingreso->free();
-                                        $total_ingreso = 0;
-                                        $total_ingreso_linea = 0;
-                                        $total_ingreso_linea_empleado_porcentaje = 0;
-                                        $total_ingreso_linea_peluqueria_porcentaje = 0;
-                                        $total_ingreso_linea_dueño_porcentaje = 0;
-                                        foreach ($rows_ingreso as $row_ingreso)
-                                        {
-                                            $total_ingreso_linea = 0;
-                                            $total_ingreso_linea += $row_ingreso["efectivo_monto"];
-                                            $total_ingreso_linea += $row_ingreso["transferencia_monto"];
-                                            $total_ingreso_linea += $row_ingreso["debito_monto"];
-                                            $total_ingreso += $total_ingreso_linea;
-                                            $total_ingreso_linea_empleado_porcentaje += ($porcentaje_empleado * $total_ingreso_linea) / 100;
-                                            $total_ingreso_linea_peluqueria_porcentaje += ($porcentaje_peluqueria * $total_ingreso_linea) / 100;
-                                            $total_ingreso_linea_dueño_porcentaje += ($porcentaje_dueño * $total_ingreso_linea) / 100;
-                                        }
-                                        $sql = "";
-                                        // echo "Total del empleado: ".$total_ingreso."<br>";
-                                        // echo "Total % del empleado: ".$porcentaje_empleado." Total con porcentaje: ".$total_ingreso_linea_empleado_porcentaje."<br>";
-                                        // echo $total_ingreso_linea_peluqueria_porcentaje."<br>";
-                                        // echo $total_ingreso_linea_dueño_porcentaje."<br>";
-                                        unset($rows_ingreso, $total_ingreso, $total_ingreso_linea, $total_ingreso_linea_empleado_porcentaje, $total_ingreso_linea_peluqueria_porcentaje, $total_ingreso_linea_dueño_porcentaje);
-                                    }
+                                    $rows_porcentajes = $result_porcentajes->fetch_all(MYSQLI_ASSOC);
+                                    $result_porcentajes->free();
+                                    
                                 }
                                 else
-                                    unset($sql);
+                                    unset($result_porcentajes);
                             }
-                                                        
-
-                            unset($porcentaje_empleado,$porcentaje_dueño,$porcentaje_peluqueria);
                         }
                     }
                     else
-                        unset($result_porcentajes);
+                        unset($result_ingreso);
                 }
+
+                // foreach ($rows_empleado as $row_empleado)
+                // {
+                //     $sql = "select
+                //         pg.fecha,
+                //         pg.porcentaje_empleado,
+                //         pg.porcentaje_peluqueria,
+                //         pg.porcentaje_dueño
+                //     from 
+                //         porcentaje_ganancia pg 
+                //     where 
+                //         pg.empleado_cedula = '".$row_empleado["empleado_cedula"]."'
+                //     order by pg.fecha_num desc;";
+                //     $result_porcentajes = $bd->mysql->query($sql);
+                //     unset($sql);
+                //     if ($result_porcentajes)
+                //     {
+                //         if (!empty($result_porcentajes->num_rows))
+                //         {
+                //             $porcentaje_empleado = 0;
+                //             $porcentaje_dueño = 0;
+                //             $porcentaje_peluqueria = 0;
+                //             $acumulado_a_pagar = 0;
+                //             $acumulado_pagado = 0;
+                            
+                //             $rows_porcentajes = $result_porcentajes->fetch_all(MYSQLI_ASSOC);
+                //             $result_porcentajes->free();
+                            
+                //             $porcentaje_empleado = $rows_porcentajes[0]["porcentaje_empleado"];
+                //             $porcentaje_peluqueria = $rows_porcentajes[0]["porcentaje_peluqueria"];
+                //             $porcentaje_dueño = $rows_porcentajes[0]["porcentaje_dueño"];
+
+                //             if (!empty($porcentaje_empleado))
+                //             {
+                //                 $sql = "select 
+                //                 i.fecha_num, 
+                //                 i.id_ingreso, 
+                //                 i.fecha, 
+                //                 mi.motivo, 
+                //                 i.efectivo, 
+                //                 i.transferencia, 
+                //                 i.debito, 
+                //                 i.deuda, 
+                //                 i.observacion, 
+                //                 case 
+                //                     when i.efectivo = 1 then ie.monto 
+                //                     else 0 
+                //                 end efectivo_monto, 
+                //                 case 
+                //                     when i.transferencia = 1 then it.monto 
+                //                     else 0 
+                //                 end transferencia_monto, 
+                //                 case 
+                //                     when i.transferencia = 1 then it.referencia 
+                //                     else '' 
+                //                 end transferencia_referencia, 
+                //                 case 
+                //                     when i.debito = 1 then id.monto 
+                //                     else 0 
+                //                 end debito_monto,
+                //                 e.empleado_cedula, 
+                //                 concat(e.nombre,' ',e.apellido) empleado, 
+                //                 concat(c.nombre,' ',c.apellido) cliente, 
+                //                 case 
+                //                     when i.id_ingreso_padre is not null then 1 
+                //                     else 0 
+                //                 end por_pago_de_deuda 
+                //                 from 
+                //                     ingreso i 
+                //                     inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso 
+                //                     inner join empleado e on i.empleado_cedula = e.empleado_cedula 
+                //                     left join cliente c on i.cliente_telf = c.telf 
+                //                     left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso 
+                //                     left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso 
+                //                     left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
+                //                 where 
+                //                     i.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and (i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1);";
+                //                 $result_ingreso = $bd->mysql->query($sql);
+                //                 unset($sql);
+                //                 if ($result_ingreso)
+                //                 {
+                //                     if (!empty($result_ingreso->num_rows))
+                //                     {
+                //                         $rows_ingreso = $result_ingreso->fetch_all(MYSQLI_ASSOC);
+                //                         $result_ingreso->free();
+                //                         $total_ingreso = 0;
+                //                         $total_ingreso_linea = 0;
+                //                         $total_ingreso_linea_empleado_porcentaje = 0;
+                //                         $total_ingreso_linea_peluqueria_porcentaje = 0;
+                //                         $total_ingreso_linea_dueño_porcentaje = 0;
+                //                         foreach ($rows_ingreso as $row_ingreso)
+                //                         {
+                //                             $total_ingreso_linea = 0;
+                //                             $total_ingreso_linea += $row_ingreso["efectivo_monto"];
+                //                             $total_ingreso_linea += $row_ingreso["transferencia_monto"];
+                //                             $total_ingreso_linea += $row_ingreso["debito_monto"];
+                //                             $total_ingreso += $total_ingreso_linea;
+                //                             $total_ingreso_linea_empleado_porcentaje += ($porcentaje_empleado * $total_ingreso_linea) / 100;
+                //                             $total_ingreso_linea_peluqueria_porcentaje += ($porcentaje_peluqueria * $total_ingreso_linea) / 100;
+                //                             $total_ingreso_linea_dueño_porcentaje += ($porcentaje_dueño * $total_ingreso_linea) / 100;
+                //                         }
+                //                         $sql = "select
+                //                             vp.vale_pago,
+                //                             vp.fecha,
+                //                             vp.efectivo,
+                //                             vp.transferencia,
+                //                             case 
+                //                                 when vp.efectivo = 1 then vpe.monto 
+                //                                 else 0 
+                //                             end efectivo_monto, 
+                //                             case 
+                //                                 when vp.transferencia = 1 then vpt.monto 
+                //                                 else 0 
+                //                             end transferencia_monto
+                //                         from
+                //                             vale_pago vp
+                //                             left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago
+                //                             left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago
+                //                         where
+                //                             vp.empleado_cedula = '".$row_empleado["empleado_cedula"]."';";
+
+                //                         echo $sql;
+                //                         // echo "Total del empleado: ".$total_ingreso."<br>";
+                //                         // echo "Total % del empleado: ".$porcentaje_empleado." Total con porcentaje: ".$total_ingreso_linea_empleado_porcentaje."<br>";
+                //                         // echo $total_ingreso_linea_peluqueria_porcentaje."<br>";
+                //                         // echo $total_ingreso_linea_dueño_porcentaje."<br>";
+                //                         unset($rows_ingreso, $total_ingreso, $total_ingreso_linea, $total_ingreso_linea_empleado_porcentaje, $total_ingreso_linea_peluqueria_porcentaje, $total_ingreso_linea_dueño_porcentaje);
+                //                     }
+                //                 }
+                //                 else
+                //                     unset($sql);
+                //             }
+                //             unset($porcentaje_empleado,$porcentaje_dueño,$porcentaje_peluqueria);
+                //         }
+                //     }
+                //     else
+                //         unset($result_porcentajes);
+                // }
                 unset($rows_empleado);
             }
         }

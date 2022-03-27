@@ -9,6 +9,12 @@
 		});
 	});
 
+	$(document).ready(function(){
+		$(function() {
+			
+		});
+	});
+
 	function submit_empleado()
 	{
 		var valido=new Boolean(true);
@@ -332,6 +338,19 @@
 	function submit_porcentaje()
 	{
 		var valido=new Boolean(true);
+		if(document.getElementById('fecha_porcentaje').value=='')
+		{
+			valido=false;
+			alertify.alert("","LA FECHA NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+		}
+		else
+		{
+			if(!validaFechaDDMMAAAA(document.getElementById('fecha_porcentaje').value))
+			{
+				valido=false;
+				alertify.alert("","LA FECHA NO ES VALIDA").set('label', 'Aceptar');
+			}
+		}
 		if(document.getElementById('porcentaje_empleado').value=='')
 		{
 			valido=false;
