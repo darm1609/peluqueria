@@ -466,7 +466,7 @@
                         left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
                     where 
                         i.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and (i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1) and
-                        i.fecha_num <= ".$fecha_num_consulta.";";
+                        i.fecha_num <= ".$fecha_num_consulta." order by i.fecha_num asc;";
                     $result_ingresos = $bd->mysql->query($sql);
                     unset($sql);
                     if ($result_ingresos)
@@ -515,19 +515,20 @@
 
                                         if (!empty($porcentaje_empleado))
                                         {
-                                            //echo "% empleado: ".$porcentaje_empleado." Fecha: ".$row_ingreso["fecha"]."<br>";
                                             $total_ingreso_linea = 0;
                                             $total_ingreso_linea += $row_ingreso["efectivo_monto"];
                                             $total_ingreso_linea += $row_ingreso["transferencia_monto"];
                                             $total_ingreso_linea += $row_ingreso["debito_monto"];
                                             $total_ingreso += $total_ingreso_linea;
-                                            $total_ingreso_linea_empleado_porcentaje += ($porcentaje_empleado * $total_ingreso_linea) / 100;
-                                            $total_ingreso_linea_peluqueria_porcentaje += ($porcentaje_peluqueria * $total_ingreso_linea) / 100;
-                                            $total_ingreso_linea_dueño_porcentaje += ($porcentaje_dueño * $total_ingreso_linea) / 100;
+                                            $total_ingreso_linea_empleado_porcentaje = ($porcentaje_empleado * $total_ingreso_linea) / 100;
+                                            $total_ingreso_linea_peluqueria_porcentaje = ($porcentaje_peluqueria * $total_ingreso_linea) / 100;
+                                            $total_ingreso_linea_dueño_porcentaje = ($porcentaje_dueño * $total_ingreso_linea) / 100;
 
                                             $total_ingreso_empleado += $total_ingreso_linea_empleado_porcentaje;
                                             $total_ingreso_peluqueria += $total_ingreso_linea_peluqueria_porcentaje;
                                             $total_ingreso_dueño += $total_ingreso_linea_dueño_porcentaje;
+
+                                            echo "Fecha: ".$row_ingreso["fecha"]." Ingreso linea: ".$total_ingreso_linea." % empleado: ".$porcentaje_empleado." total empleado: ".$total_ingreso_linea_empleado_porcentaje." % peluqueria: ".$porcentaje_peluqueria ." total peluqueria: ".$total_ingreso_linea_peluqueria_porcentaje." % dueño: ".$porcentaje_dueño." total dueño: ".$total_ingreso_linea_dueño_porcentaje."<br>";
                                         }
                                     }
                                 }
@@ -539,7 +540,7 @@
                     else
                         unset($result_ingreso);
 
-                    echo $row_empleado["nombre"]." Total ingreso empleado: ".$total_ingreso_empleado." Total ingreso peluqueria: ".$total_ingreso_empleado."<br>";
+                    echo $row_empleado["nombre"]." Total ingreso empleado: ".$total_ingreso_empleado." Total ingreso peluqueria: ".$total_ingreso_peluqueria." Total ingreso dueño: ".$total_ingreso_dueño."<br>";
                 }
 
                 // foreach ($rows_empleado as $row_empleado)
