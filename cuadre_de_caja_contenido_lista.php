@@ -70,6 +70,9 @@
             $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
             $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
             $resultado[$i]["empleado_cedula"] = $row["empleado_cedula"];
+            $resultado[$i]["porcentaje_empleado"] = $row["porcentaje_empleado"];
+            $resultado[$i]["porcentaje_peluqueria"] = $row["porcentaje_peluqueria"];
+            $resultado[$i]["porcentaje_dueño"] = $row["porcentaje_dueño"];
             $i++;
         }
 
@@ -120,9 +123,16 @@
                 {
                     echo "<tr>";
                     echo "<td>".$row2["motivo"]."</td>";
-                    echo "<td align='right'>".$row2["efectivo_monto"]."</td>";
-                    echo "<td align='right'>".$row2["debito_monto"]."</td>";
-                    echo "<td align='right'>".$row2["transferencia_monto"]."</td>";
+                    if ($row2["tipo"] == "ingreso") {
+                        echo "<td align='right'>".($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100)."</td>";
+                        echo "<td align='right'>".($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100)."</td>";
+                        echo "<td align='right'>".($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100)."</td>";
+                    }
+                    else {
+                        echo "<td align='right'>".$row2["efectivo_monto"]."</td>";
+                        echo "<td align='right'>".$row2["debito_monto"]."</td>";
+                        echo "<td align='right'>".$row2["transferencia_monto"]."</td>";
+                    }
                     echo "</tr>";
                 }
             }
@@ -228,7 +238,6 @@
                             $total_ingreso_linea_dueño_porcentaje = 0;
                             foreach ($rows_ingresos as $row_ingreso)
                             {
-                                array_push($arreglo_ingresos, $row_ingreso);
                                 $fecha_num_ingreso = strtotime($row_ingreso["fecha"][6].$row_ingreso["fecha"][7].$row_ingreso["fecha"][8].$row_ingreso["fecha"][9]."-".$row_ingreso["fecha"][3].$row_ingreso["fecha"][4]."-".$row_ingreso["fecha"][0].$row_ingreso["fecha"][1]);                                
                                 $sql = "select
                                     pg.fecha,
@@ -257,6 +266,12 @@
                                         $porcentaje_empleado = $rows_porcentajes[0]["porcentaje_empleado"];
                                         $porcentaje_peluqueria = $rows_porcentajes[0]["porcentaje_peluqueria"];
                                         $porcentaje_dueño = $rows_porcentajes[0]["porcentaje_dueño"];
+
+                                        $row_ingreso["porcentaje_empleado"] = $porcentaje_empleado;
+                                        $row_ingreso["porcentaje_peluqueria"] = $porcentaje_peluqueria;
+                                        $row_ingreso["porcentaje_dueño"] = $porcentaje_dueño;
+
+                                        array_push($arreglo_ingresos, $row_ingreso);
 
                                         if (!empty($porcentaje_empleado))
                                         {
