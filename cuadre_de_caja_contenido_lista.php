@@ -40,69 +40,67 @@
         echo "<span class='w3-display-topleft' style='padding: 1em;'><b>".$empleado["nombre"]."</b></span><br>";
         echo "<br>";
         echo "<div style='padding: 1em;'>";
-        print_r($ingresos);
-        echo "<br><br>";
-        print_r($pagos);
-        echo "<br><br>";
+        // print_r($ingresos);
+        // echo "<br><br>";
+        // print_r($pagos);
+        // echo "<br><br>";
+        $resultado_fecha = array();
         $resultado = array();
         $i = 0;
+
         foreach ($ingresos as $row)
         {
-            if (count($resultado) and !existe_fecha_en_arreglo($resultado, $row["fecha"]))
+            if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["empleado_cedula"] == $empleado["empleado_cedula"])
             {
-                $resultado[$i]["fecha_num"] = $row["fecha_num"];
-                $resultado[$i]["fecha"] = $row["fecha"];
-                $resultado[$i]["tipo"] = "ingreso";
-                $resultado[$i]["motivo"] = $row["motivo"];
-                $resultado[$i]["efectivo_monto"] = !empty($row["efectivo_monto"]) ? $row["efectivo_monto"] : 0;
-                $resultado[$i]["debito_monto"] = !empty($row["debito_monto"]) ? $row["debito_monto"] : 0;
-                $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
-                $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
+                $resultado_fecha[$i]["fecha_num"] = $row["fecha_num"];
+                $resultado_fecha[$i]["fecha"] = $row["fecha"];
+                $resultado_fecha[$i]["empleado_cedula"] = $row["empleado_cedula"];
+                $i++;
             }
-            else {
-                $resultado[$i]["fecha_num"] = $row["fecha_num"];
-                $resultado[$i]["fecha"] = $row["fecha"];
-                $resultado[$i]["tipo"] = "ingreso";
-                $resultado[$i]["motivo"] = $row["motivo"];
-                $resultado[$i]["efectivo_monto"] = !empty($row["efectivo_monto"]) ? $row["efectivo_monto"] : 0;
-                $resultado[$i]["debito_monto"] = !empty($row["debito_monto"]) ? $row["debito_monto"] : 0;
-                $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
-                $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
-            }
+        }
+
+        foreach ($ingresos as $row)
+        {
+            $resultado[$i]["fecha_num"] = $row["fecha_num"];
+            $resultado[$i]["fecha"] = $row["fecha"];
+            $resultado[$i]["tipo"] = "ingreso";
+            $resultado[$i]["motivo"] = $row["motivo"];
+            $resultado[$i]["efectivo_monto"] = !empty($row["efectivo_monto"]) ? $row["efectivo_monto"] : 0;
+            $resultado[$i]["debito_monto"] = !empty($row["debito_monto"]) ? $row["debito_monto"] : 0;
+            $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
+            $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
+            $resultado[$i]["empleado_cedula"] = $row["empleado_cedula"];
             $i++;
         }
 
         foreach ($pagos as $row)
         {
-            if (count($resultado) and !existe_fecha_en_arreglo($resultado, $row["fecha"]))
+            if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["empleado_cedula"] == $empleado["empleado_cedula"])
             {
-                $resultado[$i]["fecha_num"] = $row["fecha_num"];
-                $resultado[$i]["fecha"] = $row["fecha"];
-                $resultado[$i]["tipo"] = "pago";
-                $resultado[$i]["motivo"] = $row["vale_pago"];
-                $resultado[$i]["efectivo_monto"] = !empty($row["efectivo_monto"]) ? $row["efectivo_monto"] : 0;
-                $resultado[$i]["debito_monto"] = 0;
-                $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
-                $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
+                $resultado_fecha[$i]["fecha_num"] = $row["fecha_num"];
+                $resultado_fecha[$i]["fecha"] = $row["fecha"];
+                $resultado_fecha[$i]["empleado_cedula"] = $row["empleado_cedula"];
+                $i++;
             }
-            else {
-                $resultado[$i]["fecha_num"] = $row["fecha_num"];
-                $resultado[$i]["fecha"] = $row["fecha"];
-                $resultado[$i]["tipo"] = "pago";
-                $resultado[$i]["motivo"] = $row["vale_pago"];
-                $resultado[$i]["efectivo_monto"] = !empty($row["efectivo_monto"]) ? $row["efectivo_monto"] : 0;
-                $resultado[$i]["debito_monto"] = 0;
-                $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
-                $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
-            }
+        }
+
+        foreach ($pagos as $row)
+        {
+            $resultado[$i]["fecha_num"] = $row["fecha_num"];
+            $resultado[$i]["fecha"] = $row["fecha"];
+            $resultado[$i]["tipo"] = "pago";
+            $resultado[$i]["motivo"] = $row["vale_pago"];
+            $resultado[$i]["efectivo_monto"] = !empty($row["efectivo_monto"]) ? $row["efectivo_monto"] : 0;
+            $resultado[$i]["debito_monto"] = 0;
+            $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
+            $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
+            $resultado[$i]["empleado_cedula"] = $row["empleado_cedula"];
             $i++;
         }
 
-        array_multisort($resultado, SORT_DESC, SORT_REGULAR);
+        array_multisort($resultado_fecha, SORT_DESC, SORT_REGULAR);
 
-        //print_r($resultado);echo"<br>";
-
-        foreach ($resultado as $row)
+        foreach ($resultado_fecha as $row)
         {
             echo "<span style='cursor:pointer;' onclick='mostrar_detalle_empleado(\"".$row["fecha"]."\",\"".$empleado["empleado_cedula"]."\");'>".$row["fecha"]."&nbsp;<i id='icon_detalle_fecha_".$row["fecha"]."_".$empleado["empleado_cedula"]."' class='icon-chevron-down'></i></span><br><br>";
             echo "<div id='detalle_fecha_".$row["fecha"]."_".$empleado["empleado_cedula"]."' style='display: none;border: 1px solid #cccccc;margin-top: -1.5em;padding: 1em;'>";
@@ -118,10 +116,13 @@
             echo "<tbody>";
             foreach ($resultado as $row2)
             {
-                if ($row2["fecha"] == $row["fecha"])
+                if ($row2["fecha"] == $row["fecha"] and $row2["empleado_cedula"] == $empleado["empleado_cedula"])
                 {
                     echo "<tr>";
                     echo "<td>".$row2["motivo"]."</td>";
+                    echo "<td align='right'>".$row2["efectivo_monto"]."</td>";
+                    echo "<td align='right'>".$row2["debito_monto"]."</td>";
+                    echo "<td align='right'>".$row2["transferencia_monto"]."</td>";
                     echo "</tr>";
                 }
             }
@@ -219,10 +220,6 @@
                         if (!empty($result_ingresos->num_rows))
                         {
                             $rows_ingresos = $result_ingresos->fetch_all(MYSQLI_ASSOC);
-                            if (count($arreglo_ingresos))
-                                array_merge($arreglo_ingresos, $rows_ingresos);
-                            else
-                                $arreglo_ingresos += $rows_ingresos;
                             $result_ingresos->free();
                             $total_ingreso = 0;
                             $total_ingreso_linea = 0;
@@ -231,6 +228,7 @@
                             $total_ingreso_linea_dueño_porcentaje = 0;
                             foreach ($rows_ingresos as $row_ingreso)
                             {
+                                array_push($arreglo_ingresos, $row_ingreso);
                                 $fecha_num_ingreso = strtotime($row_ingreso["fecha"][6].$row_ingreso["fecha"][7].$row_ingreso["fecha"][8].$row_ingreso["fecha"][9]."-".$row_ingreso["fecha"][3].$row_ingreso["fecha"][4]."-".$row_ingreso["fecha"][0].$row_ingreso["fecha"][1]);                                
                                 $sql = "select
                                     pg.fecha,
@@ -319,12 +317,9 @@
                         {
                             $rows_vale_pago = $result_vale_pago->fetch_all(MYSQLI_ASSOC);
                             $result_vale_pago->free();
-                            if (count($arreglo_vales_pagos))
-                                array_push($arreglo_vales_pagos, $rows_vale_pago);
-                            else
-                                $arreglo_vales_pagos = $rows_vale_pago;
                             foreach ($rows_vale_pago as $row_vale_pago)
                             {
+                                array_push($arreglo_vales_pagos, $row_vale_pago);
                                 $total_pagado_a_empleado += $row_vale_pago["efectivo_monto"];
                                 $total_pagado_a_empleado += $row_vale_pago["transferencia_monto"];
                             }
