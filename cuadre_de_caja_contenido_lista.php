@@ -1,18 +1,17 @@
 <script type="text/javascript">
 
-    function mostrar_detalle_empleado(fecha)
+    function mostrar_detalle_empleado(fecha, empleado_cedula)
     {
-        debugger;
-        if (!$("#detalle_fecha_"+fecha).is(":visible")) {
-            $("#icon_detalle_fecha_"+fecha).removeClass("icon-chevron-up");
-            $("#icon_detalle_fecha_"+fecha).addClass("icon-chevron-down");
-            $("#detalle_fecha_"+fecha).show();
-        }
-        else {
-            $("#icon_detalle_fecha_"+fecha).removeClass("icon-chevron-down");
-            $("#icon_detalle_fecha_"+fecha).addClass("icon-chevron-up");
-            $("#detalle_fecha_"+fecha).hide();
-        }
+        $("#detalle_fecha_"+fecha+"_"+empleado_cedula).toggle("slow", function() {
+            if($("#detalle_fecha_"+fecha+"_"+empleado_cedula).is(":visible")) {
+                $("#icon_detalle_fecha_"+fecha+"_"+empleado_cedula).addClass("icon-chevron-up");
+                $("#icon_detalle_fecha_"+fecha+"_"+empleado_cedula).removeClass("icon-chevron-down");
+            }
+            else {
+                $("#icon_detalle_fecha_"+fecha+"_"+empleado_cedula).removeClass("icon-chevron-up");
+                $("#icon_detalle_fecha_"+fecha+"_"+empleado_cedula).addClass("icon-chevron-down");
+            }
+        });
     }
 
 </script>
@@ -71,12 +70,12 @@
 
         array_multisort($resultado, SORT_DESC, SORT_REGULAR);
 
-        print_r($resultado);
+        //print_r($resultado);
 
         foreach ($resultado as $row)
         {
-            echo "<span style='cursor:pointer;' onclick='mostrar_detalle_empleado(\"".$row["fecha"]."\");'>".$row["fecha"]."&nbsp;<i id='icon_detalle_fecha_".$row["fecha"]."' class='icon-chevron-down'></i></span><br><br>";
-            echo "<div id='detalle_fecha_".$row["fecha"]."' style='border: 1px solid #cccccc;display: none;margin-top: -1.5em;padding: 1em;'>";
+            echo "<span style='cursor:pointer;' onclick='mostrar_detalle_empleado(\"".$row["fecha"]."\",\"".$empleado["empleado_cedula"]."\");'>".$row["fecha"]."&nbsp;<i id='icon_detalle_fecha_".$row["fecha"]."_".$empleado["empleado_cedula"]."' class='icon-chevron-down'></i></span><br><br>";
+            echo "<div id='detalle_fecha_".$row["fecha"]."_".$empleado["empleado_cedula"]."' style='display: none;border: 1px solid #cccccc;margin-top: -1.5em;padding: 1em;'>";
             echo "Detalle aqui<br><br><br>";
             echo "</div>";
         }
