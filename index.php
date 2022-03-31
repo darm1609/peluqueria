@@ -11,12 +11,11 @@
 		$valido=false;
 		$sql="SELECT login FROM usuario WHERE login='".$_POST["login"]."' AND pass='".$_POST["pass"]."';";
 		$result = $bd->mysql->query($sql);
-		echo $sql;
+		//echo $sql;
 		unset($sql);
 		if ($result)
 		{
 			$n = $result->num_rows;
-			echo $n;
 			if (!empty($n))
 			{
 				$valido = true;
