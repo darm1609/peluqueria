@@ -21,12 +21,12 @@
 		global $basedatos;
 		$fecha_porcentaje = $_POST["fecha_porcentaje"];
 		$fecha_num_porcentaje = strtotime($fecha_porcentaje[6].$fecha_porcentaje[7].$fecha_porcentaje[8].$fecha_porcentaje[9]."-".$fecha_porcentaje[3].$fecha_porcentaje[4]."-".$fecha_porcentaje[0].$fecha_porcentaje[1]);
-		if($bd->insertar_datos(7,$basedatos,"porcentaje_ganancia","empleado_cedula","fecha","porcentaje_peluqueria","porcentaje_dueño","porcentaje_empleado","fecha_num","login",$_POST["empleado_cedula"],$fecha_porcentaje,$_POST["porcentaje_peluqueria"],$_POST["porcentaje_dueño"],$_POST["porcentaje_empleado"],$fecha_num_porcentaje,$_SESSION["login"]))
+		if($bd->insertar_datos(7,$basedatos,"porcentaje_ganancia","empleado_telf","fecha","porcentaje_peluqueria","porcentaje_dueño","porcentaje_empleado","fecha_num","login",$_POST["empleado_telf"],$fecha_porcentaje,$_POST["porcentaje_peluqueria"],$_POST["porcentaje_dueño"],$_POST["porcentaje_empleado"],$fecha_num_porcentaje,$_SESSION["login"]))
 		{
 			$n=$_POST["porcentajes_motivos"];
 			for($i=1;$i<=$n;$i++)
 			{
-				if(!$bd->insertar_datos(8,$basedatos,"motivo_porcentaje_ganancia","id_motivo_ingreso","empleado_cedula","fecha","porcentaje_empleado","porcentaje_dueño","porcentaje_peluqueria","fecha_num","login",$_POST["sel_motivo_".$i],$_POST["empleado_cedula"],date("d-m-Y",time()),$_POST["porcentaje_empleado_motivo_".$i],$_POST["porcentaje_dueño_motivo_".$i],$_POST["porcentaje_peluqueria_motivo_".$i],time(),$_SESSION["login"]))
+				if(!$bd->insertar_datos(8,$basedatos,"motivo_porcentaje_ganancia","id_motivo_ingreso","empleado_telf","fecha","porcentaje_empleado","porcentaje_dueño","porcentaje_peluqueria","fecha_num","login",$_POST["sel_motivo_".$i],$_POST["empleado_telf"],date("d-m-Y",time()),$_POST["porcentaje_empleado_motivo_".$i],$_POST["porcentaje_dueño_motivo_".$i],$_POST["porcentaje_peluqueria_motivo_".$i],time(),$_SESSION["login"]))
 				{
 					unset($n);
 					return false;
@@ -42,15 +42,15 @@
 	function guardar_modificar($bd)
 	{
 		global $basedatos;
-		if($bd->actualizar_datos(1,1,$basedatos,"ingreso","empleado_cedula",$_POST["oempleado_cedula"],"empleado_cedula",$_POST["oempleado_cedula"],$_POST["mempleado_cedula"]))
+		if($bd->actualizar_datos(1,1,$basedatos,"ingreso","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
 		{
-			if($bd->actualizar_datos(1,1,$basedatos,"porcentaje_ganancia","empleado_cedula",$_POST["oempleado_cedula"],"empleado_cedula",$_POST["oempleado_cedula"],$_POST["mempleado_cedula"]))
+			if($bd->actualizar_datos(1,1,$basedatos,"porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
 			{
-				if($bd->actualizar_datos(1,1,$basedatos,"motivo_porcentaje_ganancia","empleado_cedula",$_POST["oempleado_cedula"],"empleado_cedula",$_POST["oempleado_cedula"],$_POST["mempleado_cedula"]))
+				if($bd->actualizar_datos(1,1,$basedatos,"motivo_porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
 				{
-					if($bd->actualizar_datos(1,1,$basedatos,"vale_pago","empleado_cedula",$_POST["oempleado_cedula"],"empleado_cedula",$_POST["oempleado_cedula"],$_POST["mempleado_cedula"]))
+					if($bd->actualizar_datos(1,1,$basedatos,"vale_pago","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
 					{
-						if($bd->actualizar_datos(1,6,$basedatos,"empleado","empleado_cedula",$_POST["oempleado_cedula"],"empleado_cedula",$_POST["oempleado_cedula"],$_POST["mempleado_cedula"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"genero",$_POST["ogenero"],$_POST["mgenero"],"correo",$_POST["ocorreo"],$_POST["mcorreo"],"telf",$_POST["otelf"],$_POST["mtelf"]))
+						if($bd->actualizar_datos(1,5,$basedatos,"empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"genero",$_POST["ogenero"],$_POST["mgenero"],"correo",$_POST["ocorreo"],$_POST["mcorreo"]))
 							return true;
 						else
 							return false;
@@ -71,15 +71,15 @@
 	function eliminar_empleado($bd)
 	{
 		global $basedatos;
-		if ($bd->eliminar_datos(1,$basedatos,"ingreso","empleado_cedula",$_POST["accion_eliminar"]))
+		if ($bd->eliminar_datos(1,$basedatos,"ingreso","empleado_telf",$_POST["accion_eliminar"]))
 		{
-			if ($bd->eliminar_datos(1,$basedatos,"porcentaje_ganancia","empleado_cedula",$_POST["accion_eliminar"]))
+			if ($bd->eliminar_datos(1,$basedatos,"porcentaje_ganancia","empleado_telf",$_POST["accion_eliminar"]))
 			{
-				if ($bd->eliminar_datos(1,$basedatos,"motivo_porcentaje_ganancia","empleado_cedula",$_POST["accion_eliminar"]))
+				if ($bd->eliminar_datos(1,$basedatos,"motivo_porcentaje_ganancia","empleado_telf",$_POST["accion_eliminar"]))
 				{
-					if ($bd->eliminar_datos(1,$basedatos,"vale_pago","empleado_cedula",$_POST["accion_eliminar"]))
+					if ($bd->eliminar_datos(1,$basedatos,"vale_pago","empleado_telf",$_POST["accion_eliminar"]))
 					{
-						if($bd->eliminar_datos(1,$basedatos,"empleado","empleado_cedula",$_POST["accion_eliminar"]))
+						if($bd->eliminar_datos(1,$basedatos,"empleado","empleado_telf",$_POST["accion_eliminar"]))
 						{
 							return true;
 						}
@@ -101,7 +101,7 @@
 
 	function exite($bd)
 	{
-		if($bd->existe(1,"empleado","empleado_cedula",$_POST["mempleado_cedula"]))
+		if($bd->existe(1,"empleado","empleado_telf",$_POST["mempleado_telf"]))
 			return true;
 		else
 			return false;
@@ -114,7 +114,7 @@
 			<h2 class="w3-center">Porcentajes De Ganancia</h2>
 			<div class="w3-row w3-section" style="border:1px solid #cccccc;font-size:12px;">
 				<?php
-					$sql="SELECT id_porcentaje_ganancia, empleado_cedula, fecha, porcentaje_peluqueria, porcentaje_dueño, porcentaje_empleado, fecha_num, login FROM porcentaje_ganancia WHERE empleado_cedula='".$_POST["accion_porcentaje"]."' ORDER BY fecha_num DESC;";
+					$sql="SELECT id_porcentaje_ganancia, empleado_telf, fecha, porcentaje_peluqueria, porcentaje_dueño, porcentaje_empleado, fecha_num, login FROM porcentaje_ganancia WHERE empleado_telf='".$_POST["accion_porcentaje"]."' ORDER BY fecha_num DESC;";
 					$result = $bd->mysql->query($sql);
 					unset($sql);
 					$ultima_fecha_porcentaje = "";
@@ -125,7 +125,6 @@
 						{
 							while($row = $result->fetch_array())
 							{
-								//echo "<b>".$row["fecha"][8].$row["fecha"][9]."-".$row["fecha"][5].$row["fecha"][6]."-".$row["fecha"][0].$row["fecha"][1].$row["fecha"][2].$row["fecha"][3]."</b>";
 								echo "<b>".$row["fecha"]."</b>";
 								$ultima_fecha_porcentaje = $row["fecha"];
 								echo " ".$row["porcentaje_empleado"]."% Empleado ".$row["porcentaje_peluqueria"]."% Peluquer&iacute;a ".$row["porcentaje_dueño"]."% Due&ntilde;o";
@@ -138,14 +137,14 @@
 						}
 						else
 						{
-							echo"<b>No hay porcentajes establecidos</b>";
+							echo "<b>No hay porcentajes establecidos</b>";
 						}
 						unset($n);
 						$result->free();
 					}
 					else
 						unset($result);
-					$sql="SELECT id_motivo_porcentaje_ganancia, id_motivo_ingreso, empleado_cedula, fecha, porcentaje_empleado, porcentaje_dueño, porcentaje_peluqueria, fecha_num, login FROM motivo_porcentaje_ganancia WHERE empleado_cedula='".$_POST["accion_porcentaje"]."' ORDER BY fecha_num ASC;";
+					$sql="SELECT id_motivo_porcentaje_ganancia, id_motivo_ingreso, empleado_telf, fecha, porcentaje_empleado, porcentaje_dueño, porcentaje_peluqueria, fecha_num, login FROM motivo_porcentaje_ganancia WHERE empleado_telf='".$_POST["accion_porcentaje"]."' ORDER BY fecha_num ASC;";
 					$result = $bd->mysql->query($sql);
 					unset($sql);
 					if($result)
@@ -180,15 +179,15 @@
 				</div>
 			</div>
 			<div class="w3-row w3-section">
-				<label for="porcentaje_empleado" class="w3-text-blue"><b>% Empleado</b></label>
+				<label for="porcentaje_empleado" class="w3-text-blue"><b>%&nbsp;Empleado</b></label>
 				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_empleado" name="porcentaje_empleado" type="text" placeholder="%" onkeypress="return NumCheck(event, this)" tabindex="1" value="<?php if(isset($porcentaje_empleado)) if(empty($porcentaje_empleado)) echo 0; else echo $porcentaje_empleado; ?>"></div>
 			</div>
 			<div class="w3-row w3-section">
-				<label for="porcentaje_peluqueria" class="w3-text-blue"><b>% Empresa</b></label>
+				<label for="porcentaje_peluqueria" class="w3-text-blue"><b>%&nbsp;Empresa</b></label>
 				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_peluqueria" name="porcentaje_peluqueria" type="text" placeholder="%" onkeypress="return NumCheck(event, this)" tabindex="2" value="<?php if(isset($porcentaje_peluqueria)) if(empty($porcentaje_peluqueria)) echo 0; else echo $porcentaje_peluqueria; ?>"></div>
 			</div>
 			<div class="w3-row w3-section">
-				<label for="porcentaje_dueño" class="w3-text-blue"><b>% Due&ntilde;o</b></label>
+				<label for="porcentaje_dueño" class="w3-text-blue"><b>%&nbsp;Due&ntilde;o</b></label>
 				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_dueño" name="porcentaje_dueño" type="text" placeholder="%" onkeypress="return NumCheck(event, this)" tabindex="3" value="<?php if(isset($porcentaje_dueño)) if(empty($porcentaje_dueño)) echo 0; else echo $porcentaje_dueño; ?>"></div>
 			</div>
 			<?php
@@ -237,11 +236,11 @@
 			<input type="hidden" id="porcentajes_correctos" name="porcentajes_correctos">
 			<?php
 				if(isset($_POST["sel_opcion"])) echo"<input type='hidden' id='sel_opcion' name='sel_opcion' value='".$_POST["sel_opcion"]."'>";
-				if(isset($_POST["chbcedula"])) echo"<input type='hidden' id='chbcedula' name='chbcedula' value='".$_POST["chbcedula"]."'>";
-				if(isset($_POST["bcedula"])) echo"<input type='hidden' id='bcedula' name='bcedula' value='".$_POST["bcedula"]."'>";
+				if(isset($_POST["chbempleado_telf"])) echo"<input type='hidden' id='chbempleado_telf' name='chbempleado_telf' value='".$_POST["chbempleado_telf"]."'>";
+				if(isset($_POST["bempleado_telf"])) echo"<input type='hidden' id='bempleado_telf' name='bempleado_telf' value='".$_POST["bempleado_telf"]."'>";
 				if(isset($_POST["chbnombre"])) echo"<input type='hidden' id='chbnombre' name='chbnombre' value='".$_POST["chbnombre"]."'>";
 				if(isset($_POST["bnombre"])) echo"<input type='hidden' id='bnombre' name='bnombre' value='".$_POST["bnombre"]."'>";
-				if(isset($_POST["accion_porcentaje"])) echo"<input type='hidden' id='empleado_cedula' name='empleado_cedula' value='".$_POST["accion_porcentaje"]."'>";
+				if(isset($_POST["accion_porcentaje"])) echo"<input type='hidden' id='empleado_telf' name='empleado_telf' value='".$_POST["accion_porcentaje"]."'>";
 			?>
 		</form>
 		<?php
@@ -249,7 +248,7 @@
 
 	function formulario_modificar($bd)
 	{
-		$sql="SELECT empleado_cedula, nombre, apellido, genero, telf, correo FROM empleado WHERE empleado_cedula='".$_POST["accion_modificar"]."';";
+		$sql="SELECT empleado_telf, nombre, apellido, genero, correo FROM empleado WHERE empleado_telf='".$_POST["accion_modificar"]."';";
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if($result)
@@ -260,10 +259,10 @@
 				<input type="hidden" id="guardar_modificar" name="guardar_modificar" value="">
 				<h2 class="w3-center">Empleado</h2>
 				<div class="w3-row w3-section">
-					<div class="w3-col" style="width:50px"><label for="mempleado_cedula"><i class="icon-drivers-license-o" style="font-size:37px;"></i></label></div>
+					<div class="w3-col" style="width:50px"><label for="mtelf"><i class=" icon-phone" style="font-size:37px;"></i></label></div>
 					<div class="w3-rest">
-						<input type="hidden" id="oempleado_cedula" name="oempleado_cedula" value="<?php echo $row[0]['empleado_cedula']; ?>">
-						<input class="w3-input w3-border" id="mempleado_cedula" name="mempleado_cedula" type="text" placeholder="C&eacute;dula" onkeypress="return NumCheck2(event, this)" tabindex="1" value="<?php echo $row[0]['empleado_cedula']; ?>">
+						<input type="hidden" id="oempleado_telf" name="oempleado_telf" value="<?php $row[0]['empleado_telf']; ?>">
+						<input class="w3-input w3-border" id="mempleado_telf" name="mempleado_telf" type="text" placeholder="Tel&eacute;fono" maxlength="20" onkeypress="return NumCheck3(event, this)" tabindex="1" value="<?php echo $row[0]['empleado_telf']; ?>">
 					</div>
 				</div>
 				<div class="w3-row w3-section">
@@ -302,13 +301,6 @@
 					</label>
 				</div>
 				<div class="w3-row w3-section">
-					<div class="w3-col" style="width:50px"><label for="mtelf"><i class=" icon-phone" style="font-size:37px;"></i></label></div>
-					<div class="w3-rest">
-						<input type="hidden" id="otelf" name="otelf" value="<?php $row[0]['telf']; ?>">
-						<input class="w3-input w3-border" id="mtelf" name="mtelf" type="text" placeholder="Tel&eacute;fono" maxlength="11" onkeypress="return NumCheck3(event, this)" tabindex="6" value="<?php echo $row[0]['telf']; ?>">
-					</div>
-				</div>
-				<div class="w3-row w3-section">
 					<div class="w3-col" style="width:50px"><label for="correo"><i class="icon-mail2" style="font-size:37px;"></i></label></div>
 					<div class="w3-rest">
 						<input type="hidden" id="ocorreo" name="ocorreo" value="<?php echo $row[0]['correo']; ?>">
@@ -327,8 +319,8 @@
 				</div>
 				<?php
 					if(isset($_POST["sel_opcion"])) echo"<input type='hidden' id='sel_opcion' name='sel_opcion' value='".$_POST["sel_opcion"]."'>";
-					if(isset($_POST["chbcedula"])) echo"<input type='hidden' id='chbcedula' name='chbcedula' value='".$_POST["chbcedula"]."'>";
-					if(isset($_POST["bcedula"])) echo"<input type='hidden' id='bcedula' name='bcedula' value='".$_POST["bcedula"]."'>";
+					if(isset($_POST["chbempleado_telf"])) echo"<input type='hidden' id='chbempleado_telf' name='chbempleado_telf' value='".$_POST["chbempleado_telf"]."'>";
+					if(isset($_POST["bempleado_telf"])) echo"<input type='hidden' id='bempleado_telf' name='bempleado_telf' value='".$_POST["bempleado_telf"]."'>";
 					if(isset($_POST["chbnombre"])) echo"<input type='hidden' id='chbnombre' name='chbnombre' value='".$_POST["chbnombre"]."'>";
 					if(isset($_POST["bnombre"])) echo"<input type='hidden' id='bnombre' name='bnombre' value='".$_POST["bnombre"]."'>";
 				?>
@@ -465,8 +457,8 @@
 				</table>
 				<?php
 					if(isset($_POST["sel_opcion"])) echo"<input type='hidden' id='sel_opcion' name='sel_opcion' value='".$_POST["sel_opcion"]."'>";
-					if(isset($_POST["chbcedula"])) echo"<input type='hidden' id='chbcedula' name='chbcedula' value='".$_POST["chbcedula"]."'>";
-					if(isset($_POST["bcedula"])) echo"<input type='hidden' id='bcedula' name='bcedula' value='".$_POST["bcedula"]."'>";
+					if(isset($_POST["chbempleado_telf"])) echo"<input type='hidden' id='chbempleado_telf' name='chbempleado_telf' value='".$_POST["chbempleado_telf"]."'>";
+					if(isset($_POST["bempleado_telf"])) echo"<input type='hidden' id='bempleado_telf' name='bempleado_telf' value='".$_POST["bempleado_telf"]."'>";
 					if(isset($_POST["chbnombre"])) echo"<input type='hidden' id='chbnombre' name='chbnombre' value='".$_POST["chbnombre"]."'>";
 					if(isset($_POST["bnombre"])) echo"<input type='hidden' id='bnombre' name='bnombre' value='".$_POST["bnombre"]."'>";
 				?>
@@ -481,8 +473,8 @@
 		if(isset($_POST["sel_opcion"]) and $_POST["sel_opcion"]=="especificar")
 		{
 			$where=" ";
-			if(isset($_POST["chbcedula"]) and !empty($_POST["bcedula"]))
-				$where.="empleado_cedula='".$_POST["bcedula"]."' AND ";
+			if(isset($_POST["chbempleado_telf"]) and !empty($_POST["bempleado_telf"]))
+				$where.="empleado_telf='".$_POST["bempleado_telf"]."' AND ";
 			if(isset($_POST["chbnombre"]) and !empty($_POST["bnombre"]))
 				$where.="nombre LIKE '%".$_POST["bnombre"]."%' OR apellido LIKE '%".$_POST["bnombre"]."%' AND ";
 			$where[strlen($where)-1]=" ";
@@ -490,11 +482,11 @@
 			$where[strlen($where)-3]=" ";
 			$where[strlen($where)-4]=" ";
 			$where=trim($where);
-			$sql="SELECT empleado_cedula, empleado_cedula AS cédula, nombre, apellido, telf, correo FROM empleado WHERE ".$where.";";
+			$sql="SELECT empleado_telf, empleado_telf AS teléfono, nombre, apellido, correo FROM empleado WHERE ".$where.";";
 		}
 		elseif(isset($_POST["sel_opcion"]) and $_POST["sel_opcion"]=="listar")
 		{
-			$sql="SELECT empleado_cedula, empleado_cedula AS cédula, nombre, apellido, telf, correo FROM empleado;";
+			$sql="SELECT empleado_telf, empleado_telf AS teléfono, nombre, apellido, correo FROM empleado;";
 		}
 		$result = $bd->mysql->query($sql);
 		unset($sql);
@@ -566,14 +558,14 @@
 		if(isset($_POST["guardar_modificar"]) and !empty($_POST["guardar_modificar"]))
 		{
 			$valido=true;
-			if($_POST["oempleado_cedula"]!=$_POST["mempleado_cedula"])
+			if($_POST["oempleado_telf"]!=$_POST["mempleado_telf"])
 			{
 				if(exite($bd))
 				{
 					$valido=false;
 					?>
 					<script language='JavaScript' type='text/JavaScript'>
-						alertify.alert("","EL EMPLEADO "+<?php echo $_POST["mempleado_cedula"]; ?>+" YA SE ENCUENTRA REGISTRADO").set('label', 'Aceptar');
+						alertify.alert("","EL EMPLEADO "+<?php echo $_POST["mempleado_telf"]; ?>+" YA SE ENCUENTRA REGISTRADO").set('label', 'Aceptar');
 					</script>
 					<?php
 				}
@@ -617,7 +609,7 @@
 					$pag=$_POST["pag"];
 				if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
 					$cantxpag=$_POST["cantxpag"];
-				$colocultar[0]="empleado_cedula";
+				$colocultar[0]="empleado_telf";
 				if(isset($pag) and isset($cantxpag))
 					mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
 				else

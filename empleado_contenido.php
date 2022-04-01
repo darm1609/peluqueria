@@ -9,26 +9,20 @@
 		});
 	});
 
-	$(document).ready(function(){
-		$(function() {
-			
-		});
-	});
-
 	function submit_empleado()
 	{
 		var valido=new Boolean(true);
-		if(document.getElementById('empleado_cedula').value=='')
+		if(document.getElementById('empleado_telf').value == '')
 		{
 			valido=false;
-			alertify.alert("","LA CÉDULA NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+			alertify.alert("","EL TELÉFONO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
 		}
-		else
+		else 
 		{
-			if(!/^([0-9])*$/.test(document.getElementById('empleado_cedula').value))
+			if (!/^([0-9])*$/.test(document.getElementById('empleado_telf').value))
 			{
 				valido=false;
-				alertify.alert("","LA CÉDULA NO ES VALIDA").set('label', 'Aceptar');
+				alertify.alert("","EL TELÉFONO NO ES VALIDO").set('label', 'Aceptar');
 			}
 		}
 		if(valido)
@@ -48,17 +42,6 @@
 			}
 		}
 		if(valido)
-		{
-			if(document.getElementById('telf').value!='')
-			{
-				if (!/^([0-9])*$/.test(document.getElementById('telf').value))
-				{
-					valido=false;
-					alertify.alert("","EL TELÉFONO NO ES VALIDO").set('label', 'Aceptar');
-				}
-			}
-		}
-		if(valido)
 			document.getElementById('fagregar').submit();
 	}
 
@@ -68,17 +51,17 @@
 		valido=true;
 		if(document.getElementById('especificar').checked)
 		{
-			if(!document.getElementById('chbcedula').checked && !document.getElementById('chbnombre').checked)
+			if(!document.getElementById('chbempleado_telf').checked && !document.getElementById('chbnombre').checked)
 			{
 				valido=false;
 				alertify.alert("","DEBE ESPECIFICAR UNA OPCIÓN DE BUSQUEDA").set('label', 'Aceptar');
 			}
-			if(document.getElementById('chbcedula').checked)
+			if(document.getElementById('chbempleado_telf').checked)
 			{
-				if(document.getElementById('bcedula').value=="")
+				if(document.getElementById('bempleado_telf').value=="")
 				{
 					valido=false;
-					alertify.alert("","LA CÉDULA A BUSCAR NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+					alertify.alert("","EL TELÉFONO A BUSCAR NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
 				}
 			}
 			if(document.getElementById('chbnombre').checked)
@@ -123,11 +106,11 @@
 
 	function habilitar_especificar()
 	{
-		document.getElementById('chbcedula').disabled=false;
-		if(document.getElementById('chbcedula').checked)
-			document.getElementById('bcedula').disabled=false;
+		document.getElementById('chbempleado_telf').disabled=false;
+		if(document.getElementById('chbempleado_telf').checked)
+			document.getElementById('bempleado_telf').disabled=false;
 		else
-			document.getElementById('bcedula').disabled=true;
+			document.getElementById('bempleado_telf').disabled=true;
 		document.getElementById('chbnombre').disabled=false;
 		if(document.getElementById('chbnombre').checked)
 			document.getElementById('bnombre').disabled=false;
@@ -137,8 +120,8 @@
 
 	function deshabilitar_especificar()
 	{
-		document.getElementById('chbcedula').disabled=true;
-		document.getElementById('bcedula').disabled=true;
+		document.getElementById('chbempleado_telf').disabled=true;
+		document.getElementById('bempleado_telf').disabled=true;
 		document.getElementById('chbnombre').disabled=true;
 		document.getElementById('bnombre').disabled=true;	
 	}
@@ -202,13 +185,11 @@
 	{
 		var cambio=new Boolean(false);
 		cambio=false;
-		if(document.getElementById('oempleado_cedula').value!=document.getElementById('mempleado_cedula').value)
+		if(document.getElementById('oempleado_telf').value!=document.getElementById('mempleado_telf').value)
 			cambio=true;
 		if(document.getElementById('onombre').value!=document.getElementById('mnombre').value)
 			cambio=true;
 		if(document.getElementById('oapellido').value!=document.getElementById('mapellido').value)
-			cambio=true;
-		if(document.getElementById('otelf').value!=document.getElementById('mtelf').value)
 			cambio=true;
 		if(document.getElementById('ogenero').value!=document.getElementById('mgenero').value)
 			cambio=true;
@@ -216,21 +197,20 @@
 			cambio=true;
 		if(cambio)
 		{
-			var valido;
-			valido=true;
-			if(document.getElementById('oempleado_cedula').value!=document.getElementById('mempleado_cedula').value)
+			var valido = true;
+			if(document.getElementById('oempleado_telf').value!=document.getElementById('mempleado_telf').value)
 			{
-				if(document.getElementById('mempleado_cedula').value=='')
+				if(document.getElementById('mempleado_telf').value=='')
 				{
 					valido=false;
-					alertify.alert("","LA CÉDULA NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+					alertify.alert("","EL TELÉFONO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
 				}
 				else
 				{
-					if (!/^([0-9])*$/.test(document.getElementById('mempleado_cedula').value))
+					if (!/^([0-9])*$/.test(document.getElementById('mtelf').value))
 					{
 						valido=false;
-						alertify.alert("","LA CÉDULA NO ES VALIDA").set('label', 'Aceptar');
+						alertify.alert("","EL TELÉFONO NO ES VALIDO").set('label', 'Aceptar');
 					}
 				}
 			}
@@ -253,20 +233,6 @@
 					{
 						valido=false;
 						alertify.alert("","EL APELLIDO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
-					}
-				}
-			}
-			if(valido)
-			{
-				if(document.getElementById('otelf').value!=document.getElementById('mtelf').value)
-				{
-					if(document.getElementById('mtelf').value!='')
-					{
-						if (!/^([0-9])*$/.test(document.getElementById('mtelf').value))
-						{
-							valido=false;
-							alertify.alert("","EL TELÉFONO NO ES VALIDO").set('label', 'Aceptar');
-						}
 					}
 				}
 			}
@@ -494,14 +460,14 @@
 	<h5><b>Administraci&oacute;n de Empleados</b></h5>
 </header>
 <form id="flistae" name="flistae" method="post">
-	<input type="hidden" id="cedula_eliminar" name="cedula_eliminar">
-	<input type="hidden" id="cedula_editar" name="cedula_editar">
+	<input type="hidden" id="telf_eliminar" name="telf_eliminar">
+	<input type="hidden" id="telf_editar" name="telf_editar">
 </form>
 <?php
 	function guardar($bd)
 	{
 		global $basedatos;
-		if($bd->insertar_datos(8,$basedatos,"empleado","empleado_cedula","nombre","apellido","genero","correo","telf","login","dueño",$_POST["empleado_cedula"],$_POST["nombre"],$_POST["apellido"],$_POST["genero"],$_POST["correo"],$_POST["telf"],$_SESSION["login"],"0"))
+		if($bd->insertar_datos(7,$basedatos,"empleado","empleado_telf","nombre","apellido","genero","correo","login","dueño",$_POST["empleado_telf"],$_POST["nombre"],$_POST["apellido"],$_POST["genero"],$_POST["correo"],$_SESSION["login"],"0"))
 			return true;
 		else
 			return false;
@@ -509,7 +475,7 @@
 
 	function validar_exite($bd)
 	{
-		if($bd->existe(1,"empleado","empleado_cedula",$_POST["empleado_cedula"]))
+		if($bd->existe(1,"empleado","empleado_telf",$_POST["empleado_telf"]))
 			return true;
 		else
 			return false;
@@ -521,9 +487,9 @@
 		<form class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin" id="fagregar" name="fagregar" method="post">
 			<h2 class="w3-center">Nuevo Empleado</h2>
 			<div class="w3-row w3-section">
-				<div class="w3-col" style="width:50px"><label for="empleado_cedula"><i class="icon-drivers-license-o" style="font-size:37px;"></i></label></div>
+				<div class="w3-col" style="width:50px"><label for="empleado_telf"><i class="icon-drivers-license-o" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
-					<input class="w3-input w3-border" id="empleado_cedula" name="empleado_cedula" type="text" placeholder="C&eacute;dula" onkeypress="return NumCheck2(event, this)" tabindex="1">
+					<input class="w3-input w3-border" id="empleado_telf" name="empleado_telf" type="text" placeholder="Tel&eacute;fono" onkeypress="return NumCheck3(event, this)" maxlength="20" tabindex="1">
 				</div>
 			</div>
 			<div class="w3-row w3-section">
@@ -547,12 +513,6 @@
 					<i class="icon-venus" style="font-size:37px;"></i>&nbsp;
 					<input type="radio" class="w3-radio" id="genero" name="genero" value="f" tabindex="4" checked>
 				</label>
-			</div>
-			<div class="w3-row w3-section">
-				<div class="w3-col" style="width:50px"><label for="telf"><i class=" icon-phone" style="font-size:37px;"></i></label></div>
-				<div class="w3-rest">
-					<input class="w3-input w3-border" id="telf" name="telf" type="text" placeholder="Tel&eacute;fono" maxlength="11" onkeypress="return NumCheck3(event, this)" tabindex="6">
-				</div>
 			</div>
 			<div class="w3-row w3-section">
 				<div class="w3-col" style="width:50px"><label for="correo"><i class="icon-mail2" style="font-size:37px;"></i></label></div>
@@ -582,12 +542,12 @@
 				<table border="0" style="width: 100%;">
 					<tr>
 						<td align="right">
-							<input class="w3-check" type="checkbox" id="chbcedula" name="chbcedula" disabled onclick="if(document.getElementById('chbcedula').checked){document.getElementById('bcedula').disabled=false;}else{document.getElementById('bcedula').disabled=true;}">
+							<input class="w3-check" type="checkbox" id="chbempleado_telf" name="chbempleado_telf" disabled onclick="if(document.getElementById('chbempleado_telf').checked){document.getElementById('bempleado_telf').disabled=false;}else{document.getElementById('bempleado_telf').disabled=true;}">
 						</td>
 						<td>
 							<label>
-								C&eacute;dula
-								<input class="w3-input w3-border" type="text" id="bcedula" name="bcedula" onkeypress="return NumCheck2(event, this)" disabled>
+								Tel&eacute;fono
+								<input class="w3-input w3-border" type="text" id="bempleado_telf" name="bempleado_telf" onkeypress="return NumCheck3(event, this)" disabled>
 							</label>
 						</td>
 					</tr>
@@ -633,7 +593,7 @@
 			echo"</div>";
 			formulario_busqueda($bd);
 			echo"<div id='loader'></div>";
-			if(isset($_POST["empleado_cedula"]))
+			if(isset($_POST["empleado_telf"]))
 			{
 				if(!validar_exite($bd))
 				{

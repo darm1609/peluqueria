@@ -40,7 +40,7 @@
 		}
 		if(valido)
 		{
-			if(document.getElementById('empleado_cedula').value=='')
+			if(document.getElementById('empleado_telf').value=='')
 			{
 				valido=false;
 				alertify.alert("","DEBE SELECCIONAR UN EMPLEADO").set('label', 'Aceptar');
@@ -250,7 +250,7 @@
 			$transferencia = 1;
 		if (!empty($_POST["monto_efectivo"]))
 			$efectivo = 1;
-		if($bd->insertar_datos(6,$basedatos,"abono_empleado","empleado_cedula","fecha","fecha_num","login","efectivo","transferencia",$_POST["empleado_cedula"],$fecha,$fecha_num,$_SESSION["login"],$efectivo,$transferencia))
+		if($bd->insertar_datos(6,$basedatos,"abono_empleado","empleado_telf","fecha","fecha_num","login","efectivo","transferencia",$_POST["empleado_telf"],$fecha,$fecha_num,$_SESSION["login"],$efectivo,$transferencia))
 		{
 			$insert_id = $bd->ultimo_result;
 			$valido = false;
@@ -298,17 +298,17 @@
 			<div class="w3-row w3-section">
 				<div class="w3-col" style="width:50px"><label for="empleado_cedula"><i class="icon-menu" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
-					<select class="w3-select" id="empleado_cedula" name="empleado_cedula">
+					<select class="w3-select" id="empleado_telf" name="empleado_telf">
 						<option value="">Empleado</option>
 						<?php
-							$sql="SELECT empleado_cedula, nombre, apellido FROM empleado;";
+							$sql="SELECT empleado_telf, nombre, apellido FROM empleado;";
 							$result = $bd->mysql->query($sql);
 							unset($sql);
 							if($result)
 							{
 								while($row = $result->fetch_array())
 								{
-									echo"<option value='".$row["empleado_cedula"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
+									echo"<option value='".$row["empleado_telf"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
 								}
 								unset($row);
 								$result->free();
