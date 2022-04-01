@@ -1,15 +1,15 @@
 <script type="text/javascript">
 
-    function mostrar_detalle_empleado(fecha, empleado_cedula)
+    function mostrar_detalle_empleado(fecha, empleado_telf)
     {
-        $("#detalle_fecha_"+fecha+"_"+empleado_cedula).toggle("slow", function() {
-            if($("#detalle_fecha_"+fecha+"_"+empleado_cedula).is(":visible")) {
-                $("#icon_detalle_fecha_"+fecha+"_"+empleado_cedula).addClass("icon-chevron-up");
-                $("#icon_detalle_fecha_"+fecha+"_"+empleado_cedula).removeClass("icon-chevron-down");
+        $("#detalle_fecha_"+fecha+"_"+empleado_telf).toggle("slow", function() {
+            if($("#detalle_fecha_"+fecha+"_"+empleado_telf).is(":visible")) {
+                $("#icon_detalle_fecha_"+fecha+"_"+empleado_telf).addClass("icon-chevron-up");
+                $("#icon_detalle_fecha_"+fecha+"_"+empleado_telf).removeClass("icon-chevron-down");
             }
             else {
-                $("#icon_detalle_fecha_"+fecha+"_"+empleado_cedula).removeClass("icon-chevron-up");
-                $("#icon_detalle_fecha_"+fecha+"_"+empleado_cedula).addClass("icon-chevron-down");
+                $("#icon_detalle_fecha_"+fecha+"_"+empleado_telf).removeClass("icon-chevron-up");
+                $("#icon_detalle_fecha_"+fecha+"_"+empleado_telf).addClass("icon-chevron-down");
             }
         });
     }
@@ -34,9 +34,9 @@
     function crear_modal_detalle($empleado, $ingresos, $pagos)
     {
         //Modal de detalles pagos a empleados
-        echo "<div id='modal_detalle_empleado_".$empleado["empleado_cedula"]."' class='w3-modal'>";
+        echo "<div id='modal_detalle_empleado_".$empleado["empleado_telf"]."' class='w3-modal'>";
         echo "<div class='w3-modal-content'>";
-        echo "<span onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_cedula"]."').style.display='none'\" class='w3-button w3-display-topright'>&times;</span>";
+        echo "<span onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='none'\" class='w3-button w3-display-topright'>&times;</span>";
         echo "<span class='w3-display-topleft' style='padding: 1em;'><b>".$empleado["nombre"]."</b></span><br>";
         echo "<br>";
         echo "<div style='padding: 1em;'>";
@@ -50,11 +50,11 @@
 
         foreach ($ingresos as $row)
         {
-            if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["empleado_cedula"] == $empleado["empleado_cedula"])
+            if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["empleado_telf"] == $empleado["empleado_telf"])
             {
                 $resultado_fecha[$i]["fecha_num"] = $row["fecha_num"];
                 $resultado_fecha[$i]["fecha"] = $row["fecha"];
-                $resultado_fecha[$i]["empleado_cedula"] = $row["empleado_cedula"];
+                $resultado_fecha[$i]["empleado_telf"] = $row["empleado_telf"];
                 $i++;
             }
         }
@@ -69,7 +69,7 @@
             $resultado[$i]["debito_monto"] = !empty($row["debito_monto"]) ? $row["debito_monto"] : 0;
             $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
             $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
-            $resultado[$i]["empleado_cedula"] = $row["empleado_cedula"];
+            $resultado[$i]["empleado_telf"] = $row["empleado_telf"];
             $resultado[$i]["porcentaje_empleado"] = $row["porcentaje_empleado"];
             $resultado[$i]["porcentaje_peluqueria"] = $row["porcentaje_peluqueria"];
             $resultado[$i]["porcentaje_dueño"] = $row["porcentaje_dueño"];
@@ -78,11 +78,11 @@
 
         foreach ($pagos as $row)
         {
-            if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["empleado_cedula"] == $empleado["empleado_cedula"])
+            if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["empleado_telf"] == $empleado["empleado_telf"])
             {
                 $resultado_fecha[$i]["fecha_num"] = $row["fecha_num"];
                 $resultado_fecha[$i]["fecha"] = $row["fecha"];
-                $resultado_fecha[$i]["empleado_cedula"] = $row["empleado_cedula"];
+                $resultado_fecha[$i]["empleado_telf"] = $row["empleado_telf"];
                 $i++;
             }
         }
@@ -97,7 +97,7 @@
             $resultado[$i]["debito_monto"] = 0;
             $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
             $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
-            $resultado[$i]["empleado_cedula"] = $row["empleado_cedula"];
+            $resultado[$i]["empleado_telf"] = $row["empleado_telf"];
             $i++;
         }
 
@@ -105,8 +105,8 @@
 
         foreach ($resultado_fecha as $row)
         {
-            echo "<span style='cursor:pointer;' onclick='mostrar_detalle_empleado(\"".$row["fecha"]."\",\"".$empleado["empleado_cedula"]."\");'>".$row["fecha"]."&nbsp;<i id='icon_detalle_fecha_".$row["fecha"]."_".$empleado["empleado_cedula"]."' class='icon-chevron-down'></i></span><br><br>";
-            echo "<div id='detalle_fecha_".$row["fecha"]."_".$empleado["empleado_cedula"]."' style='display: none;border: 1px solid #cccccc;margin-top: -1.5em;padding: 1em;'>";
+            echo "<span style='cursor:pointer;' onclick='mostrar_detalle_empleado(\"".$row["fecha"]."\",\"".$empleado["empleado_telf"]."\");'>".$row["fecha"]."&nbsp;<i id='icon_detalle_fecha_".$row["fecha"]."_".$empleado["empleado_telf"]."' class='icon-chevron-down'></i></span><br><br>";
+            echo "<div id='detalle_fecha_".$row["fecha"]."_".$empleado["empleado_telf"]."' style='display: none;border: 1px solid #cccccc;margin-top: -1.5em;padding: 1em;'>";
             echo "<table border='1' cellpadding='5' cellspacing='0' style='border-color: floralwhite;'>";
             echo "<thead>";
             echo "<tr>";
@@ -119,7 +119,7 @@
             echo "<tbody>";
             foreach ($resultado as $row2)
             {
-                if ($row2["fecha"] == $row["fecha"] and $row2["empleado_cedula"] == $empleado["empleado_cedula"])
+                if ($row2["fecha"] == $row["fecha"] and $row2["empleado_telf"] == $empleado["empleado_telf"])
                 {
                     echo "<tr>";
                     echo "<td>".$row2["motivo"]."</td>";
@@ -149,7 +149,7 @@
     function acumulado_por_empleado($bd)
     {
         //Acumulados por empleado
-        $sql = "select concat(e.nombre,' ',e.apellido) nombre, e.empleado_cedula from empleado e";
+        $sql = "select concat(e.nombre,' ',e.apellido) nombre, e.empleado_telf from empleado e";
         $result_empleado = $bd->mysql->query($sql);
         unset($sql);
         $fecha_num_consulta = strtotime($_POST["bfecha"][6].$_POST["bfecha"][7].$_POST["bfecha"][8].$_POST["bfecha"][9]."-".$_POST["bfecha"][3].$_POST["bfecha"][4]."-".$_POST["bfecha"][0].$_POST["bfecha"][1]);
@@ -205,7 +205,7 @@
                         when i.debito = 1 then id.monto 
                         else 0 
                     end debito_monto,
-                    e.empleado_cedula, 
+                    e.empleado_telf, 
                     concat(e.nombre,' ',e.apellido) empleado, 
                     concat(c.nombre,' ',c.apellido) cliente, 
                     case 
@@ -215,13 +215,13 @@
                     from 
                         ingreso i 
                         inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso 
-                        inner join empleado e on i.empleado_cedula = e.empleado_cedula 
+                        inner join empleado e on i.empleado_telf = e.empleado_telf 
                         left join cliente c on i.cliente_telf = c.telf 
                         left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso 
                         left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso 
                         left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
                     where 
-                        i.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and (i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1) and
+                        i.empleado_telf = '".$row_empleado["empleado_telf"]."' and (i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1) and
                         i.fecha_num <= ".$fecha_num_consulta." order by i.fecha_num desc;";
                     $result_ingresos = $bd->mysql->query($sql);
                     unset($sql);
@@ -247,7 +247,7 @@
                                 from 
                                     porcentaje_ganancia pg 
                                 where 
-                                    pg.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and
+                                    pg.empleado_telf = '".$row_empleado["empleado_telf"]."' and
                                     pg.fecha_num <= $fecha_num_ingreso
                                 order by pg.fecha_num desc limit 1;";
                                 $result_porcentajes = $bd->mysql->query($sql);
@@ -303,7 +303,7 @@
                     //echo $row_empleado["nombre"]." Total ingreso empleado: ".$total_ingreso_empleado." Total ingreso peluqueria: ".$total_ingreso_peluqueria." Total ingreso dueño: ".$total_ingreso_dueño."<br>";
 
                     $sql = "select
-                        vp.empleado_cedula,
+                        vp.empleado_telf,
                         vp.fecha_num,
                         vp.fecha,
                         vp.vale_pago,
@@ -322,7 +322,7 @@
                         left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago
                         left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago
                     where
-                        vp.empleado_cedula = '".$row_empleado["empleado_cedula"]."' and vp.fecha_num <= '".$fecha_num_consulta."';";
+                        vp.empleado_telf = '".$row_empleado["empleado_telf"]."' and vp.fecha_num <= '".$fecha_num_consulta."';";
                     $result_vale_pago = $bd->mysql->query($sql);
                     unset($sql);
                     $total_pagado_a_empleado = 0;
@@ -347,7 +347,7 @@
                     $total_ingreso_empleado -= $total_pagado_a_empleado;
                     //echo "<br><br>".$row_empleado["nombre"]." Total ingreso empleado: ".$total_ingreso_empleado." Total ingreso peluqueria: ".$total_ingreso_peluqueria." Total ingreso dueño: ".$total_ingreso_dueño."<br>";
                     echo "<tr>";
-                    echo "<td><span style='text-decoration: underline; cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$row_empleado["empleado_cedula"]."').style.display='block'\">".$row_empleado["nombre"]."</span></td>";
+                    echo "<td><span style='text-decoration: underline; cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$row_empleado["empleado_telf"]."').style.display='block'\">".$row_empleado["nombre"]."</span></td>";
                     echo "<td align='right'>".$total_ingreso_empleado."</td>";
                     echo "</tr>";
                 }
@@ -431,7 +431,7 @@
             concat(e.nombre,' ',e.apellido) empleado
         from
             vale_pago vp
-            inner join empleado e on vp.empleado_cedula = e.empleado_cedula
+            inner join empleado e on vp.empleado_telf = e.empleado_telf
             left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago
             left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago
         where 
@@ -461,7 +461,7 @@
             concat(e.nombre,' ',e.apellido) empleado
         from
             abono_empleado ae
-            inner join empleado e on ae.empleado_cedula = e.empleado_cedula
+            inner join empleado e on ae.empleado_telf = e.empleado_telf
             left join abono_empleado_efectivo aee on ae.id_abono_empleado = aee.id_abono_empleado
             left join abono_empleado_transferencia aet on ae.id_abono_empleado = aet.id_abono_empleado
         where
@@ -594,7 +594,7 @@
         from 
             ingreso i 
             inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso 
-            inner join empleado e on i.empleado_cedula = e.empleado_cedula 
+            inner join empleado e on i.empleado_telf = e.empleado_telf 
             left join cliente c on i.cliente_telf = c.telf 
             left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso 
             left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso 
