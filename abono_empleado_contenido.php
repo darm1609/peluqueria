@@ -296,7 +296,7 @@
 				</div>
 			</div>
 			<div class="w3-row w3-section">
-				<div class="w3-col" style="width:50px"><label for="empleado_cedula"><i class="icon-menu" style="font-size:37px;"></i></label></div>
+				<div class="w3-col" style="width:50px"><label for="empleado_telf"><i class="icon-menu" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
 					<select class="w3-select" id="empleado_telf" name="empleado_telf">
 						<option value="">Empleado</option>
