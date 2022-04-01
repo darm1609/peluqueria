@@ -137,8 +137,8 @@
 				</table>
 				<?php
 					if(isset($_POST["sel_opcion"])) echo"<input type='hidden' id='sel_opcion' name='sel_opcion' value='".$_POST["sel_opcion"]."'>";
-					if(isset($_POST["chbcedula"])) echo"<input type='hidden' id='chbcedula' name='chbcedula' value='".$_POST["chbcedula"]."'>";
-					if(isset($_POST["bcedula"])) echo"<input type='hidden' id='bcedula' name='bcedula' value='".$_POST["bcedula"]."'>";
+					if(isset($_POST["chbempleado_telf"])) echo"<input type='hidden' id='chbempleado_telf' name='chbempleado_telf' value='".$_POST["chbempleado_telf"]."'>";
+					if(isset($_POST["bempleado_telf"])) echo"<input type='hidden' id='bempleado_telf' name='bempleado_telf' value='".$_POST["bempleado_telf"]."'>";
 					if(isset($_POST["chbnombre"])) echo"<input type='hidden' id='chbnombre' name='chbnombre' value='".$_POST["chbnombre"]."'>";
 					if(isset($_POST["bnombre"])) echo"<input type='hidden' id='bnombre' name='bnombre' value='".$_POST["bnombre"]."'>";
 					if(isset($_POST["accion_mostrar"])) echo"<input type='hidden' id='accion_mostrar' name='accion_mostrar' value='".$_POST["accion_mostrar"]."'>";
@@ -151,7 +151,7 @@
 
 	function crear_sql_busqueda2($bd)
 	{
-		$sql = "select vp.id_vale_pago, vp.fecha, vp.vale_pago, case when vp.efectivo = 1 then vpe.monto else '' end as 'efectivo', case when vp.transferencia = 1 then vpt.monto else '' end as 'transferencia', case when vp.transferencia = 1 then vpt.referencia else '' end as 'referencia', ifnull(vpe.monto,0) + ifnull(vpt.monto,0) total, vp.comentario from empleado e inner join vale_pago vp on e.empleado_cedula = vp.empleado_cedula left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago where e.empleado_cedula = '".$_POST["accion_mostrar"]."' order by vp.fecha_num asc;";
+		$sql = "select vp.id_vale_pago, vp.fecha, vp.vale_pago, case when vp.efectivo = 1 then vpe.monto else '' end as 'efectivo', case when vp.transferencia = 1 then vpt.monto else '' end as 'transferencia', case when vp.transferencia = 1 then vpt.referencia else '' end as 'referencia', ifnull(vpe.monto,0) + ifnull(vpt.monto,0) total, vp.comentario from empleado e inner join vale_pago vp on e.empleado_telf = vp.empleado_telf left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago where e.empleado_telf = '".$_POST["accion_mostrar"]."' order by vp.fecha_num asc;";
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if($result)
@@ -215,7 +215,7 @@
 			$transferencia = 1;
 		if (!empty($_POST["monto_efectivo"]))
 			$efectivo = 1;
-		if($bd->insertar_datos(8,$basedatos,"vale_pago","empleado_cedula","fecha","comentario","vale_pago","fecha_num","login","efectivo","transferencia",$_POST["empleado_cedula"],$fecha,$_POST["comentario"],$_POST["vale_pago"],$fecha_num,$_SESSION["login"],$efectivo,$transferencia))
+		if($bd->insertar_datos(8,$basedatos,"vale_pago","empleado_telf","fecha","comentario","vale_pago","fecha_num","login","efectivo","transferencia",$_POST["empleado_telf"],$fecha,$_POST["comentario"],$_POST["vale_pago"],$fecha_num,$_SESSION["login"],$efectivo,$transferencia))
 		{
 			$insert_id = $bd->ultimo_result;
 			$valido = false;
@@ -250,7 +250,7 @@
 	{
 		?>
 		<form class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin" id="fmodificar" name="fmodificar" method="post">
-			<h2 class="w3-center">Vale / Pago</h2>
+			<h2 class="w3-center">Vale&nbsp;/&nbsp;Pago</h2>
 			<h4 class="w3-left"><?php echo nombre_empleado($_POST["accion_vale_pago"],$bd); ?></h4>
 			<div class="w3-row w3-section">
 				<div class="w3-col" style="width:50px"><label><i class="icon-calendar" style="font-size:37px;"></i></label></div>
@@ -305,11 +305,11 @@
 			<input type="hidden" id="vale_pago_correcto" name="vale_pago_correcto">
 			<?php
 				if(isset($_POST["sel_opcion"])) echo"<input type='hidden' id='sel_opcion' name='sel_opcion' value='".$_POST["sel_opcion"]."'>";
-				if(isset($_POST["chbcedula"])) echo"<input type='hidden' id='chbcedula' name='chbcedula' value='".$_POST["chbcedula"]."'>";
-				if(isset($_POST["bcedula"])) echo"<input type='hidden' id='bcedula' name='bcedula' value='".$_POST["bcedula"]."'>";
+				if(isset($_POST["chbempleado_telf"])) echo"<input type='hidden' id='chbempleado_telf' name='chbempleado_telf' value='".$_POST["chbempleado_telf"]."'>";
+				if(isset($_POST["bempleado_telf"])) echo"<input type='hidden' id='bempleado_telf' name='bempleado_telf' value='".$_POST["bempleado_telf"]."'>";
 				if(isset($_POST["chbnombre"])) echo"<input type='hidden' id='chbnombre' name='chbnombre' value='".$_POST["chbnombre"]."'>";
 				if(isset($_POST["bnombre"])) echo"<input type='hidden' id='bnombre' name='bnombre' value='".$_POST["bnombre"]."'>";
-				if(isset($_POST["accion_vale_pago"])) echo"<input type='hidden' id='empleado_cedula' name='empleado_cedula' value='".$_POST["accion_vale_pago"]."'>";
+				if(isset($_POST["accion_vale_pago"])) echo"<input type='hidden' id='empleado_telf' name='empleado_telf' value='".$_POST["accion_vale_pago"]."'>";
 			?>
 		</form>
 		<?php
@@ -428,8 +428,8 @@
 				</table>
 				<?php
 					if(isset($_POST["sel_opcion"])) echo"<input type='hidden' id='sel_opcion' name='sel_opcion' value='".$_POST["sel_opcion"]."'>";
-					if(isset($_POST["chbcedula"])) echo"<input type='hidden' id='chbcedula' name='chbcedula' value='".$_POST["chbcedula"]."'>";
-					if(isset($_POST["bcedula"])) echo"<input type='hidden' id='bcedula' name='bcedula' value='".$_POST["bcedula"]."'>";
+					if(isset($_POST["chbempleado_telf"])) echo"<input type='hidden' id='chbempleado_telf' name='chbempleado_telf' value='".$_POST["chbempleado_telf"]."'>";
+					if(isset($_POST["bempleado_telf"])) echo"<input type='hidden' id='bempleado_telf' name='bempleado_telf' value='".$_POST["bempleado_telf"]."'>";
 					if(isset($_POST["chbnombre"])) echo"<input type='hidden' id='chbnombre' name='chbnombre' value='".$_POST["chbnombre"]."'>";
 					if(isset($_POST["bnombre"])) echo"<input type='hidden' id='bnombre' name='bnombre' value='".$_POST["bnombre"]."'>";
 				?>
@@ -444,8 +444,8 @@
 		if(isset($_POST["sel_opcion"]) and $_POST["sel_opcion"]=="especificar")
 		{
 			$where=" ";
-			if(isset($_POST["chbcedula"]) and !empty($_POST["bcedula"]))
-				$where.="empleado_cedula='".$_POST["bcedula"]."' AND ";
+			if(isset($_POST["chbempleado_telf"]) and !empty($_POST["bempleado_telf"]))
+				$where.="empleado_telf = '".$_POST["bempleado_telf"]."' AND ";
 			if(isset($_POST["chbnombre"]) and !empty($_POST["bnombre"]))
 				$where.="nombre LIKE '%".$_POST["bnombre"]."%' OR apellido LIKE '%".$_POST["bnombre"]."%' AND ";
 			$where[strlen($where)-1]=" ";
@@ -453,11 +453,11 @@
 			$where[strlen($where)-3]=" ";
 			$where[strlen($where)-4]=" ";
 			$where=trim($where);
-			$sql="SELECT empleado_cedula, empleado_cedula AS cédula, nombre, apellido, telf, correo FROM empleado WHERE ".$where.";";
+			$sql="SELECT empleado_telf, empleado_telf AS cédula, nombre, apellido, correo FROM empleado WHERE ".$where.";";
 		}
 		elseif(isset($_POST["sel_opcion"]) and $_POST["sel_opcion"]=="listar")
 		{
-			$sql="SELECT empleado_cedula, empleado_cedula AS cédula, nombre, apellido, telf, correo FROM empleado;";
+			$sql="SELECT empleado_telf, empleado_telf AS cédula, nombre, apellido, correo FROM empleado;";
 		}
 		$result = $bd->mysql->query($sql);
 		unset($sql);
@@ -543,7 +543,7 @@
 					$pag=$_POST["pag"];
 				if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
 					$cantxpag=$_POST["cantxpag"];
-				$colocultar[0] = "empleado_cedula";
+				$colocultar[0] = "empleado_telf";
 				if(isset($pag) and isset($cantxpag))
 					mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
 				else

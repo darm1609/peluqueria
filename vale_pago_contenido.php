@@ -2,11 +2,11 @@
 
 	function habilitar_especificar()
 	{
-		document.getElementById('chbcedula').disabled=false;
-		if(document.getElementById('chbcedula').checked)
-			document.getElementById('bcedula').disabled=false;
+		document.getElementById('chbempleado_telf').disabled=false;
+		if(document.getElementById('chbempleado_telf').checked)
+			document.getElementById('bempleado_telf').disabled=false;
 		else
-			document.getElementById('bcedula').disabled=true;
+			document.getElementById('bempleado_telf').disabled=true;
 		document.getElementById('chbnombre').disabled=false;
 		if(document.getElementById('chbnombre').checked)
 			document.getElementById('bnombre').disabled=false;
@@ -16,8 +16,8 @@
 
 	function deshabilitar_especificar()
 	{
-		document.getElementById('chbcedula').disabled=true;
-		document.getElementById('bcedula').disabled=true;
+		document.getElementById('chbempleado_telf').disabled=true;
+		document.getElementById('bempleado_telf').disabled=true;
 		document.getElementById('chbnombre').disabled=true;
 		document.getElementById('bnombre').disabled=true;	
 	}
@@ -28,17 +28,17 @@
 		valido=true;
 		if(document.getElementById('especificar').checked)
 		{
-			if(!document.getElementById('chbcedula').checked && !document.getElementById('chbnombre').checked)
+			if(!document.getElementById('chbempleado_telf').checked && !document.getElementById('chbnombre').checked)
 			{
 				valido=false;
 				alertify.alert("","DEBE ESPECIFICAR UNA OPCIÓN DE BUSQUEDA").set('label', 'Aceptar');
 			}
-			if(document.getElementById('chbcedula').checked)
+			if(document.getElementById('chbempleado_telf').checked)
 			{
-				if(document.getElementById('bcedula').value=="")
+				if(document.getElementById('bempleado_telf').value=="")
 				{
 					valido=false;
-					alertify.alert("","LA CÉDULA A BUSCAR NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+					alertify.alert("","EL TELÉFONO A BUSCAR NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
 				}
 			}
 			if(document.getElementById('chbnombre').checked)
@@ -261,12 +261,12 @@
 				<table border="0" style="width: 100%;">
 					<tr>
 						<td align="right">
-							<input class="w3-check" type="checkbox" id="chbcedula" name="chbcedula" disabled onclick="if(document.getElementById('chbcedula').checked){document.getElementById('bcedula').disabled=false;}else{document.getElementById('bcedula').disabled=true;}">
+							<input class="w3-check" type="checkbox" id="chbempleado_telf" name="chbempleado_telf" disabled onclick="if(document.getElementById('chbempleado_telf').checked){document.getElementById('bempleado_telf').disabled=false;}else{document.getElementById('bempleado_telf').disabled=true;}">
 						</td>
 						<td>
 							<label>
-								C&eacute;dula
-								<input class="w3-input w3-border" type="text" id="bcedula" name="bcedula" onkeypress="return NumCheck2(event, this)" disabled>
+								Teléfono
+								<input class="w3-input w3-border" type="text" id="bempleado_telf" name="bempleado_telf" onkeypress="return NumCheck3(event, this)" disabled>
 							</label>
 						</td>
 					</tr>
