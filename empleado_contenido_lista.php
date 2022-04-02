@@ -180,15 +180,15 @@
 			</div>
 			<div class="w3-row w3-section">
 				<label for="porcentaje_empleado" class="w3-text-blue"><b>%&nbsp;Empleado</b></label>
-				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_empleado" name="porcentaje_empleado" type="text" placeholder="%" onkeypress="return NumCheck(event, this)" tabindex="1" value="<?php if(isset($porcentaje_empleado)) if(empty($porcentaje_empleado)) echo 0; else echo $porcentaje_empleado; ?>"></div>
+				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_empleado" name="porcentaje_empleado" type="number" placeholder="%" tabindex="1" value="<?php if(isset($porcentaje_empleado)) if(empty($porcentaje_empleado)) echo 0; else echo $porcentaje_empleado; ?>"></div>
 			</div>
 			<div class="w3-row w3-section">
 				<label for="porcentaje_peluqueria" class="w3-text-blue"><b>%&nbsp;Empresa</b></label>
-				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_peluqueria" name="porcentaje_peluqueria" type="text" placeholder="%" onkeypress="return NumCheck(event, this)" tabindex="2" value="<?php if(isset($porcentaje_peluqueria)) if(empty($porcentaje_peluqueria)) echo 0; else echo $porcentaje_peluqueria; ?>"></div>
+				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_peluqueria" name="porcentaje_peluqueria" type="number" placeholder="%" tabindex="2" value="<?php if(isset($porcentaje_peluqueria)) if(empty($porcentaje_peluqueria)) echo 0; else echo $porcentaje_peluqueria; ?>"></div>
 			</div>
 			<div class="w3-row w3-section">
 				<label for="porcentaje_dueño" class="w3-text-blue"><b>%&nbsp;Due&ntilde;o</b></label>
-				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_dueño" name="porcentaje_dueño" type="text" placeholder="%" onkeypress="return NumCheck(event, this)" tabindex="3" value="<?php if(isset($porcentaje_dueño)) if(empty($porcentaje_dueño)) echo 0; else echo $porcentaje_dueño; ?>"></div>
+				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_dueño" name="porcentaje_dueño" type="number" placeholder="%" tabindex="3" value="<?php if(isset($porcentaje_dueño)) if(empty($porcentaje_dueño)) echo 0; else echo $porcentaje_dueño; ?>"></div>
 			</div>
 			<?php
 				$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso;";

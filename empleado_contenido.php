@@ -367,7 +367,7 @@
 			x=document.getElementById('porcentaje_dueño').value;
 			y=document.getElementById('porcentaje_peluqueria').value;
 			z=document.getElementById('porcentaje_empleado').value;
-			suma=parseInt(x)+parseInt(y)+parseInt(z);
+			suma=Number(x)+Number(y)+Number(z);
 			if(suma!=100)
 			{
 				valido=false;
