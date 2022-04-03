@@ -116,21 +116,28 @@
             echo "<th align='center'>Debito</th>";
             echo "<th align='center'>Transferencia</th>";
             echo "<th align='center'>Deuda</th>";
+            echo "<th align='center'>%</th>";
             echo "</tr>";
             echo "</thead>";
             echo "<tbody>";
             $total_por_dia = 0;
             foreach ($resultado as $row2)
             {
+                $total_por_linea_con_porcentaje = 0;
                 if ($row2["fecha"] == $row["fecha"] and $row2["empleado_telf"] == $empleado["empleado_telf"])
                 {
                     echo "<tr>";
                     echo "<td>".$row2["motivo"]."</td>";
                     if ($row2["tipo"] == "ingreso") {
-                        echo "<td align='right'>".($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100)."</td>";
-                        echo "<td align='right'>".($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100)."</td>";
-                        echo "<td align='right'>".($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100)."</td>";
-                        echo "<td align='right'>".($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100)."</td>";
+                        echo "<td align='right'>".$row2["efectivo_monto"]."</td>";
+                        echo "<td align='right'>".$row2["debito_monto"]."</td>";
+                        echo "<td align='right'>".$row2["transferencia_monto"]."</td>";
+                        echo "<td align='right'>".$row2["deuda_monto"]."</td>";
+                        $total_por_linea_con_porcentaje += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
+                        $total_por_linea_con_porcentaje += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
+                        $total_por_linea_con_porcentaje += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
+                        $total_por_linea_con_porcentaje += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
+                        echo "<td align='right'>".$total_por_linea_con_porcentaje."</td>";
                         $total_por_dia += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
                         $total_por_dia += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
                         $total_por_dia += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
@@ -140,6 +147,11 @@
                         echo "<td align='right'>".$row2["efectivo_monto"]."</td>";
                         echo "<td align='right'>".$row2["debito_monto"]."</td>";
                         echo "<td align='right'>".$row2["transferencia_monto"]."</td>";
+                        echo "<td align='right'>0</td>";
+                        $total_por_linea_con_porcentaje += $row2["efectivo_monto"];
+                        $total_por_linea_con_porcentaje += $row2["debito_monto"];
+                        $total_por_linea_con_porcentaje += $row2["debito_monto"];
+                        echo "<td align='right'>".$total_por_linea_con_porcentaje."</td>";
                         $total_por_dia -= $row2["efectivo_monto"];
                         $total_por_dia -= $row2["debito_monto"];
                         $total_por_dia -= $row2["transferencia_monto"];
@@ -149,7 +161,7 @@
             echo "</tr>";
             echo "<tr>";
             echo "<td><b>Total:</b></td>";
-            echo "<td colspan='4' align='center'><b>".$total_por_dia."</b></td>";
+            echo "<td colspan='5' align='center'><b>".$total_por_dia."</b></td>";
             echo "</tr>";
             $total_por_dia = 0;
             echo "</tbody>";
@@ -272,7 +284,7 @@
                                 where 
                                     pg.empleado_telf = '".$row_empleado["empleado_telf"]."' and
                                     pg.fecha_num <= $fecha_num_ingreso
-                                order by pg.fecha_num desc limit 1;";
+                                order by pg.fecha_num, pg.id_porcentaje_ganancia desc limit 1;";
                                 $result_porcentajes = $bd->mysql->query($sql);
                                 unset($sql);
                                 if ($result_porcentajes)
