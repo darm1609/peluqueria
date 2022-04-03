@@ -67,6 +67,7 @@
             $resultado[$i]["motivo"] = $row["motivo"];
             $resultado[$i]["efectivo_monto"] = !empty($row["efectivo_monto"]) ? $row["efectivo_monto"] : 0;
             $resultado[$i]["debito_monto"] = !empty($row["debito_monto"]) ? $row["debito_monto"] : 0;
+            $resultado[$i]["deuda_monto"] = !empty($row["deuda_monto"]) ? $row["deuda_monto"] : 0;
             $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
             $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
             $resultado[$i]["empleado_telf"] = $row["empleado_telf"];
@@ -114,6 +115,7 @@
             echo "<th align='center'>Efectivo</th>";
             echo "<th align='center'>Debito</th>";
             echo "<th align='center'>Transferencia</th>";
+            echo "<th align='center'>Deuda</th>";
             echo "</tr>";
             echo "</thead>";
             echo "<tbody>";
@@ -127,6 +129,7 @@
                         echo "<td align='right'>".($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100)."</td>";
                         echo "<td align='right'>".($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100)."</td>";
                         echo "<td align='right'>".($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100)."</td>";
+                        echo "<td align='right'>".($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100)."</td>";
                     }
                     else {
                         echo "<td align='right'>".$row2["efectivo_monto"]."</td>";
@@ -205,6 +208,10 @@
                         when i.debito = 1 then id.monto 
                         else 0 
                     end debito_monto,
+                    case 
+                        when i.deuda = 1 then idd.monto 
+                        else 0 
+                    end deuda_monto,
                     e.empleado_telf, 
                     concat(e.nombre,' ',e.apellido) empleado, 
                     concat(c.nombre,' ',c.apellido) cliente, 
@@ -219,10 +226,13 @@
                         left join cliente c on i.cliente_telf = c.telf 
                         left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso 
                         left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso 
-                        left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
+                        left join ingreso_debito id on i.id_ingreso = id.id_ingreso
+                        left join ingreso_deuda idd on i.id_ingreso = idd.id_ingreso 
                     where 
-                        i.empleado_telf = '".$row_empleado["empleado_telf"]."' and (i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1) and
+                        i.empleado_telf = '".$row_empleado["empleado_telf"]."' and 
                         i.fecha_num <= ".$fecha_num_consulta." order by i.fecha_num desc;";
+                    //echo $sql."<br><br>";
+                    //(i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1) and
                     $result_ingresos = $bd->mysql->query($sql);
                     unset($sql);
                     if ($result_ingresos)
@@ -279,6 +289,7 @@
                                             $total_ingreso_linea += $row_ingreso["efectivo_monto"];
                                             $total_ingreso_linea += $row_ingreso["transferencia_monto"];
                                             $total_ingreso_linea += $row_ingreso["debito_monto"];
+                                            $total_ingreso_linea += $row_ingreso["deuda_monto"];
                                             $total_ingreso += $total_ingreso_linea;
                                             $total_ingreso_linea_empleado_porcentaje = ($porcentaje_empleado * $total_ingreso_linea) / 100;
                                             $total_ingreso_linea_peluqueria_porcentaje = ($porcentaje_peluqueria * $total_ingreso_linea) / 100;
@@ -778,9 +789,115 @@
             unset($result);
     }
 
+    function deudas_del_dia($bd)
+    {
+        //Deudas del dia
+        $sql = "select 
+        i.fecha_num, 
+        i.id_ingreso, 
+        i.fecha, 
+        mi.motivo, 
+        i.efectivo, 
+        i.transferencia, 
+        i.debito, 
+        i.deuda, 
+        i.observacion, 
+        case 
+            when i.efectivo = 1 then ie.monto 
+            else '' 
+        end efectivo_monto, 
+        case 
+            when i.transferencia = 1 then it.monto 
+            else '' 
+        end transferencia_monto, 
+        case 
+            when i.transferencia = 1 then it.referencia 
+            else '' 
+        end transferencia_referencia, 
+        case 
+            when i.debito = 1 then id.monto 
+            else '' 
+        end debito_monto,
+        case 
+            when i.deuda = 1 then idd.monto 
+            else '' 
+        end deuda_monto,
+        i.observacion, 
+        concat(e.nombre,' ',e.apellido) empleado, 
+        concat(c.nombre,' ',c.apellido) cliente, 
+        case 
+            when i.id_ingreso_padre is not null then 1 
+            else 0 
+        end por_pago_de_deuda 
+        from 
+            ingreso i 
+            inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso 
+            inner join empleado e on i.empleado_telf = e.empleado_telf 
+            left join cliente c on i.cliente_telf = c.telf 
+            left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso 
+            left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso 
+            left join ingreso_debito id on i.id_ingreso = id.id_ingreso
+            left join ingreso_deuda idd on i.id_ingreso = idd.id_ingreso
+        where 
+            i.fecha = '".$_POST["bfecha"]."' and i.deuda = 1";
+        $result = $bd->mysql->query($sql);
+        unset($sql);
+        if ($result)
+        {
+            if (!empty($result->num_rows))
+            {
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                ?>
+                <form class="w3-container w3-card-4 w3-light-grey w3-margin" method="post">
+                    <div class="w3-row  w3-section" style='font-weight: bolder;'>Deudas del d&iacute;a</div>
+                    <div class="w3-row w3-section">
+                        <table border='1' cellpadding='5' cellspacing='0' style='border-color: floralwhite;'>
+                            <thead>
+                                <tr>
+                                    <th align="center">Tipo</th>
+                                    <th align="center">Empleado</th>
+                                    <th align="center">Deuda</th>
+                                    <th align="center">Cliente</th>
+                                    <th align="center">Comentario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    $total_ingreso_del_dia = 0;
+                                    foreach ($rows as $row)
+                                    {
+                                        $total_ingreso_del_dia += $row["deuda_monto"] ? $row["deuda_monto"] : 0;
+                                        echo "<tr>";
+                                        echo "<td>".$row["motivo"]."</td>";
+                                        echo "<td>".$row["empleado"]."</td>";
+                                        echo "<td>".$row["deuda_monto"]."</td>";
+                                        echo "<td>".$row["cliente"]."</td>";
+                                        echo "<td>".$row["observacion"]."</td>";
+                                        echo "</tr>";
+                                    }
+                                    echo "<tr>";
+                                    echo "<td>&nbsp;</td>";
+                                    echo "<td>&nbsp;</td>";
+                                    echo"<td align='right' style='font-weight: bolder;'>".$total_ingreso_del_dia."</td>";
+                                    echo "<td>&nbsp;</td>";
+                                    echo "<td>&nbsp;</td>";
+                                    echo "</tr>";
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+                <?php
+            }
+        }
+    }
+
     function mostrar_busqueda($bd)
     {
         ingresos_del_dia($bd);
+
+        deudas_del_dia($bd);
 
         egresos_pagos_vales($bd);
 

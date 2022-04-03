@@ -241,7 +241,7 @@
 			$transferencia = 1;
 		if (!empty($_POST["monto_efectivo"]))
 			$efectivo = 1;
-		if($bd->insertar_datos(5,$basedatos,"abono_peluqueria","fecha","fecha_num","login","efectivo","transferencia",$fecha,$fecha_num,$_SESSION["login"],$efectivo,$transferencia))
+		if($bd->insertar_datos(6,$basedatos,"abono_peluqueria","fecha","fecha_num","login","efectivo","transferencia","observacion",$fecha,$fecha_num,$_SESSION["login"],$efectivo,$transferencia,$_POST["observacion"]))
 		{
 			$insert_id = $bd->ultimo_result;
 			$valido = false;
@@ -299,6 +299,12 @@
 			<div class="w3-row">
 				<div class="w3-rest">
 					<input type="number" class="w3-input w3-border" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
+				</div>
+			</div>
+			<label for="observacion"><b>Comentario</b></label>
+			<div class="w3-row">
+				<div class="w3-rest">
+					<textarea style="float: left;width: 100%;height: auto;" id="observacion" name="observacion"></textarea>
 				</div>
 			</div>
 			<div class="w3-row w3-section">

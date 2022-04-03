@@ -51,26 +51,26 @@
 								$transferencia = 0;
 								$debito = 0;
 								$pagada = 0;
-								$empleado_cedula = "";
+								$empleado_telf = "";
 								if (!empty($abono_efectivo))
 									$efectivo = 1;
 								if (!empty($abono_transferencia))
 									$transferencia = 1;
 								if (!empty($abono_datafono))
 									$debito = 1;
-								$sql = "select empleado_cedula from ingreso where id_ingreso = '".$id_ingreso."';";
+								$sql = "select empleado_telf from ingreso where id_ingreso = '".$id_ingreso."';";
 								$result = $bd->mysql->query($sql);
 								unset($sql);
 								if ($result)
 								{
 									$row = $result->fetch_row();
 									$result->free();
-									$empleado_cedula = $row[0];
+									$empleado_telf = $row[0];
 								}
 								else
 									unset($result);
 								if ($efectivo == 1 or $transferencia == 1 or $debito == 1)
-									$bd->insertar_datos(11,$basedatos,"ingreso","id_ingreso_padre","id_motivo_ingreso","cliente_telf","fecha","fecha_num","efectivo","transferencia","debito","deuda","empleado_cedula","login",$id_ingreso,$id_motivo_ingreso,$_POST["mtelf"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,0,$empleado_cedula,$_SESSION["login"]);
+									$bd->insertar_datos(11,$basedatos,"ingreso","id_ingreso_padre","id_motivo_ingreso","cliente_telf","fecha","fecha_num","efectivo","transferencia","debito","deuda","empleado_telf","login",$id_ingreso,$id_motivo_ingreso,$_POST["mtelf"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,0,$empleado_telf,$_SESSION["login"]);
 								$id_ingreso_nuevo = $bd->ultimo_result;
 								if ($efectivo == 1)
 									$bd->insertar_datos(2,$basedatos,"ingreso_efectivo","id_ingreso","monto",$id_ingreso_nuevo,$abono_efectivo);
@@ -121,7 +121,7 @@
 								$transferencia = 0;
 								$debito = 0;
 								$pagada = 0;
-								$empleado_cedula = "";
+								$empleado_telf = "";
 								if (!empty($abono_efectivo))
 									$efectivo = 1;
 								if (!empty($abono_transferencia))
@@ -335,7 +335,7 @@
 						</thead>
 						<tbody>
 							<?php
-								$sql3 = "select i.fecha_num, i.id_ingreso, i.fecha, mi.id_motivo_ingreso, mi.motivo as 'tipo_de_trabajo', concat(e.nombre,' ',e.apellido) as 'realizado_por', id.monto as 'debe', id.monto_pagado as 'pagado', (id.monto - ifnull(id.monto_pagado,0)) as 'total', id.pagada, '0' as por_venta FROM empleado e inner join ingreso i on e.empleado_cedula = i.empleado_cedula inner join ingreso_deuda id on i.id_ingreso = id.id_ingreso inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso where i.cliente_telf = '".$row[0]["telf"]."' union all select v.fecha_num, v.id_venta, v.fecha, '' as id_motivo_ingreso, v.motivo as 'tipo_de_trabajo', '' as 'realizado_por', vd.monto as 'debe', vd.monto_pagado as 'pagado', (vd.monto - ifnull(vd.monto_pagado,0)) as 'total', vd.pagada, '1' as por_venta FROM venta v inner join venta_deuda vd on v.id_venta = vd.id_venta where v.cliente_telf = '".$row[0]["telf"]."' order by fecha_num asc;";
+								$sql3 = "select i.fecha_num, i.id_ingreso, i.fecha, mi.id_motivo_ingreso, mi.motivo as 'tipo_de_trabajo', concat(e.nombre,' ',e.apellido) as 'realizado_por', id.monto as 'debe', id.monto_pagado as 'pagado', (id.monto - ifnull(id.monto_pagado,0)) as 'total', id.pagada, '0' as por_venta FROM empleado e inner join ingreso i on e.empleado_telf = i.empleado_telf inner join ingreso_deuda id on i.id_ingreso = id.id_ingreso inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso where i.cliente_telf = '".$row[0]["telf"]."' union all select v.fecha_num, v.id_venta, v.fecha, '' as id_motivo_ingreso, v.motivo as 'tipo_de_trabajo', '' as 'realizado_por', vd.monto as 'debe', vd.monto_pagado as 'pagado', (vd.monto - ifnull(vd.monto_pagado,0)) as 'total', vd.pagada, '1' as por_venta FROM venta v inner join venta_deuda vd on v.id_venta = vd.id_venta where v.cliente_telf = '".$row[0]["telf"]."' order by fecha_num asc;";
 								$result3 = $bd->mysql->query($sql3);
 								unset($sql3);
 								if($result3)
