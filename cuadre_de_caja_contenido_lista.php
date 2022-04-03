@@ -159,9 +159,6 @@
             {
                 $rows_empleado = $result_empleado->fetch_all(MYSQLI_ASSOC);
                 $result_empleado->free();
-                $total_ingreso_empleado = 0;
-                $total_ingreso_peluqueria = 0;
-                $total_ingreso_dueño = 0;
                 ?>
                 <form class="w3-container w3-card-4 w3-light-grey w3-margin" method="post">
                 <div class="w3-row  w3-section" style='font-weight: bolder;'>Pagos a empleados</div>
@@ -179,6 +176,9 @@
                 $arreglo_vales_pagos = array();
                 foreach ($rows_empleado as $row_empleado)
                 {
+                    $total_ingreso_empleado = 0;
+                    $total_ingreso_peluqueria = 0;
+                    $total_ingreso_dueño = 0;
                     $sql = "select 
                     i.fecha_num, 
                     i.id_ingreso, 
