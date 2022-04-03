@@ -25,7 +25,7 @@
 
 	function formulario_lista($bd)
 	{
-		$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso;";
+		$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso order by motivo asc;";
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if($result)

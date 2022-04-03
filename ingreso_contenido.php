@@ -374,7 +374,7 @@
 					<select class="w3-select" id="id_motivo_ingreso" name="id_motivo_ingreso">
 						<option value="">Tipo de Trabajo</option>
 						<?php
-							$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso;";
+							$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso order by motivo asc;";
 							$result = $bd->mysql->query($sql);
 							unset($sql);
 							if($result)

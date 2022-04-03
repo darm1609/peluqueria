@@ -6,6 +6,7 @@
 	<meta name="description" content="">
 	<meta name="Keywords" content="">
 	<meta name="author" content="Daniel Rodriguez">
+	<meta name="title" content="Dulce Vanidad">
 
 	<script type="text/javascript" src="js/validaciones.js"></script>
 	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
