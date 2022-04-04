@@ -121,6 +121,8 @@
             echo "</thead>";
             echo "<tbody>";
             $total_por_dia = 0;
+            $total_por_dia_ingreso = 0;
+            $total_por_dia_pago = 0;
             foreach ($resultado as $row2)
             {
                 $total_por_linea_con_porcentaje = 0;
@@ -142,6 +144,10 @@
                         $total_por_dia += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
                         $total_por_dia += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
                         $total_por_dia += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
+                        $total_por_dia_ingreso += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
+                        $total_por_dia_ingreso += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
+                        $total_por_dia_ingreso += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
+                        $total_por_dia_ingreso += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
                     }
                     else {
                         echo "<td align='right'>".$row2["efectivo_monto"]."</td>";
@@ -155,13 +161,16 @@
                         $total_por_dia -= $row2["efectivo_monto"];
                         $total_por_dia -= $row2["debito_monto"];
                         $total_por_dia -= $row2["transferencia_monto"];
+                        $total_por_dia_pago += $row2["efectivo_monto"];
+                        $total_por_dia_pago += $row2["debito_monto"];
+                        $total_por_dia_pago += $row2["transferencia_monto"];
                     }
                 }
             }
             echo "</tr>";
             echo "<tr>";
-            echo "<td><b>Total:</b></td>";
-            echo "<td colspan='5' align='center'><b>".$total_por_dia."</b></td>";
+            echo "<td><b>Totales:</b></td>";
+            echo "<td colspan='5' align='center'><b>Ingreso: ".$total_por_dia_ingreso."&nbsp;&nbsp;Pago:".$total_por_dia_pago."</b></td>";
             echo "</tr>";
             $total_por_dia = 0;
             echo "</tbody>";
