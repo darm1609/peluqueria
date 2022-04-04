@@ -61,6 +61,8 @@
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 	if($bd->conectado)
 	{
+		if (isset($_COOKIE["PHPSESSID"]))
+			setcookie("PHPSESSID", $_COOKIE["PHPSESSID"], time() + (86400 * 30), "/");
 		if(!isset($_POST["enviar"]) and !isset($_SESSION["login"]) or isset($_POST["cerrar"]))
 		{
 			login_form();
