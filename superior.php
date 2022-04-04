@@ -11,3 +11,6 @@
 <form id="f_cerrar" name="f_cerrar" method="post" action="index.php">
 	<input type="hidden" id="cerrar" name="cerrar" value="">
 </form>
+<div class="div-logo-inicial">
+	<img src="imagenes/logo_2.png" width="400px" class="logo-inicial-2 w3-display-middle">
+</div>
