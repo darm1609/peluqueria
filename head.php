@@ -58,12 +58,11 @@
             }
             return xmlhttp;
         }
-
-        
     </script>
     
 </head>
-<body class="w3-light-grey">
+<!--class="w3-light-grey"--> 
+<body class="background-color">
 <?php
 	
 ?>
