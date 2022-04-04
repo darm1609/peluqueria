@@ -11,7 +11,7 @@
 					<input type="password" id="pass" name="pass" value="">
 				</label>
 				<br><br>
-				<input class="w3-btn w3-blue" type="submit" id="enviar" name="enviar" value="Entrar">
+				<input class="w3-btn w3-dulcevanidad" type="submit" id="enviar" name="enviar" value="Entrar">
 			</form>
 		</div>
 	</div>

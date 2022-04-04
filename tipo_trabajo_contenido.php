@@ -117,7 +117,7 @@
 			echo"<div id='divformulariolista'></div>";
 			?>
 			<div class="w3-container">
-				<button id='agregar_tipo_trabajo' class="w3-button w3-blue"><i class='icon-plus4'>&nbsp;</i>Agregar Tipo de Trabajo</button>
+				<button id='agregar_tipo_trabajo' class="w3-button w3-dulcevanidad"><i class='icon-plus4'>&nbsp;</i>Agregar Tipo de Trabajo</button>
 			</div>
 			<?php
 			echo"<div id='divfagregar' class='w3-container' style='display:none;'>";

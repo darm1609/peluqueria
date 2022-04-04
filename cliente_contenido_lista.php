@@ -323,7 +323,7 @@
 				<div class="w3-row w3-section">
 					<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
 						<thead>
-							<tr class="w3-blue">
+							<tr class="w3-dulcevanidad">
 								<th class='tableheadresul' align='center' nowarp>Fecha</th>
 								<th class='tableheadresul' align='center' nowarp>Tipo De Trabajo / Venta</th>
 								<th class='tableheadresul' align='center' nowarp>Realizado Por</th>
@@ -463,12 +463,12 @@
 					</div>
 					<div class="w3-third">
 						<br>
-						<input type="button" class="w3-button w3-block w3-blue" id="mostrarxpag" name="mostrarxpag" value="Mostrar" onclick="document.getElementById('accion_eliminar').value='';document.getElementById('accion_modificar').value='';return enviardatos_lista();">
+						<input type="button" class="w3-button w3-block w3-dulcevanidad" id="mostrarxpag" name="mostrarxpag" value="Mostrar" onclick="document.getElementById('accion_eliminar').value='';document.getElementById('accion_modificar').value='';return enviardatos_lista();">
 					</div>
 				</div>
 				<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
 					<thead>
-						<tr class="w3-blue">
+						<tr class="w3-dulcevanidad">
 							<th class='tableheadresul' align='center'>&nbsp;</th>
 							<?php
 								$col = $result->fetch_fields();

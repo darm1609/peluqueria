@@ -252,7 +252,7 @@
 				</tr>
 			</table>
 			<div class="w3-row w3-section">
-				<input class="w3-button w3-block w3-blue" type="button" id="enviar" name="enviar" value="Buscar" onclick="return enviardatos_busqueda();">
+				<input class="w3-button w3-block w3-dulcevanidad" type="button" id="enviar" name="enviar" value="Buscar" onclick="return enviardatos_busqueda();">
 			</div>
 		</form>
 		<?php
@@ -367,7 +367,7 @@
 		{
 			?>
 			<div class="w3-container">
-				<button id="agregar_egreso" class="w3-button w3-blue"><i class="icon-plus4">&nbsp;</i>Agregar Egreso</button>
+				<button id="agregar_egreso" class="w3-button w3-dulcevanidad"><i class="icon-plus4">&nbsp;</i>Agregar Egreso</button>
 			</div>
 			<?php
 			echo"<div id='divfagregar' class='w3-container' style='display:none;'>";

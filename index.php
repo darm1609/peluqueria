@@ -50,7 +50,7 @@
 					</label>
 				</div>
 				<div class="w3-row w3-section">
-					<input class="w3-button w3-block w3-blue" type="submit" id="enviar" name="enviar" value="Entrar" onclick="if(this.form.pass.value!='') this.form.pass.value=CryptoJS.SHA3(this.form.pass.value);">
+					<input class="w3-button w3-block w3-dulcevanidad" type="submit" id="enviar" name="enviar" value="Entrar" onclick="if(this.form.pass.value!='') this.form.pass.value=CryptoJS.SHA3(this.form.pass.value);">
 				</div>
 			</form>
 		</div>

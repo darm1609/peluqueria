@@ -53,12 +53,12 @@
 					</div>
 					<div class="w3-third">
 						<br>
-						<input type="button" class="w3-button w3-block w3-blue" id="mostrarxpag" name="mostrarxpag" value="Mostrar" onclick="document.getElementById('accion_eliminar').value='';return enviardatos_lista();">
+						<input type="button" class="w3-button w3-block w3-dulcevanidad" id="mostrarxpag" name="mostrarxpag" value="Mostrar" onclick="document.getElementById('accion_eliminar').value='';return enviardatos_lista();">
 					</div>
 				</div>
 				<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
 					<thead>
-						<tr class="w3-blue">
+						<tr class="w3-dulcevanidad">
 							<th class='tableheadresul' align='center'>&nbsp;</th>
 							<?php
 								$col = $result->fetch_fields();

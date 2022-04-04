@@ -217,7 +217,7 @@
 			echo"<div id='divformulariolista'></div>";
 			?>
 			<div class="w3-container">
-				<button id='agregar_usuario' class="w3-button w3-blue"><i class='icon-user-plus'>&nbsp;</i>Agregar Usuario</button>
+				<button id='agregar_usuario' class="w3-button w3-dulcevanidad"><i class='icon-user-plus'>&nbsp;</i>Agregar Usuario</button>
 			</div>
 			<?php
 			echo"<div id='divfagregar' class='w3-container' style='display:none;'>";
