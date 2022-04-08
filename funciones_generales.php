@@ -28,6 +28,35 @@
 		return false;
 	}
 
+	function usuario_consulta()
+	{
+		global $servidor, $puerto, $usuario, $pass, $basedatos;
+		$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
+		if($bd->conectado)
+		{
+			$sql="SELECT consulta FROM usuario WHERE login='".$_SESSION["login"]."';";
+			$result = $bd->mysql->query($sql);
+			if ($result)
+			{
+				$admin = $result->fetch_all(MYSQLI_ASSOC);
+				$result->free();
+				if ($admin[0]["consulta"] == 1)
+				{
+					unset($admin);
+					return true;
+				}
+				else
+				{
+					unset($admin);
+					return false;
+				}
+			}
+			else
+				unset($result);
+		}
+		return false;
+	}
+
 	function usuario_cajero()
 	{
 		global $servidor, $puerto, $usuario, $pass, $basedatos;

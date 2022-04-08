@@ -19,6 +19,7 @@
 	session_start();
 	require("head.php");
 	require("config.php");
+    require("funciones_generales.php");
 	require("librerias/basedatos.php");
 
     function existe_fecha_en_arreglo($resultado, $fecha)
@@ -282,7 +283,7 @@
                             $total_ingreso_linea_dueño_porcentaje = 0;
                             foreach ($rows_ingresos as $row_ingreso)
                             {
-                                $fecha_num_ingreso = strtotime($row_ingreso["fecha"][6].$row_ingreso["fecha"][7].$row_ingreso["fecha"][8].$row_ingreso["fecha"][9]."-".$row_ingreso["fecha"][3].$row_ingreso["fecha"][4]."-".$row_ingreso["fecha"][0].$row_ingreso["fecha"][1]);                                
+                                $fecha_num_ingreso = strtotime($row_ingreso["fecha"][6].$row_ingreso["fecha"][7].$row_ingreso["fecha"][8].$row_ingreso["fecha"][9]."-".$row_ingreso["fecha"][3].$row_ingreso["fecha"][4]."-".$row_ingreso["fecha"][0].$row_ingreso["fecha"][1]);
                                 $sql = "select
                                     pg.fecha,
                                     pg.porcentaje_empleado,
@@ -1067,6 +1068,13 @@
 
     function resumen_del_dia($bd)
     {
+        $total_ingreso_efectivo = 0;
+        $total_ingreso_datafono = 0;
+        $total_ingreso_transferencia = 0;
+        $total_egreso_efectivo= 0;
+        $total_egreso_datafono = 0;
+        $total_egreso_transferencia = 0;
+
         //Ingresos netos del dia
         $sql = "select 
         i.fecha_num, 
@@ -1347,8 +1355,229 @@
         <?php
     }
 
+    function acumulado_peluqueria_dueño($bd)
+    {
+        //Acumulados por empleado
+        $sql = "select e.empleado_telf, concat(e.nombre,' ',e.apellido) nombre, e.dueño from empleado e;";
+        $result_empleado = $bd->mysql->query($sql);
+        unset($sql);
+        $fecha_num_consulta = strtotime($_POST["bfecha"][6].$_POST["bfecha"][7].$_POST["bfecha"][8].$_POST["bfecha"][9]."-".$_POST["bfecha"][3].$_POST["bfecha"][4]."-".$_POST["bfecha"][0].$_POST["bfecha"][1]);
+        if ($result_empleado)
+        {
+            if (!empty($result_empleado->num_rows))
+            {
+                $rows_empleado = $result_empleado->fetch_all(MYSQLI_ASSOC);
+                $result_empleado->free();
+                $arreglo_ingresos = array();
+                $arreglo_vales_pagos = array();
+                $total_ingreso_empleado = 0;
+                $total_ingreso_peluqueria = 0;
+                $total_ingreso_dueño = 0;
+                foreach ($rows_empleado as $row_empleado)
+                {
+                    $sql = "select 
+                    i.fecha_num, 
+                    i.id_ingreso, 
+                    i.fecha, 
+                    mi.motivo, 
+                    i.efectivo, 
+                    i.transferencia, 
+                    i.debito, 
+                    i.deuda, 
+                    i.observacion, 
+                    case 
+                        when i.efectivo = 1 then ie.monto 
+                        else 0 
+                    end efectivo_monto, 
+                    case 
+                        when i.transferencia = 1 then it.monto 
+                        else 0 
+                    end transferencia_monto, 
+                    case 
+                        when i.transferencia = 1 then it.referencia 
+                        else '' 
+                    end transferencia_referencia, 
+                    case 
+                        when i.debito = 1 then id.monto 
+                        else 0 
+                    end debito_monto,
+                    case 
+                        when i.deuda = 1 then idd.monto 
+                        else 0 
+                    end deuda_monto,
+                    e.empleado_telf, 
+                    concat(e.nombre,' ',e.apellido) empleado, 
+                    concat(c.nombre,' ',c.apellido) cliente, 
+                    case 
+                        when i.id_ingreso_padre is not null then 1 
+                        else 0 
+                    end por_pago_de_deuda 
+                    from 
+                        ingreso i 
+                        inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso 
+                        inner join empleado e on i.empleado_telf = e.empleado_telf 
+                        left join cliente c on i.cliente_telf = c.telf 
+                        left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso 
+                        left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso 
+                        left join ingreso_debito id on i.id_ingreso = id.id_ingreso
+                        left join ingreso_deuda idd on i.id_ingreso = idd.id_ingreso 
+                    where 
+                        i.empleado_telf = '".$row_empleado["empleado_telf"]."' and 
+                        i.fecha_num <= ".$fecha_num_consulta." order by i.fecha_num desc;";
+                    $result_ingresos = $bd->mysql->query($sql);
+                    unset($sql);
+                    if ($result_ingresos)
+                    {
+                        if (!empty($result_ingresos->num_rows))
+                        {
+                            $rows_ingresos = $result_ingresos->fetch_all(MYSQLI_ASSOC);
+                            $result_ingresos->free();
+                            $total_ingreso = 0;
+                            $total_ingreso_linea = 0;
+                            $total_ingreso_linea_empleado_porcentaje = 0;
+                            $total_ingreso_linea_peluqueria_porcentaje = 0;
+                            $total_ingreso_linea_dueño_porcentaje = 0;
+                            foreach ($rows_ingresos as $row_ingreso)
+                            {
+                                $fecha_num_ingreso = strtotime($row_ingreso["fecha"][6].$row_ingreso["fecha"][7].$row_ingreso["fecha"][8].$row_ingreso["fecha"][9]."-".$row_ingreso["fecha"][3].$row_ingreso["fecha"][4]."-".$row_ingreso["fecha"][0].$row_ingreso["fecha"][1]);
+                                $sql = "select
+                                    pg.fecha,
+                                    pg.porcentaje_empleado,
+                                    pg.porcentaje_peluqueria,
+                                    pg.porcentaje_dueño
+                                from 
+                                    porcentaje_ganancia pg 
+                                where 
+                                    pg.empleado_telf = '".$row_empleado["empleado_telf"]."' and
+                                    pg.fecha_num <= $fecha_num_ingreso
+                                order by pg.fecha_num, pg.id_porcentaje_ganancia desc limit 1;";
+                                $result_porcentajes = $bd->mysql->query($sql);
+                                unset($sql);
+                                if ($result_porcentajes)
+                                {
+                                    if (!empty($result_porcentajes->num_rows))
+                                    {
+                                        $porcentaje_empleado = 0;
+                                        $porcentaje_dueño = 0;
+                                        $porcentaje_peluqueria = 0;
+
+                                        $rows_porcentajes = $result_porcentajes->fetch_all(MYSQLI_ASSOC);
+                                        $result_porcentajes->free();
+
+                                        $porcentaje_empleado = $rows_porcentajes[0]["porcentaje_empleado"];
+                                        $porcentaje_peluqueria = $rows_porcentajes[0]["porcentaje_peluqueria"];
+                                        $porcentaje_dueño = $rows_porcentajes[0]["porcentaje_dueño"];
+
+                                        $row_ingreso["porcentaje_empleado"] = $porcentaje_empleado;
+                                        $row_ingreso["porcentaje_peluqueria"] = $porcentaje_peluqueria;
+                                        $row_ingreso["porcentaje_dueño"] = $porcentaje_dueño;
+
+                                        array_push($arreglo_ingresos, $row_ingreso);
+
+                                        if (!empty($porcentaje_empleado))
+                                        {
+                                            $total_ingreso_linea = 0;
+                                            $total_ingreso_linea += $row_ingreso["efectivo_monto"];
+                                            $total_ingreso_linea += $row_ingreso["transferencia_monto"];
+                                            $total_ingreso_linea += $row_ingreso["debito_monto"];
+                                            $total_ingreso_linea += $row_ingreso["deuda_monto"];
+                                            $total_ingreso += $total_ingreso_linea;
+                                            $total_ingreso_linea_empleado_porcentaje = ($porcentaje_empleado * $total_ingreso_linea) / 100;
+                                            $total_ingreso_linea_peluqueria_porcentaje = ($porcentaje_peluqueria * $total_ingreso_linea) / 100;
+                                            $total_ingreso_linea_dueño_porcentaje = ($porcentaje_dueño * $total_ingreso_linea) / 100;
+                                            
+                                            if ($row_empleado["dueño"] == 1)
+                                                $total_ingreso_empleado += $total_ingreso_linea_empleado_porcentaje;
+                                            $total_ingreso_peluqueria += $total_ingreso_linea_peluqueria_porcentaje;
+                                            $total_ingreso_dueño += $total_ingreso_linea_dueño_porcentaje;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //Vale-pagos
+                    $sql = "select
+                        vp.empleado_telf,
+                        vp.fecha_num,
+                        vp.fecha,
+                        vp.vale_pago,
+                        vp.efectivo,
+                        vp.transferencia,
+                        case
+                            when vp.efectivo = 1 then vpe.monto
+                            else 0
+                        end efectivo_monto,
+                        case
+                            when vp.transferencia = 1 then vpt.monto
+                            else 0
+                        end transferencia_monto
+                    from
+                        vale_pago vp
+                        left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago
+                        left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago
+                    where
+                        vp.empleado_telf = '".$row_empleado["empleado_telf"]."' and vp.fecha_num <= '".$fecha_num_consulta."';";
+                    $result_vale_pago = $bd->mysql->query($sql);
+                    unset($sql);
+                    $total_pagado_a_empleado = 0;
+                    if ($result_vale_pago and $row_empleado["dueño"] == 1)
+                    {
+                        if (!empty($result_vale_pago->num_rows))
+                        {
+                            $rows_vale_pago = $result_vale_pago->fetch_all(MYSQLI_ASSOC);
+                            $result_vale_pago->free();
+                            foreach ($rows_vale_pago as $row_vale_pago)
+                            {
+                                array_push($arreglo_vales_pagos, $row_vale_pago);
+                                $total_pagado_a_empleado += $row_vale_pago["efectivo_monto"];
+                                $total_pagado_a_empleado += $row_vale_pago["transferencia_monto"];
+                            }
+                            unset($rows_vale_pago);
+                        }
+                    }
+                }
+            }
+        }
+        else
+            unset($result_empleado);
+
+        ?>
+        <form class="w3-container w3-card-4 w3-light-grey w3-margin" method="post">
+        <div class="w3-row  w3-section" style='font-weight: bolder;'>Acumulados dueño y peluqueria</div>
+        <div class="w3-row w3-section">
+            <?php 
+                echo "<b>Por trabajos realizados:&nbsp;</b>";
+                echo $total_ingreso_empleado;
+                echo "<br>";
+                echo "<b>Por empleados:&nbsp;</b>";
+                echo $total_ingreso_dueño;
+                echo "<br>";
+                echo "<b>Total pagado:&nbsp;</b>";
+                echo $total_pagado_a_empleado;
+                echo "<br>";
+                echo "<b>Total:&nbsp;</b>";
+                echo ($total_ingreso_empleado + $total_ingreso_dueño) - $total_pagado_a_empleado;
+                // echo "<br>";
+                // echo "<b>Peluqueria&nbsp;</b>";
+                // echo "<br>";
+            ?>
+        </div>
+        </form>
+        <?php
+    }
+
     function mostrar_busqueda($bd)
     {
+        $admin = usuario_admin();
+        $cajero = usuario_cajero();
+        $consulta = usuario_consulta();
+
+        if ($admin) {
+            acumulado_peluqueria_dueño($bd);
+        }
+
         resumen_del_dia($bd);
 
         ingresos_del_dia($bd);
