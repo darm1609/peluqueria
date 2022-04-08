@@ -46,7 +46,7 @@
 								$abono_datafono = $_POST["abono_datafono_".$id_ingreso];
 								$id_motivo_ingreso = $_POST["id_motivo_ingreso_".$id_ingreso];
 								$fecha = $_POST["abono_fecha_".$id_ingreso];
-								$fecha_num = time();
+								$fecha_num = strtotime($fecha[6].$fecha[7].$fecha[8].$fecha[9]."-".$fecha[3].$fecha[4]."-".$fecha[0].$fecha[1]);
 								$efectivo = 0;
 								$transferencia = 0;
 								$debito = 0;

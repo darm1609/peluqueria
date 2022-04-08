@@ -1556,13 +1556,279 @@
                 echo "<br>";
                 echo "<b>Total pagado:&nbsp;</b>";
                 echo $total_pagado_a_empleado;
-                echo "<br>";
-                echo "<b>Total:&nbsp;</b>";
+                echo "<br><br>";
+                echo "<b>Total dueño:&nbsp;";
                 echo ($total_ingreso_empleado + $total_ingreso_dueño) - $total_pagado_a_empleado;
-                // echo "<br>";
-                // echo "<b>Peluqueria&nbsp;</b>";
-                // echo "<br>";
+                echo "</b>";
+                echo "<br><br>";
+                echo "<b>Peluqueria&nbsp;</b>";
+                echo "<br>";
+
+                //Ingresos totales
+                $sql = "select 
+                i.fecha_num, 
+                i.id_ingreso, 
+                i.fecha, 
+                mi.motivo, 
+                i.efectivo, 
+                i.transferencia, 
+                i.debito, 
+                i.deuda, 
+                i.observacion, 
+                case 
+                    when i.efectivo = 1 then ie.monto 
+                    else '' 
+                end efectivo_monto, 
+                case 
+                    when i.transferencia = 1 then it.monto 
+                    else '' 
+                end transferencia_monto, 
+                case 
+                    when i.transferencia = 1 then it.referencia 
+                    else '' 
+                end transferencia_referencia, 
+                case 
+                    when i.debito = 1 then id.monto 
+                    else '' 
+                end debito_monto, 
+                concat(e.nombre,' ',e.apellido) empleado, 
+                concat(c.nombre,' ',c.apellido) cliente, 
+                case 
+                    when i.id_ingreso_padre is not null then 1 
+                    else 0 
+                end por_pago_de_deuda 
+                from 
+                    ingreso i 
+                    inner join motivo_ingreso mi on i.id_motivo_ingreso = mi.id_motivo_ingreso 
+                    inner join empleado e on i.empleado_telf = e.empleado_telf 
+                    left join cliente c on i.cliente_telf = c.telf 
+                    left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso 
+                    left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso 
+                    left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
+                where 
+                    i.fecha_num <= ".$fecha_num_consulta." and (i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1) 
+                union all 
+                select 
+                    v.fecha_num, 
+                    v.id_venta as id_ingreso, 
+                    v.fecha, 
+                    v.motivo, 
+                    v.efectivo, 
+                    v.transferencia, 
+                    v.debito, 
+                    v.deuda, 
+                    '' as observacion, 
+                    case 
+                        when v.efectivo = 1 then ve.monto 
+                        else '' 
+                    end efectivo_monto, 
+                    case 
+                        when v.transferencia = 1 then vt.monto 
+                        else '' 
+                    end transferencia_monto, 
+                    case 
+                        when v.transferencia = 1 then vt.referencia 
+                        else '' 
+                    end transferencia_referencia, 
+                    case 
+                        when v.debito = 1 then vd.monto 
+                        else '' 
+                    end debito_monto, 
+                    'Venta' empleado, 
+                    concat(c.nombre,' ',c.apellido) cliente, 
+                    case 
+                        when v.id_venta_padre is not null then 1 
+                        else 0 
+                    end por_pago_de_deuda 
+                from 
+                    venta v 
+                    left join cliente c on v.cliente_telf = c.telf 
+                    left join venta_efectivo ve on v.id_venta = ve.id_venta 
+                    left join venta_transferencia vt on v.id_venta = vt.id_venta 
+                    left join venta_debito vd on vd.id_venta = v.id_venta 
+                where 
+                    v.fecha_num <= ".$fecha_num_consulta." and (v.efectivo != 0 or v.debito != 0 or v.transferencia != 0 or v.deuda != 1)
+                union all
+                select
+                    ap.fecha_num,
+                    ap.id_abono_peluqueria as id_ingreso, 
+                    ap.fecha,
+                    'Abono a pelqueria' as motivo,
+                    ap.efectivo,
+                    ap.transferencia,
+                    '' debito,
+                    '' deuda,
+                    '' as observacion,
+                    case
+                        when ap.efectivo = 1 then ape.monto
+                        else 0
+                    end efectivo_monto,
+                    case
+                        when ap.transferencia = 1 then apt.monto
+                        else 0
+                    end transferencia_monto,
+                    case 
+                        when ap.transferencia = 1 then apt.referencia 
+                        else '' 
+                    end transferencia_referencia, 
+                    0 debito_monto,
+                    '' empleado,
+                    '' cliente,
+                    '' por_pago_de_deuda
+                from
+                    abono_peluqueria ap
+                    left join abono_peluqueria_efectivo ape on ap.id_abono_peluqueria = ape.id_abono_peluqueria
+                    left join abono_peluqueria_transferencia apt on ap.id_abono_peluqueria = apt.id_abono_peluqueria
+                where 
+                    ap.fecha_num <= ".$fecha_num_consulta." and (ap.efectivo != 0 or ap.transferencia != 0)
+                order by fecha_num asc;";
+                $result = $bd->mysql->query($sql);
+                unset($sql);
+                $total_ingreso_efectivo = 0;
+                $total_ingreso_datafono = 0;
+                $total_ingreso_transferencia = 0;
+                if ($result)
+                {
+                    if (!empty($result->num_rows))
+                    {
+                        $rows = $result->fetch_all(MYSQLI_ASSOC);
+                        $result->free();
+                        foreach ($rows as $row)
+                        {
+                            $total_ingreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                            $total_ingreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                            $total_ingreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                        }
+                    }
+                }
+                else
+                    unset($result);
+
+                //Egresos - Pagos - Vales
+                $sql = "select
+                e.fecha_num,
+                e.id_egreso id,
+                e.fecha,
+                e.motivo,
+                e.efectivo, 
+                e.transferencia, 
+                e.debito, 
+                case 
+                    when e.efectivo = 1 then ee.monto 
+                    else 0 
+                end efectivo_monto, 
+                case 
+                    when e.transferencia = 1 then et.monto 
+                    else 0 
+                end transferencia_monto, 
+                case 
+                    when e.transferencia = 1 then et.referencia 
+                    else '' 
+                end transferencia_referencia, 
+                case 
+                    when e.debito = 1 then ed.monto 
+                    else 0 
+                end debito_monto, 
+                '' empleado
+                from
+                    egreso e
+                    left join egreso_debito ed on e.id_egreso = ed.id_egreso
+                    left join egreso_efectivo ee on e.id_egreso = ee.id_egreso
+                    left join egreso_transferencia et on e.id_egreso = et.id_egreso
+                where
+                    e.fecha_num <= ".$fecha_num_consulta." 
+                union all
+                select
+                    vp.fecha_num,
+                    vp.id_vale_pago id,
+                    vp.fecha,
+                    vp.vale_pago motivo,
+                    vp.efectivo,
+                    vp.transferencia,
+                    0 debito,
+                    case 
+                        when vp.efectivo = 1 then vpe.monto 
+                        else 0 
+                    end efectivo_monto, 
+                    case 
+                        when vp.transferencia = 1 then vpt.monto 
+                        else 0 
+                    end transferencia_monto, 
+                    case 
+                        when vp.transferencia = 1 then vpt.referencia 
+                        else '' 
+                    end transferencia_referencia, 
+                    0 debito_monto, 
+                    concat(e.nombre,' ',e.apellido) empleado
+                from
+                    vale_pago vp
+                    inner join empleado e on vp.empleado_telf = e.empleado_telf
+                    left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago
+                    left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago
+                where
+                    vp.fecha_num <= ".$fecha_num_consulta." 
+                union all
+                select 
+                    ae.fecha_num,
+                    ae.id_abono_empleado id,
+                    ae.fecha,
+                    'Abono a empleado' motivo,
+                    ae.efectivo,
+                    ae.transferencia,
+                    0 debito,
+                    case 
+                        when ae.efectivo = 1 then aee.monto 
+                        else 0 
+                    end efectivo_monto, 
+                    case 
+                        when ae.transferencia = 1 then aet.monto 
+                        else 0 
+                    end transferencia_monto, 
+                    case 
+                        when ae.transferencia = 1 then aet.referencia 
+                        else '' 
+                    end transferencia_referencia, 
+                    0 debito_monto, 
+                    concat(e.nombre,' ',e.apellido) empleado
+                from
+                    abono_empleado ae
+                    inner join empleado e on ae.empleado_telf = e.empleado_telf
+                    left join abono_empleado_efectivo aee on ae.id_abono_empleado = aee.id_abono_empleado
+                    left join abono_empleado_transferencia aet on ae.id_abono_empleado = aet.id_abono_empleado
+                where
+                    ae.fecha_num <= ".$fecha_num_consulta." 
+                order by fecha_num asc;";
+                $result = $bd->mysql->query($sql);
+                unset($sql);
+                $total_egreso_efectivo = 0;
+                $total_egreso_datafono = 0;
+                $total_egreso_transferencia = 0;
+                if ($result)
+                {
+                    if (!empty($result->num_rows))
+                    {
+                        $rows = $result->fetch_all(MYSQLI_ASSOC);
+                        $result->free();
+                        foreach ($rows as $row)
+                        {
+                            $total_egreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                            $total_egreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                            $total_egreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                        }   
+                    }
+                }
+                else
+                    unset($result);
             ?>
+            <div class="w3-row w3-section">
+                <b>Efectivo:</b> <?php echo $total_ingreso_efectivo - $total_egreso_efectivo; ?><br>
+                <b>Dat&aacute;fono:</b> <?php echo $total_ingreso_datafono - $total_egreso_datafono; ?><br>
+                <b>Transferencia:</b> <?php echo $total_ingreso_transferencia - $total_egreso_transferencia; ?><br><br>
+                <?php
+                    $total = ($total_ingreso_efectivo - $total_egreso_efectivo) + ($total_ingreso_datafono - $total_egreso_datafono) + ($total_ingreso_transferencia - $total_egreso_transferencia);
+                ?>
+                <b>Total peluqueria: <?php echo $total; ?></b> 
+            </div>
         </div>
         </form>
         <?php
