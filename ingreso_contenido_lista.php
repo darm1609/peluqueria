@@ -93,7 +93,7 @@
 				<div class="w3-row-padding">
 					<div class="w3-third">
 						<label for="pag">P&aacute;gina:</label>
-						<select class="w3-select w3-border" id="pag" name="pag" onchange="document.getElementById('accion_eliminar').value='';document.getElementById('accion_modificar').value='';return enviardatos_lista();">
+						<select class="w3-select w3-border" id="pag" name="pag" onchange="if($('#accion_eliminar').length) document.getElementById('accion_eliminar').value=''; if($('#accion_modificar').length) document.getElementById('accion_modificar').value='';return enviardatos_lista();">
 						<?php
 							for($i=1;$i<=$cantpag;$i++)
 							{
@@ -111,7 +111,7 @@
 					</div>
 					<div class="w3-third">
 						<br>
-						<input type="button" class="w3-button w3-block w3-dulcevanidad" id="mostrarxpag" name="mostrarxpag" value="Mostrar" onclick="document.getElementById('accion_eliminar').value='';document.getElementById('accion_modificar').value='';return enviardatos_lista();">
+						<input type="button" class="w3-button w3-block w3-dulcevanidad" id="mostrarxpag" name="mostrarxpag" value="Mostrar" onclick="if($('#accion_eliminar').length) document.getElementById('accion_eliminar').value=''; if($('#accion_modificar').length) document.getElementById('accion_modificar').value='';return enviardatos_lista();">
 					</div>
 				</div>
 				<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
