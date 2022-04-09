@@ -91,9 +91,9 @@
 		return $cad[8].$cad[9]."-".$cad[5].$cad[6]."-".$cad[0].$cad[1].$cad[2].$cad[3];
 	}
 
-	function nombre_empleado($empleado_cedula,$bd)
+	function nombre_empleado($empleado_telf,$bd)
 	{
-		$sql="SELECT nombre, apellido FROM empleado WHERE empleado_cedula='".$empleado_cedula."';";
+		$sql="SELECT nombre, apellido FROM empleado WHERE empleado_telf='".$empleado_telf."';";
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if ($result)
