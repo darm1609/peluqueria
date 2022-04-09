@@ -315,10 +315,11 @@
                                         $row_ingreso["porcentaje_empleado"] = $porcentaje_empleado;
                                         $row_ingreso["porcentaje_peluqueria"] = $porcentaje_peluqueria;
                                         $row_ingreso["porcentaje_dueño"] = $porcentaje_dueño;
+                                        
+                                        if ($row_ingreso["por_pago_de_deuda"] == 0)
+                                            array_push($arreglo_ingresos, $row_ingreso);
 
-                                        array_push($arreglo_ingresos, $row_ingreso);
-
-                                        if (!empty($porcentaje_empleado))
+                                        if (!empty($porcentaje_empleado) and $row_ingreso["por_pago_de_deuda"] == 0)
                                         {
                                             $total_ingreso_linea = 0;
                                             $total_ingreso_linea += $row_ingreso["efectivo_monto"];
@@ -333,8 +334,6 @@
                                             $total_ingreso_empleado += $total_ingreso_linea_empleado_porcentaje;
                                             $total_ingreso_peluqueria += $total_ingreso_linea_peluqueria_porcentaje;
                                             $total_ingreso_dueño += $total_ingreso_linea_dueño_porcentaje;
-
-                                            //echo "Fecha: ".$row_ingreso["fecha"]." Ingreso linea: ".$total_ingreso_linea." % empleado: ".$porcentaje_empleado." total empleado: ".$total_ingreso_linea_empleado_porcentaje." % peluqueria: ".$porcentaje_peluqueria ." total peluqueria: ".$total_ingreso_linea_peluqueria_porcentaje." % dueño: ".$porcentaje_dueño." total dueño: ".$total_ingreso_linea_dueño_porcentaje."<br>";
                                         }
                                     }
                                 }
@@ -345,8 +344,6 @@
                     }
                     else
                         unset($result_ingreso);
-
-                    //echo $row_empleado["nombre"]." Total ingreso empleado: ".$total_ingreso_empleado." Total ingreso peluqueria: ".$total_ingreso_peluqueria." Total ingreso dueño: ".$total_ingreso_dueño."<br>";
 
                     $sql = "select
                         vp.empleado_telf,
@@ -391,7 +388,7 @@
                         unset($result_vale_pago);
                     
                     $total_ingreso_empleado -= $total_pagado_a_empleado;
-                    //echo "<br><br>".$row_empleado["nombre"]." Total ingreso empleado: ".$total_ingreso_empleado." Total ingreso peluqueria: ".$total_ingreso_peluqueria." Total ingreso dueño: ".$total_ingreso_dueño."<br>";
+
                     echo "<tr>";
                     echo "<td><span style='text-decoration: underline; cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$row_empleado["empleado_telf"]."').style.display='block'\">".$row_empleado["nombre"]."</span></td>";
                     echo "<td align='right'>".$total_ingreso_empleado."</td>";
@@ -1472,9 +1469,10 @@
                                         $row_ingreso["porcentaje_peluqueria"] = $porcentaje_peluqueria;
                                         $row_ingreso["porcentaje_dueño"] = $porcentaje_dueño;
 
-                                        array_push($arreglo_ingresos, $row_ingreso);
+                                        if ($row_ingreso["por_pago_de_deuda"] == 0)
+                                            array_push($arreglo_ingresos, $row_ingreso);
 
-                                        if (!empty($porcentaje_empleado))
+                                        if (!empty($porcentaje_empleado) and $row_ingreso["por_pago_de_deuda"] == 0)
                                         {
                                             $total_ingreso_linea = 0;
                                             $total_ingreso_linea += $row_ingreso["efectivo_monto"];
