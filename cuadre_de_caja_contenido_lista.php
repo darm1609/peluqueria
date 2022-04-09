@@ -266,8 +266,6 @@
                     where 
                         i.empleado_telf = '".$row_empleado["empleado_telf"]."' and 
                         i.fecha_num <= ".$fecha_num_consulta." order by i.fecha_num desc;";
-                    //echo $sql."<br><br>";
-                    //(i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1) and
                     $result_ingresos = $bd->mysql->query($sql);
                     unset($sql);
                     if ($result_ingresos)
