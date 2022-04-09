@@ -88,7 +88,7 @@
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 	if($bd->conectado)
 	{
-        if(usuario_admin())
+        if(usuario_admin() or usuario_cajero())
         {
             formulario_busqueda();
 			echo"<div id='divformulariolista'></div>";

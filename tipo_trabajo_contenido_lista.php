@@ -2,6 +2,7 @@
 	session_start();
 	require("head.php");
 	require("config.php");
+	require("funciones_generales.php");
 	require("librerias/basedatos.php");
 
 	function eliminar_trabajo($bd)
@@ -31,6 +32,7 @@
 		if($result)
 		{
 			$n = $result->num_rows;
+			$admin = usuario_admin();
 			if(!empty($n))
 			{
 				?>
@@ -38,7 +40,10 @@
 				<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
 				<thead>
 				<tr>
-				<th width="10px"></th>
+				<?php
+					if ($admin)
+						echo "<th width='10px'></th>";
+				?>
 				<th>Tipo</th>
 				</tr>
 				</thead>
@@ -50,14 +55,17 @@
 					$i++;
 					$id_motivo_ingreso=$row["id_motivo_ingreso"];
 					echo"<tr>";
-					echo"<td>";
-					echo"<i class='icon-cross2 icon_table' id='eliminar_<?php echo $i; ?>' name='eliminar_<?php echo $i; ?>' alt='Eliminar' title='Eliminar' onclick='";
-					?>
-					eliminar_trabajo("<?php echo $id_motivo_ingreso; ?>");
-					<?php
-					echo"'></i>";
-					unset($id_motivo_ingreso);
-					echo"</td>";
+					if ($admin)
+					{
+						echo"<td>";
+						echo"<i class='icon-cross2 icon_table' id='eliminar_<?php echo $i; ?>' name='eliminar_<?php echo $i; ?>' alt='Eliminar' title='Eliminar' onclick='";
+						?>
+						eliminar_trabajo("<?php echo $id_motivo_ingreso; ?>");
+						<?php
+						echo"'></i>";
+						unset($id_motivo_ingreso);
+						echo"</td>";
+					}
 					echo"<td>".$row["motivo"]."</td>";
 					echo"</tr>";
 				}

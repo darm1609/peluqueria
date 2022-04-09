@@ -92,7 +92,7 @@
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 	if($bd->conectado)
 	{
-		if(usuario_admin())
+		if(usuario_admin() or usuario_cajero())
 		{
 			echo"<div id='loader'></div>";
 			if(isset($_POST["trabajo"]))
@@ -114,7 +114,6 @@
 					<?php
 				}
 			}
-			echo"<div id='divformulariolista'></div>";
 			?>
 			<div class="w3-container">
 				<button id='agregar_tipo_trabajo' class="w3-button w3-dulcevanidad"><i class='icon-plus4'>&nbsp;</i>Agregar Tipo de Trabajo</button>
@@ -123,6 +122,7 @@
 			echo"<div id='divfagregar' class='w3-container' style='display:none;'>";
 			formulario_agregar_tipo_trabajo();
 			echo"</div>";
+			echo"<div id='divformulariolista'></div>";
 		}
 		else
 		{

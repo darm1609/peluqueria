@@ -15,6 +15,7 @@
 	session_start();
 	require("head.php");
 	require("config.php");
+	require("funciones_generales.php");
 	require("librerias/basedatos.php");
 
 	function guardar_modificar($bd)
@@ -494,18 +495,21 @@
 							if($pag>1) for($i=0;$i<$pag-1;$i++) for($j=0;$j<$cantxpag;$j++) $row=$result->fetch_array();
 							echo"<input type='hidden' id='accion_eliminar' name='accion_eliminar'>";
 							echo"<input type='hidden' id='accion_modificar' name='accion_modificar'>";
+							$admin = usuario_admin();
 							for($i=$ini;$i<=$fin and $i<$fil;$i++)
 							{
 								echo"<tr>";
 								$row=$result->fetch_array();
 								$num_col=count($row)/2;
 								echo"<td align='center' nowrap>";
-									echo"<i class='icon-cross2 icon_table' id='eliminar_<?php echo $i; ?>' name='eliminar_<?php echo $i; ?>' alt='Eliminar' title='Eliminar' ";
-									?>
-									onclick="document.getElementById('accion_eliminar').value='<?php echo $row[0]; ?>';return confirmar_eliminar('<?php echo $row[0]; ?>');"
-									<?php
-									echo"'></i>";
-									echo"&nbsp;&nbsp;";
+									if ($admin) {
+										echo"<i class='icon-cross2 icon_table' id='eliminar_<?php echo $i; ?>' name='eliminar_<?php echo $i; ?>' alt='Eliminar' title='Eliminar' ";
+										?>
+										onclick="document.getElementById('accion_eliminar').value='<?php echo $row[0]; ?>';return confirmar_eliminar('<?php echo $row[0]; ?>');"
+										<?php
+										echo"'></i>";
+										echo"&nbsp;&nbsp;";
+									}
 									echo"<i class='icon-pencil icon_table' id='editar_<?php echo $i; ?>' name='editar_<?php echo $i; ?>' alt='Modificar' title='Modificar' ";
 									?>
 									onclick="document.getElementById('accion_modificar').value='<?php echo $row[0]; ?>';return enviardatos_lista();"

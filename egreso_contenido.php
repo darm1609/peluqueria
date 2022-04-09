@@ -363,7 +363,7 @@
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 	if($bd->conectado)
 	{
-		if(usuario_admin())
+		if(usuario_admin() or usuario_cajero())
 		{
 			?>
 			<div class="w3-container">
