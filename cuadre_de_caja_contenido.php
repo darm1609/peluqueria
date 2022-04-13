@@ -91,6 +91,7 @@
         if(usuario_admin() or usuario_cajero())
         {
             formulario_busqueda();
+			echo"<div id='loader'></div>";
 			echo"<div id='divformulariolista'></div>";
         }
         else
