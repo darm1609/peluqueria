@@ -60,6 +60,16 @@
         return false;
     }
 
+    function existe_venta_en_el_arreglo($array) 
+    {
+        foreach ($array as $i => $v)
+        {
+            if ($v["tipo_ingreso"] == "venta")
+                return true;
+        }
+        return false;
+    }
+
     function crear_modal_detalle($empleado, $ingresos, $pagos)
     {
         //Modal de detalles pagos a empleados
@@ -1977,7 +1987,7 @@
         </div>
         <div id="id-ventas-del-dia" class="w3-row w3-section" style="display:none;">
         <?php
-        if (existe_fecha_en_arreglo($array_ingresos, $fecha))
+        if (existe_fecha_en_arreglo($array_ingresos, $fecha) and existe_venta_en_el_arreglo($array_ingresos))
         {
             ?>
             <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
@@ -2046,8 +2056,106 @@
             echo "<b>Total&nbsp;efectivo:&nbsp;".$total_ingreso_efectivo."</b><br>";
             echo "<b>Total&nbsp;dat&aacute;fono:&nbsp;".$total_ingreso_datafono."</b><br>";
             echo "<b>Total&nbsp;transferencia:&nbsp;".$total_ingreso_transferencia."</b><br>";
-            echo "<b>Total:&nbsp;".$total_ingreso_del_dia."</b>";            
+            echo "<b>Total:&nbsp;".$total_ingreso_del_dia."</b>";
             unset($total_ingreso_del_dia, $total_ingreso_linea, $total_ingreso_efectivo, $total_ingreso_datafono, $total_ingreso_transferencia);
+        }
+        else
+        {
+            ?>
+            <div class="w3-panel w3-blue-grey">
+            <h3>Aviso</h3>
+            <p>No hubo ventas registradas</p>
+            </div>  
+            <?php
+        }
+        ?>
+        </div>
+        </form>
+        <?php
+    }
+
+    function mostrar_egresos_del_dia($array_egresos, $fecha)
+    {
+        ?>
+        <form class="w3-container w3-card-4 w3-light-grey w3-margin table-overflow" method="post">
+        <div class="w3-row w3-section" style='font-weight: bolder; float: left;'>
+            Egresos del d&iacute;a
+        </div>
+        <div class="w3-row w3-section" style='font-weight: bolder; float: right;'>
+            <span style='cursor:pointer;' class='w3-button' onclick="return mostrar_ocultar_div('id-egreso-del-dia');">
+                <i class='icon-chevron-down'></i>
+            </span>
+        </div>
+        <div id="id-egreso-del-dia" class="w3-row w3-section" style="display:none;">
+        <?php
+        if (existe_fecha_en_arreglo($array_egresos, $fecha))
+        {
+            ?>
+            <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+                <thead>
+                    <tr class="w3-dulcevanidad">
+                        <th align="center">Tipo</th>
+                        <th align="center">Empleado</th>
+                        <th align="center">Efectivo</th>
+                        <th align="center">Dat&aacute;fono</th>
+                        <th align="center">Transferencia</th>
+                        <th align="center">Referencia</th>
+                        <th align="center">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $total_egreso_del_dia = 0;
+                    $total_egreso_linea = 0;
+                    $total_egreso_efectivo = 0;
+                    $total_egreso_datafono = 0;
+                    $total_egreso_transferencia = 0;
+                    foreach ($array_egresos as $row)
+                    {
+                        if ($row["fecha"] == $fecha)
+                        {
+                            $total_egreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                            $total_egreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                            $total_egreso_del_dia += $row["debito_monto"] ? $row["debito_monto"] : 0;
+
+                            $total_egreso_linea += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                            $total_egreso_linea += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                            $total_egreso_linea += $row["debito_monto"] ? $row["debito_monto"] : 0;
+
+                            $total_egreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                            $total_egreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                            $total_egreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+
+                            echo"<tr>";
+                            echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
+                            echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
+                            echo"<td class='table-celda-numerica'>".$row["efectivo_monto"]."</td>";
+                            echo"<td class='table-celda-numerica'>".$row["debito_monto"]."</td>";
+                            echo"<td class='table-celda-numerica'>".$row["transferencia_monto"]."</td>";
+                            echo"<td class='table-celda-texto'>".$row["transferencia_referencia"]."</td>";
+                            echo"<td class='table-celda-numerica-ultima'>".$total_egreso_linea."</td>";
+                            echo"</tr>";
+
+                            $total_egreso_linea = 0;
+                        }
+                    }
+                    ?>
+                </tbody>
+            </table>
+            <?php
+            echo "<b>Total&nbsp;efectivo:&nbsp;".$total_egreso_efectivo."</b><br>";
+            echo "<b>Total&nbsp;dat&aacute;fono:&nbsp;".$total_egreso_datafono."</b><br>";
+            echo "<b>Total&nbsp;transferencia:&nbsp;".$total_egreso_transferencia."</b><br>";
+            echo "<b>Total:&nbsp;".$total_egreso_del_dia."</b>";
+        }
+        else 
+        {
+            ?>
+            <div class="w3-panel w3-blue-grey">
+            <h3>Aviso</h3>
+            <p>No hubo egresos registrados</p>
+            </div>  
+            <?php
         }
         ?>
         </div>
@@ -2073,6 +2181,8 @@
         mostrar_ingresos_netos_del_dia($array_ingresos, $fecha);
 
         mostrar_ventas_del_dia($array_ingresos, $fecha);
+
+        mostrar_egresos_del_dia($array_egresos, $fecha);
 
         // if ($admin) {
         //     acumulado_peluqueria_dueño($bd);
