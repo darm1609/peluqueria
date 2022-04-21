@@ -16,7 +16,20 @@
 
     function mostrar_ocultar_div(divId)
     {
-        $("#" + divId).toggle("fast", function() {});
+        $("#" + divId + "-contenido-1").hide();
+        $("#" + divId + "-contenido-2").hide();
+        $("#" + divId).toggle("fast", function() {
+            if($("#" + divId).is(":visible")) { 
+                $("#" + divId + "-icon").addClass("icon-chevron-up");
+                $("#" + divId + "-icon").removeClass("icon-chevron-down");
+                $("#" + divId + "-contenido-1").show(1000);
+                $("#" + divId + "-contenido-2").show(1000);
+            }
+            else {
+                $("#" + divId + "-icon").removeClass("icon-chevron-up");
+                $("#" + divId + "-icon").addClass("icon-chevron-down");
+            }
+        });
     }
 
 </script>
@@ -2394,7 +2407,7 @@
         </div>
         <div class="w3-row w3-section" style='font-weight: bolder; float: right;'>
             <span style='cursor:pointer;' class='w3-button' onclick="return mostrar_ocultar_div('id-ingreso-del-dia');">
-                <i class='icon-chevron-down'></i>
+                <i id="id-ingreso-del-dia-icon" class='icon-chevron-down'></i>
             </span>
         </div>
         <div id="id-ingreso-del-dia" class="w3-row w3-section" style="display:none;">
@@ -2402,81 +2415,87 @@
         if (existe_fecha_en_arreglo($array_ingresos, $fecha))
         {
             ?>
-            <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-                <thead>
-                    <tr class="w3-dulcevanidad">
-                        <th align="center">Tipo</th>
-                        <th align="center">Empleado</th>
-                        <th align="center">Efectivo</th>
-                        <th align="center">Dat&aacute;fono</th>
-                        <th align="center">Transferencia</th>
-                        <th align="center">Referencia</th>
-                        <th align="center">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        $total_ingreso_del_dia = 0;
-                        $total_ingreso_linea = 0;
-                        $total_ingreso_efectivo = 0;
-                        $total_ingreso_datafono = 0;
-                        $total_ingreso_transferencia = 0;
-                        $por_pago_de_deuda = 0;
-                        $por_pago_de_deuda_encontrado = 0;
-                        foreach($array_ingresos as $row)
-                        {
-                            if ($fecha == $row["fecha"]) 
+            <div id="id-ingreso-del-dia-contenido-1" style="display:none;">
+                <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+                    <thead>
+                        <tr class="w3-dulcevanidad">
+                            <th align="center">Tipo</th>
+                            <th align="center">Empleado</th>
+                            <th align="center">Efectivo</th>
+                            <th align="center">Dat&aacute;fono</th>
+                            <th align="center">Transferencia</th>
+                            <th align="center">Referencia</th>
+                            <th align="center">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            $total_ingreso_del_dia = 0;
+                            $total_ingreso_linea = 0;
+                            $total_ingreso_efectivo = 0;
+                            $total_ingreso_datafono = 0;
+                            $total_ingreso_transferencia = 0;
+                            $por_pago_de_deuda = 0;
+                            $por_pago_de_deuda_encontrado = 0;
+                            foreach($array_ingresos as $row)
                             {
-                                $total_ingreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
-                                $total_ingreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
-                                $total_ingreso_del_dia += $row["debito_monto"] ? $row["debito_monto"] : 0;
-
-                                $total_ingreso_linea += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
-                                $total_ingreso_linea += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
-                                $total_ingreso_linea += $row["debito_monto"] ? $row["debito_monto"] : 0;
-                                
-                                $total_ingreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
-                                $total_ingreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
-                                $total_ingreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
-
-                                $por_pago_de_deuda = $row["por_pago_de_deuda"];
-                                
-                                echo "<tr style='";
-                                if ($por_pago_de_deuda == 1) 
+                                if ($fecha == $row["fecha"]) 
                                 {
-                                    $por_pago_de_deuda_encontrado = 1;
-                                    echo"background-color: #C8A2C8";
+                                    $total_ingreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                                    $total_ingreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                                    $total_ingreso_del_dia += $row["debito_monto"] ? $row["debito_monto"] : 0;
+
+                                    $total_ingreso_linea += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                                    $total_ingreso_linea += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                                    $total_ingreso_linea += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                                    
+                                    $total_ingreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                                    $total_ingreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                                    $total_ingreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+
+                                    $por_pago_de_deuda = $row["por_pago_de_deuda"];
+                                    
+                                    echo "<tr style='";
+                                    if ($por_pago_de_deuda == 1) 
+                                    {
+                                        $por_pago_de_deuda_encontrado = 1;
+                                        echo"background-color: #C8A2C8";
+                                    }
+                                    echo "'>";
+                                    echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
+                                    echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
+                                    echo"<td class='table-celda-numerica'>".$row["efectivo_monto"]."</td>";
+                                    echo"<td class='table-celda-numerica'>".$row["debito_monto"]."</td>";
+                                    echo"<td class='table-celda-numerica'>".$row["transferencia_monto"]."</td>";
+                                    echo"<td class='table-celda-texto'>".$row["transferencia_referencia"]."</td>";
+                                    echo"<td class='table-celda-numerica-ultima'>".$total_ingreso_linea."</td>";
+                                    echo "</tr>";
+                                    $total_ingreso_linea = 0;
                                 }
-                                echo "'>";
-                                echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
-                                echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
-                                echo"<td class='table-celda-numerica'>".$row["efectivo_monto"]."</td>";
-                                echo"<td class='table-celda-numerica'>".$row["debito_monto"]."</td>";
-                                echo"<td class='table-celda-numerica'>".$row["transferencia_monto"]."</td>";
-                                echo"<td class='table-celda-texto'>".$row["transferencia_referencia"]."</td>";
-                                echo"<td class='table-celda-numerica-ultima'>".$total_ingreso_linea."</td>";
-                                echo "</tr>";
-                                $total_ingreso_linea = 0;
                             }
-                        }
-                    ?>
-                </tbody>
-            </table>
+                        ?>
+                    </tbody>
+                </table>
+                <?php
+                if ($por_pago_de_deuda_encontrado == 1)
+                {
+                    echo"<table border=0><tr><td style='background-color: #C8A2C8' width='25em'></td><td>Pago por deuda</td></tr></table><br>";
+                }
+                echo "<table border='0'>";
+                echo "<tr><td><b>Total&nbsp;efectivo:</b></td><td align='right'>$total_ingreso_efectivo</td></tr>";
+                echo "<tr><td><b>Total&nbsp;dat&aacute;fono:</b></td><td align='right'>$total_ingreso_datafono</td></tr>";
+                echo "<tr><td><b>Total&nbsp;transferencia:</b></td><td align='right'>$total_ingreso_transferencia</td></tr>";
+                echo "<tr><td><b>Total:</b></td><td align='right'>$total_ingreso_del_dia</td></tr>";
+                echo "</table>";
+                unset($total_ingreso_del_dia, $total_ingreso_linea, $total_ingreso_efectivo, $total_ingreso_datafono, $total_ingreso_transferencia);
+                ?>
+            </div>
             <?php
-            if ($por_pago_de_deuda_encontrado == 1)
-            {
-                echo"<table border=0><tr><td style='background-color: #C8A2C8' width='25em'></td><td>Pago por deuda</td></tr></table><br>";
-            }
-            echo "<b>Total&nbsp;efectivo:&nbsp;".$total_ingreso_efectivo."</b><br>";
-            echo "<b>Total&nbsp;dat&aacute;fono:&nbsp;".$total_ingreso_datafono."</b><br>";
-            echo "<b>Total&nbsp;transferencia:&nbsp;".$total_ingreso_transferencia."</b><br>";
-            echo "<b>Total:&nbsp;".$total_ingreso_del_dia."</b>";            
-            unset($total_ingreso_del_dia, $total_ingreso_linea, $total_ingreso_efectivo, $total_ingreso_datafono, $total_ingreso_transferencia);
         }
         else 
         {
             ?>
-            <div class="w3-panel w3-blue-grey">
+            <div id="id-ingreso-del-dia-contenido-2" class="w3-panel w3-blue-grey" style="display: none">
             <h3>Aviso</h3>
             <p>No hubo ingresos registrados</p>
             </div>  
@@ -2497,7 +2516,7 @@
         </div>
         <div class="w3-row w3-section" style='font-weight: bolder; float: right;'>
             <span style='cursor:pointer;' class='w3-button' onclick="return mostrar_ocultar_div('id-ventas-del-dia');">
-                <i class='icon-chevron-down'></i>
+                <i id="id-ventas-del-dia-icon" class='icon-chevron-down'></i>
             </span>
         </div>
         <div id="id-ventas-del-dia" class="w3-row w3-section" style="display:none;">
@@ -2505,79 +2524,85 @@
         if (existe_fecha_en_arreglo($array_ingresos, $fecha) and existe_venta_en_el_arreglo($array_ingresos, $fecha))
         {
             ?>
-            <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-                <thead>
-                    <tr class="w3-dulcevanidad">
-                        <th align="center">Tipo</th>
-                        <th align="center">Efectivo</th>
-                        <th align="center">Dat&aacute;fono</th>
-                        <th align="center">Transferencia</th>
-                        <th align="center">Referencia</th>
-                        <th align="center">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        $total_ingreso_del_dia = 0;
-                        $total_ingreso_linea = 0;
-                        $total_ingreso_efectivo = 0;
-                        $total_ingreso_datafono = 0;
-                        $total_ingreso_transferencia = 0;
-                        $por_pago_de_deuda = 0;
-                        $por_pago_de_deuda_encontrado = 0;
-                        foreach ($array_ingresos as $row)
-                        {
-                            if ($row["tipo_ingreso"] == "venta" and $fecha == $row["fecha"])
+            <div id="id-ventas-del-dia-contenido-1" style="display:none;">
+                <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+                    <thead>
+                        <tr class="w3-dulcevanidad">
+                            <th align="center">Tipo</th>
+                            <th align="center">Efectivo</th>
+                            <th align="center">Dat&aacute;fono</th>
+                            <th align="center">Transferencia</th>
+                            <th align="center">Referencia</th>
+                            <th align="center">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            $total_ingreso_del_dia = 0;
+                            $total_ingreso_linea = 0;
+                            $total_ingreso_efectivo = 0;
+                            $total_ingreso_datafono = 0;
+                            $total_ingreso_transferencia = 0;
+                            $por_pago_de_deuda = 0;
+                            $por_pago_de_deuda_encontrado = 0;
+                            foreach ($array_ingresos as $row)
                             {
-                                $total_ingreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
-                                $total_ingreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
-                                $total_ingreso_del_dia += $row["debito_monto"] ? $row["debito_monto"] : 0;
-
-                                $total_ingreso_linea += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
-                                $total_ingreso_linea += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
-                                $total_ingreso_linea += $row["debito_monto"] ? $row["debito_monto"] : 0;
-
-                                $total_ingreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
-                                $total_ingreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
-                                $total_ingreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
-
-                                $por_pago_de_deuda = $row["por_pago_de_deuda"];
-
-                                if ($por_pago_de_deuda_encontrado == 0 and $por_pago_de_deuda == 1) $por_pago_de_deuda_encontrado = 1;
-                                echo"<tr style='";
-                                if ($por_pago_de_deuda == 1) 
+                                if ($row["tipo_ingreso"] == "venta" and $fecha == $row["fecha"])
                                 {
-                                    echo"background-color: #C8A2C8";
+                                    $total_ingreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                                    $total_ingreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                                    $total_ingreso_del_dia += $row["debito_monto"] ? $row["debito_monto"] : 0;
+
+                                    $total_ingreso_linea += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                                    $total_ingreso_linea += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                                    $total_ingreso_linea += $row["debito_monto"] ? $row["debito_monto"] : 0;
+
+                                    $total_ingreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                                    $total_ingreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                                    $total_ingreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+
+                                    $por_pago_de_deuda = $row["por_pago_de_deuda"];
+
+                                    if ($por_pago_de_deuda_encontrado == 0 and $por_pago_de_deuda == 1) $por_pago_de_deuda_encontrado = 1;
+                                    echo"<tr style='";
+                                    if ($por_pago_de_deuda == 1) 
+                                    {
+                                        echo"background-color: #C8A2C8";
+                                    }
+                                    echo"'>";
+                                    echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
+                                    echo"<td class='table-celda-numerica'>".$row["efectivo_monto"]."</td>";
+                                    echo"<td class='table-celda-numerica'>".$row["debito_monto"]."</td>";
+                                    echo"<td class='table-celda-numerica'>".$row["transferencia_monto"]."</td>";
+                                    echo"<td class='table-celda-texto'>".$row["transferencia_referencia"]."</td>";
+                                    echo"<td class='table-celda-numerica-ultima'>".$total_ingreso_linea."</td>";
+                                    echo"</tr>";
+                                    $total_ingreso_linea = 0;
                                 }
-                                echo"'>";
-                                echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
-                                echo"<td class='table-celda-numerica'>".$row["efectivo_monto"]."</td>";
-                                echo"<td class='table-celda-numerica'>".$row["debito_monto"]."</td>";
-                                echo"<td class='table-celda-numerica'>".$row["transferencia_monto"]."</td>";
-                                echo"<td class='table-celda-texto'>".$row["transferencia_referencia"]."</td>";
-                                echo"<td class='table-celda-numerica-ultima'>".$total_ingreso_linea."</td>";
-                                echo"</tr>";
-                                $total_ingreso_linea = 0;
                             }
-                        }
-                    ?>
-                </tbody>
-            </table>
+                        ?>
+                    </tbody>
+                </table>
+                <?php
+                if ($por_pago_de_deuda_encontrado == 1)
+                {
+                    echo"<table border=0><tr><td style='background-color: #C8A2C8' width='25em'></td><td>Pago por deuda</td></tr></table><br>";
+                }
+                echo "<table border='0'>";
+                echo "<tr><td><b>Total&nbsp;efectivo:</b></td><td align='right'>$total_ingreso_efectivo</td></tr>";
+                echo "<tr><td><b>Total&nbsp;dat&aacute;fono:</b></td><td align='right'>$total_ingreso_datafono</td></tr>";
+                echo "<tr><td><b>Total&nbsp;transferencia:</b></td><td align='right'>$total_ingreso_transferencia</td></tr>";
+                echo "<tr><td><b>Total:</b></td><td align='right'>$total_ingreso_del_dia</td></tr>";
+                echo "</table>";
+                unset($total_ingreso_del_dia, $total_ingreso_linea, $total_ingreso_efectivo, $total_ingreso_datafono, $total_ingreso_transferencia);
+                ?>
+            </div>
             <?php
-            if ($por_pago_de_deuda_encontrado == 1)
-            {
-                echo"<table border=0><tr><td style='background-color: #C8A2C8' width='25em'></td><td>Pago por deuda</td></tr></table><br>";
-            }
-            echo "<b>Total&nbsp;efectivo:&nbsp;".$total_ingreso_efectivo."</b><br>";
-            echo "<b>Total&nbsp;dat&aacute;fono:&nbsp;".$total_ingreso_datafono."</b><br>";
-            echo "<b>Total&nbsp;transferencia:&nbsp;".$total_ingreso_transferencia."</b><br>";
-            echo "<b>Total:&nbsp;".$total_ingreso_del_dia."</b>";
-            unset($total_ingreso_del_dia, $total_ingreso_linea, $total_ingreso_efectivo, $total_ingreso_datafono, $total_ingreso_transferencia);
         }
         else
         {
             ?>
-            <div class="w3-panel w3-blue-grey">
+            <div id="id-venta-del-dia-contenido-2" class="w3-panel w3-blue-grey">
             <h3>Aviso</h3>
             <p>No hubo ventas registradas</p>
             </div>  
@@ -2598,7 +2623,7 @@
         </div>
         <div class="w3-row w3-section" style='font-weight: bolder; float: right;'>
             <span style='cursor:pointer;' class='w3-button' onclick="return mostrar_ocultar_div('id-egreso-del-dia');">
-                <i class='icon-chevron-down'></i>
+                <i id="id-egreso-del-dia-icon" class='icon-chevron-down'></i>
             </span>
         </div>
         <div id="id-egreso-del-dia" class="w3-row w3-section" style="display:none;">
@@ -2606,67 +2631,73 @@
         if (existe_fecha_en_arreglo($array_egresos, $fecha))
         {
             ?>
-            <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-                <thead>
-                    <tr class="w3-dulcevanidad">
-                        <th align="center">Tipo</th>
-                        <th align="center">Empleado</th>
-                        <th align="center">Efectivo</th>
-                        <th align="center">Dat&aacute;fono</th>
-                        <th align="center">Transferencia</th>
-                        <th align="center">Referencia</th>
-                        <th align="center">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $total_egreso_del_dia = 0;
-                    $total_egreso_linea = 0;
-                    $total_egreso_efectivo = 0;
-                    $total_egreso_datafono = 0;
-                    $total_egreso_transferencia = 0;
-                    foreach ($array_egresos as $row)
-                    {
-                        if ($row["fecha"] == $fecha)
+            <div id="id-egreso-del-dia-contenido-1" style="display:none;">
+                <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+                    <thead>
+                        <tr class="w3-dulcevanidad">
+                            <th align="center">Tipo</th>
+                            <th align="center">Empleado</th>
+                            <th align="center">Efectivo</th>
+                            <th align="center">Dat&aacute;fono</th>
+                            <th align="center">Transferencia</th>
+                            <th align="center">Referencia</th>
+                            <th align="center">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $total_egreso_del_dia = 0;
+                        $total_egreso_linea = 0;
+                        $total_egreso_efectivo = 0;
+                        $total_egreso_datafono = 0;
+                        $total_egreso_transferencia = 0;
+                        foreach ($array_egresos as $row)
                         {
-                            $total_egreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
-                            $total_egreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
-                            $total_egreso_del_dia += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                            if ($row["fecha"] == $fecha)
+                            {
+                                $total_egreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                                $total_egreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                                $total_egreso_del_dia += $row["debito_monto"] ? $row["debito_monto"] : 0;
 
-                            $total_egreso_linea += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
-                            $total_egreso_linea += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
-                            $total_egreso_linea += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                                $total_egreso_linea += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                                $total_egreso_linea += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                                $total_egreso_linea += $row["debito_monto"] ? $row["debito_monto"] : 0;
 
-                            $total_egreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
-                            $total_egreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
-                            $total_egreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                                $total_egreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                                $total_egreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                                $total_egreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
 
-                            echo"<tr>";
-                            echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
-                            echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
-                            echo"<td class='table-celda-numerica'>".$row["efectivo_monto"]."</td>";
-                            echo"<td class='table-celda-numerica'>".$row["debito_monto"]."</td>";
-                            echo"<td class='table-celda-numerica'>".$row["transferencia_monto"]."</td>";
-                            echo"<td class='table-celda-texto'>".$row["transferencia_referencia"]."</td>";
-                            echo"<td class='table-celda-numerica-ultima'>".$total_egreso_linea."</td>";
-                            echo"</tr>";
+                                echo"<tr>";
+                                echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
+                                echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
+                                echo"<td class='table-celda-numerica'>".$row["efectivo_monto"]."</td>";
+                                echo"<td class='table-celda-numerica'>".$row["debito_monto"]."</td>";
+                                echo"<td class='table-celda-numerica'>".$row["transferencia_monto"]."</td>";
+                                echo"<td class='table-celda-texto'>".$row["transferencia_referencia"]."</td>";
+                                echo"<td class='table-celda-numerica-ultima'>".$total_egreso_linea."</td>";
+                                echo"</tr>";
 
-                            $total_egreso_linea = 0;
+                                $total_egreso_linea = 0;
+                            }
                         }
-                    }
-                    ?>
-                </tbody>
-            </table>
+                        ?>
+                    </tbody>
+                </table>
+                <?php
+                echo "<table border='0'>";
+                echo "<tr><td><b>Total&nbsp;efectivo:</b></td><td align='right'>$total_egreso_efectivo</td></tr>";
+                echo "<tr><td><b>Total&nbsp;dat&aacute;fono:</b></td><td align='right'>$total_egreso_datafono</td></tr>";
+                echo "<tr><td><b>Total&nbsp;transferencia:</b></td><td align='right'>$total_egreso_transferencia</td></tr>";
+                echo "<tr><td><b>Total:</b></td><td align='right'>$total_egreso_del_dia</td></tr>";
+                echo "</table>";
+                ?>
+            </div>
             <?php
-            echo "<b>Total&nbsp;efectivo:&nbsp;".$total_egreso_efectivo."</b><br>";
-            echo "<b>Total&nbsp;dat&aacute;fono:&nbsp;".$total_egreso_datafono."</b><br>";
-            echo "<b>Total&nbsp;transferencia:&nbsp;".$total_egreso_transferencia."</b><br>";
-            echo "<b>Total:&nbsp;".$total_egreso_del_dia."</b>";
         }
         else 
         {
             ?>
-            <div class="w3-panel w3-blue-grey">
+            <div id="id-egreso-del-dia-contenido-2" class="w3-panel w3-blue-grey">
             <h3>Aviso</h3>
             <p>No hubo egresos registrados</p>
             </div>  
@@ -2706,7 +2737,7 @@
 
         mostrar_egresos_del_dia($array_egresos, $fecha);
 
-        mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta);
+        //mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta);
 
         // if ($admin) {
         //     acumulado_peluqueria_dueño($bd);
