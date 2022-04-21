@@ -60,14 +60,74 @@
         return false;
     }
 
-    function existe_venta_en_el_arreglo($array) 
+    function existe_venta_en_el_arreglo($array, $fecha) 
     {
         foreach ($array as $i => $v)
         {
-            if ($v["tipo_ingreso"] == "venta")
+            if ($v["tipo_ingreso"] == "venta" and $v["fecha"] == $fecha)
                 return true;
         }
         return false;
+    }
+
+    function porcentaje_peluqueria($array_porcentajes, $fecha_num, $empleado)
+    {
+        $id_aux = 0;
+        $fecha_num_aux = 0;
+        $porcentaje_peluqueria = 0;
+        foreach ($array_porcentajes as $row)
+        {
+            if ($row["empleado_telf"] == $empleado) 
+            {
+                if ($row["fecha_num"] >= $fecha_num_aux and $row["id_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
+                {
+                    $id_aux = $row["id_porcentaje_ganancia"];
+                    $fecha_num_aux = $row["fecha_num"];
+                    $porcentaje_peluqueria = $row["porcentaje_peluqueria"];
+                }
+            }
+        }
+        return $porcentaje_peluqueria;
+    }
+
+    function porcentaje_dueño($array_porcentajes, $fecha_num, $empleado)
+    {
+        $id_aux = 0;
+        $fecha_num_aux = 0;
+        $porcentaje_dueño = 0;
+        foreach ($array_porcentajes as $row)
+        {
+            if ($row["empleado_telf"] == $empleado) 
+            {
+                if ($row["fecha_num"] >= $fecha_num_aux and $row["id_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
+                {
+                    $id_aux = $row["id_porcentaje_ganancia"];
+                    $fecha_num_aux = $row["fecha_num"];
+                    $porcentaje_dueño = $row["porcentaje_dueño"];
+                }
+            }
+        }
+        return $porcentaje_dueño;
+    }
+
+    function porcentaje_empleado($array_porcentajes, $fecha_num, $empleado)
+    {
+        $id_aux = 0;
+        $fecha_num_aux = 0;
+        $porcentaje_empleado = 0;
+        foreach ($array_porcentajes as $row)
+        {
+            if ($row["empleado_telf"] == $empleado) 
+            {
+                if ($row["fecha_num"] >= $fecha_num_aux and $row["id_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
+                {
+                    $id_aux = $row["id_porcentaje_ganancia"];
+                    $fecha_num_aux = $row["fecha_num"];
+                    $porcentaje_empleado = $row["porcentaje_empleado"];
+                }
+            }
+        }
+        return $porcentaje_empleado;
     }
 
     function crear_modal_detalle($empleado, $ingresos, $pagos)
@@ -1629,8 +1689,10 @@
         case 
             when i.debito = 1 then id.monto 
             else '' 
-        end debito_monto, 
-        concat(e.nombre,' ',e.apellido) empleado, 
+        end debito_monto,
+        e.empleado_telf empleado_telf, 
+        concat(e.nombre,' ',e.apellido) empleado,
+        e.dueño dueño, 
         concat(c.nombre,' ',c.apellido) cliente, 
         case 
             when i.id_ingreso_padre is not null then 1 
@@ -1673,8 +1735,10 @@
             case 
                 when v.debito = 1 then vd.monto 
                 else '' 
-            end debito_monto, 
-            'Venta' empleado, 
+            end debito_monto,
+            '' empleado_telf, 
+            'Venta' empleado,
+            '' dueño, 
             concat(c.nombre,' ',c.apellido) cliente, 
             case 
                 when v.id_venta_padre is not null then 1 
@@ -1713,7 +1777,9 @@
                 else '' 
             end transferencia_referencia, 
             0 debito_monto,
+            '' empleado_telf, 
             '' empleado,
+            '' dueño, 
             '' cliente,
             '' por_pago_de_deuda,
             'abono_peluqueria' tipo_ingreso
@@ -1764,7 +1830,8 @@
                 when e.debito = 1 then ed.monto 
                 else 0 
             end debito_monto, 
-            '' empleado
+            '' empleado,
+            'compra_servicio' tipo_egreso
         from
             egreso e
             left join egreso_debito ed on e.id_egreso = ed.id_egreso
@@ -1792,7 +1859,8 @@
                 else '' 
             end transferencia_referencia, 
             0 debito_monto, 
-            concat(e.nombre,' ',e.apellido) empleado
+            concat(e.nombre,' ',e.apellido) empleado,
+            'pago_empleado' tipo_egreso
         from
             vale_pago vp
             inner join empleado e on vp.empleado_telf = e.empleado_telf
@@ -1820,7 +1888,8 @@
                 else '' 
             end transferencia_referencia, 
             0 debito_monto, 
-            concat(e.nombre,' ',e.apellido) empleado
+            concat(e.nombre,' ',e.apellido) empleado,
+            'abono_empleado' tipo_egreso
         from
             abono_empleado ae
             inner join empleado e on ae.empleado_telf = e.empleado_telf
@@ -1844,6 +1913,7 @@
     function consultar_porcentaje_empleados_totales($bd, &$array_porcentajes)
     {
         $sql = "select
+            pg.id_porcentaje_ganancia,
             e.empleado_telf,
             concat(e.nombre,' ',e.apellido) nombre_empleado,
             pg.id_porcentaje_ganancia,
@@ -1868,6 +1938,451 @@
         }
         else
             unset($result);
+    }
+
+    function mostrar_acumulado_empresa($array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta)
+    {
+        $total_ingreso_efectivo = 0;
+        $total_ingreso_datafono = 0;
+        $total_ingreso_transferencia = 0;
+        $total_ingreso = 0;
+
+        $total_ingreso_efectivo_por_trabajo = 0;
+        $total_ingreso_datafono_por_trabajo = 0;
+        $total_ingreso_transferencia_por_trabajo = 0;
+        $total_ingreso_por_trabajo = 0;
+
+        $total_ingreso_efectivo_por_venta = 0;
+        $total_ingreso_datafono_por_venta = 0;
+        $total_ingreso_transferencia_por_venta = 0;
+        $total_ingreso_por_venta = 0;
+
+        $total_ingreso_efectivo_por_abono = 0;
+        $total_ingreso_datafono_por_abono = 0;
+        $total_ingreso_transferencia_por_abono = 0;
+        $total_ingreso_por_abono = 0;
+
+        $total_ingreso_efectivo_del_dia = 0;
+        $total_ingreso_datafono_del_dia = 0;
+        $total_ingreso_transferencia_del_dia = 0;
+        $total_ingreso_del_dia = 0;
+
+        $total_ganancia_peluqueria_efectivo = 0;
+        $total_ganancia_peluqueria_datafono = 0;
+        $total_ganancia_peluqueria_transferencia = 0;
+        $total_ganancia_peluqueria = 0;
+
+        foreach ($array_ingresos as $row)
+        {
+            if ($row["fecha_num"] <= $fecha_num_consulta)
+            {
+                $total_ingreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                $total_ingreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                $total_ingreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                $total_ingreso += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                                    ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+            }
+
+            if ($row["fecha_num"] <= $fecha_num_consulta and $row["tipo_ingreso"] == "trabajo")
+            {
+                $total_ingreso_efectivo_por_trabajo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                $total_ingreso_datafono_por_trabajo += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                $total_ingreso_transferencia_por_trabajo += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                $total_ingreso_por_trabajo += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                                    ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+
+                $porcentaje_peluqueria = porcentaje_peluqueria($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
+
+                $total_ganancia_peluqueria_efectivo += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_peluqueria) / 100;
+                $total_ganancia_peluqueria_datafono += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_peluqueria) / 100;
+                $total_ganancia_peluqueria_transferencia += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_peluqueria) / 100;
+                $total_ganancia_peluqueria += ((($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_peluqueria) / 100) + 
+                                    ((($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_peluqueria) / 100) + 
+                                    ((($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_peluqueria) / 100);
+            }
+
+            if ($row["fecha_num"] <= $fecha_num_consulta and $row["tipo_ingreso"] == "venta")
+            {
+                $total_ingreso_efectivo_por_venta += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                $total_ingreso_datafono_por_venta += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                $total_ingreso_transferencia_por_venta += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                $total_ingreso_por_venta += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                                    ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+            }
+
+            if ($row["fecha_num"] <= $fecha_num_consulta and $row["tipo_ingreso"] == "abono_peluqueria")
+            {
+                $total_ingreso_efectivo_por_abono += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                $total_ingreso_datafono_por_abono += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                $total_ingreso_transferencia_por_abono += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                $total_ingreso_por_abono += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                                    ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+            }
+
+            if ($row["fecha"] == $fecha)
+            {
+                $total_ingreso_efectivo_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                $total_ingreso_datafono_del_dia += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                $total_ingreso_transferencia_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                $total_ingreso_del_dia += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                                    ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+            }
+        }
+
+        $total_egreso_efectivo = 0;
+        $total_egreso_datafono = 0;
+        $total_egreso_transferencia = 0;
+        $total_egreso = 0;
+
+        $total_egreso_efectivo_pago_empleado = 0;
+        $total_egreso_transferencia_pago_empleado = 0;
+        $total_egreso_pago_empleado = 0;
+
+        $total_egreso_efectivo_compra = 0;
+        $total_egreso_datafono_compra = 0;
+        $total_egreso_transferencia_compra = 0;
+        $total_egreso_compra = 0;
+
+        $total_egreso_efectivo_abono_empleado = 0;
+        $total_egreso_transferencia_abono_empleado = 0;
+        $total_egreso_abono_empleado = 0;
+
+        $total_egreso_efectivo_del_dia = 0;
+        $total_egreso_datafono_del_dia = 0;
+        $total_egreso_transferencia_del_dia = 0;
+        $total_egreso_del_dia = 0;
+
+        foreach ($array_egresos as $row)
+        {
+            if ($row["fecha_num"] <= $fecha_num_consulta)
+            {
+                $total_egreso_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                $total_egreso_datafono += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                $total_egreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                $total_egreso += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                                    ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+            }
+
+            if ($row["fecha_num"] <= $fecha_num_consulta and $row["tipo_egreso"] == "pago_empleado")
+            {
+                $total_egreso_efectivo_pago_empleado += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                $total_egreso_transferencia_pago_empleado += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                $total_egreso_pago_empleado += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+            }
+
+            if ($row["fecha_num"] <= $fecha_num_consulta and $row["tipo_egreso"] == "compra_servicio")
+            {
+                $total_egreso_efectivo_compra += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                $total_egreso_datafono_compra += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                $total_egreso_transferencia_compra += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                $total_egreso_compra += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                                    ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+            }
+
+            if ($row["fecha_num"] <= $fecha_num_consulta and $row["tipo_egreso"] == "abono_empleado")
+            {
+                $total_egreso_efectivo_abono_empleado += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                $total_egreso_transferencia_abono_empleado += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                $total_egreso_abono_empleado += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+            }
+
+            if ($row["fecha"] == $fecha)
+            {
+                $total_egreso_efectivo_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                $total_egreso_datafono_del_dia += $row["debito_monto"] ? $row["debito_monto"] : 0;
+                $total_egreso_transferencia_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                $total_egreso_del_dia += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                                    ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+            }
+        }
+
+        ?>
+        <form class="w3-container w3-card-4 w3-light-grey w3-margin table-overflow" method="post">
+            <div class="w3-row">
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Ingresos - Egresos
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right"><?php echo $total_ingreso_efectivo - $total_egreso_efectivo; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total dat&aacute;fono:</td>
+                                <td align="right"><?php echo $total_ingreso_datafono - $total_egreso_datafono; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right"><?php echo $total_ingreso_transferencia - $total_egreso_transferencia; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right"><?php echo $total_ingreso - $total_egreso; ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #a03e61; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Ingresos
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right"><?php echo $total_ingreso_efectivo; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total dat&aacute;fono:</td>
+                                <td align="right"><?php echo $total_ingreso_datafono; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right"><?php echo $total_ingreso_transferencia; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right"><?php echo $total_ingreso; ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #6C6C6C; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Ingresos por trabajos realizados
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right"><?php echo $total_ingreso_efectivo_por_trabajo; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total dat&aacute;fono:</td>
+                                <td align="right"><?php echo $total_ingreso_datafono_por_trabajo; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right"><?php echo $total_ingreso_transferencia_por_trabajo; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right"><?php echo $total_ingreso_por_trabajo; ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #6C6C6C; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Ingresos por ventas
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right"><?php echo $total_ingreso_efectivo_por_venta; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total dat&aacute;fono:</td>
+                                <td align="right"><?php echo $total_ingreso_datafono_por_venta; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right"><?php echo $total_ingreso_transferencia_por_venta; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right"><?php echo $total_ingreso_por_venta; ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="w3-row">
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #6C6C6C; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Ingresos por abono
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right"><?php echo $total_ingreso_efectivo_por_abono; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total dat&aacute;fono:</td>
+                                <td align="right"><?php echo $total_ingreso_datafono_por_abono; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right"><?php echo $total_ingreso_transferencia_por_abono; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right"><?php echo $total_ingreso_por_abono; ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #a03e61; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Egresos
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right"><?php echo $total_egreso_efectivo; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total dat&aacute;fono:</td>
+                                <td align="right"><?php echo $total_egreso_datafono; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right"><?php echo $total_egreso_transferencia; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right"><?php echo $total_egreso; ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #6C6C6C; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Egresos por pago a empleados
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right"><?php echo $total_egreso_efectivo_pago_empleado; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right"><?php echo $total_egreso_transferencia_pago_empleado; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right"><?php echo $total_egreso_pago_empleado; ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #6C6C6C; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Egresos por compra-servicios
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right"><?php echo $total_egreso_efectivo_compra; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total dat&aacute;fono:</td>
+                                <td align="right"><?php echo $total_egreso_datafono_compra; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right"><?php echo $total_egreso_transferencia_compra; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right"><?php echo $total_egreso_compra; ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="w3-row">
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #6C6C6C; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Egresos por abono a empleados
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right"><?php echo $total_egreso_efectivo_abono_empleado; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right"><?php echo $total_egreso_transferencia_abono_empleado; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right"><?php echo $total_egreso_abono_empleado; ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #567C95; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Cuadre de caja del d&iacute;a
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right"><?php echo ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) >= 0 ? ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) : 0; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total dat&aacute;fono:</td>
+                                <td align="right"><?php echo ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) >= 0 ? ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) : 0; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right"><?php echo ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) >= 0 ? ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) : 0; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right"><?php echo ($total_ingreso_del_dia - $total_egreso_del_dia) >= 0 ? ($total_ingreso_del_dia - $total_egreso_del_dia) : 0; ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Ganancia de la peluquer&iacute;a por trabajos realizados
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right"><?php echo $total_ganancia_peluqueria_efectivo; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total dat&aacute;fono:</td>
+                                <td align="right"><?php echo $total_ganancia_peluqueria_datafono; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right"><?php echo $total_ganancia_peluqueria_transferencia; ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right"><?php echo $total_ganancia_peluqueria; ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <?php
     }
 
     function mostrar_ingresos_netos_del_dia($array_ingresos, $fecha)
@@ -1987,7 +2502,7 @@
         </div>
         <div id="id-ventas-del-dia" class="w3-row w3-section" style="display:none;">
         <?php
-        if (existe_fecha_en_arreglo($array_ingresos, $fecha) and existe_venta_en_el_arreglo($array_ingresos))
+        if (existe_fecha_en_arreglo($array_ingresos, $fecha) and existe_venta_en_el_arreglo($array_ingresos, $fecha))
         {
             ?>
             <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
@@ -2163,6 +2678,11 @@
         <?php
     }
 
+    function mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta)
+    {
+        
+    }
+
     function mostrar_busqueda($bd, &$array_ingresos, &$array_egresos, &$array_porcentajes)
     {
         $admin = usuario_admin();
@@ -2178,11 +2698,15 @@
         $fecha_num_consulta = strtotime($_POST["bfecha"][6].$_POST["bfecha"][7].$_POST["bfecha"][8].$_POST["bfecha"][9]."-".$_POST["bfecha"][3].$_POST["bfecha"][4]."-".$_POST["bfecha"][0].$_POST["bfecha"][1]);
         $fecha = $_POST["bfecha"];
 
+        mostrar_acumulado_empresa($array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta);
+
         mostrar_ingresos_netos_del_dia($array_ingresos, $fecha);
 
         mostrar_ventas_del_dia($array_ingresos, $fecha);
 
         mostrar_egresos_del_dia($array_egresos, $fecha);
+
+        mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta);
 
         // if ($admin) {
         //     acumulado_peluqueria_dueño($bd);
