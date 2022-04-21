@@ -73,6 +73,16 @@
         return false;
     }
 
+    function existe_fecha_en_arreglo_con_deuda($array, $fecha)
+    {
+        foreach ($array as $i => $v)
+        {
+            if ($v["fecha"] == $fecha and $v["deuda"] == 1)
+                return true;
+        }
+        return false;
+    }
+
     function existe_venta_en_el_arreglo($array, $fecha) 
     {
         foreach ($array as $i => $v)
@@ -103,7 +113,7 @@
         return $porcentaje_peluqueria;
     }
 
-    function porcentaje_dueño($array_porcentajes, $fecha_num, $empleado)
+    function porcentaje_dueño_por_empleado($array_porcentajes, $fecha_num, $empleado)
     {
         $id_aux = 0;
         $fecha_num_aux = 0;
@@ -143,6 +153,29 @@
         return $porcentaje_empleado;
     }
 
+    function total_empleado($empleado, $array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta, $dueño)
+    {
+        $total = 0;
+        $porcentaje_empleado = porcentaje_empleado($array_porcentajes, $fecha_num_consulta, $empleado);
+        $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $fecha_num_consulta, $empleado);
+
+        foreach ($array_ingresos as $row)
+        {
+            if ($dueño)
+            {
+                if ($row["tipo_ingreso"] == "trabajo")
+                {
+                    //Se toma el porcentaje de cada empleado
+                    $total += ($row["efectivo_monto"]) / 100;
+                }
+            }
+            //Se toma el porcenta del empleado a buscar
+        }
+
+        return $total;
+    }
+
+    /////borrar
     function crear_modal_detalle($empleado, $ingresos, $pagos)
     {
         //Modal de detalles pagos a empleados
@@ -1673,6 +1706,33 @@
         </form>
         <?php
     }
+    ////////borrar
+
+    function consultar_empleado($bd, &$array_empleados)
+    {
+        $sql = "select 
+            e.empleado_telf,
+            e.nombre,
+            e.apellido,
+            e.genero,
+            e.correo,
+            e.login,
+            e.dueño
+        from
+            empleado e;";
+        $result = $bd->mysql->query($sql);
+        unset($sql);
+        if ($result)
+        {
+            if (!empty($result->num_rows))
+            {
+                $array_empleados = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+            }
+        }
+        else
+            unset($result);
+    }
 
     function consultar_ingresos_totales($bd, &$array_ingresos)
     {
@@ -1703,6 +1763,10 @@
             when i.debito = 1 then id.monto 
             else '' 
         end debito_monto,
+        case 
+            when i.deuda = 1 then idd.monto 
+            else 0 
+        end deuda_monto,
         e.empleado_telf empleado_telf, 
         concat(e.nombre,' ',e.apellido) empleado,
         e.dueño dueño, 
@@ -1719,9 +1783,8 @@
             left join cliente c on i.cliente_telf = c.telf 
             left join ingreso_efectivo ie on i.id_ingreso = ie.id_ingreso 
             left join ingreso_transferencia it on i.id_ingreso = it.id_ingreso 
-            left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
-        where 
-            (i.efectivo != 0 or i.debito != 0 or i.transferencia != 0 or i.deuda != 1) 
+            left join ingreso_debito id on id.id_ingreso = i.id_ingreso
+            left join ingreso_deuda idd on i.id_ingreso = idd.id_ingreso  
         union all 
         select 
             v.fecha_num, 
@@ -1749,6 +1812,10 @@
                 when v.debito = 1 then vd.monto 
                 else '' 
             end debito_monto,
+            case 
+                when v.deuda = 1 then vdd.monto 
+                else 0 
+            end deuda_monto,
             '' empleado_telf, 
             'Venta' empleado,
             '' dueño, 
@@ -1764,8 +1831,7 @@
             left join venta_efectivo ve on v.id_venta = ve.id_venta 
             left join venta_transferencia vt on v.id_venta = vt.id_venta 
             left join venta_debito vd on vd.id_venta = v.id_venta 
-        where 
-            (v.efectivo != 0 or v.debito != 0 or v.transferencia != 0 or v.deuda != 1)
+            left join venta_deuda vdd on v.id_venta = vdd.id_venta 
         union all
         select
             ap.fecha_num,
@@ -1788,7 +1854,8 @@
             case 
                 when ap.transferencia = 1 then apt.referencia 
                 else '' 
-            end transferencia_referencia, 
+            end transferencia_referencia,
+            0 deuda_monto, 
             0 debito_monto,
             '' empleado_telf, 
             '' empleado,
@@ -2439,7 +2506,7 @@
                             $por_pago_de_deuda_encontrado = 0;
                             foreach($array_ingresos as $row)
                             {
-                                if ($fecha == $row["fecha"]) 
+                                if ($fecha == $row["fecha"] and $row["deuda"] != 1) 
                                 {
                                     $total_ingreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
                                     $total_ingreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
@@ -2498,6 +2565,76 @@
             <div id="id-ingreso-del-dia-contenido-2" class="w3-panel w3-blue-grey" style="display: none">
             <h3>Aviso</h3>
             <p>No hubo ingresos registrados</p>
+            </div>
+            <?php
+        }
+        ?>
+        </div>
+        </form>
+        <?php
+    }
+
+    function mostrar_deudas_del_dia($array_ingresos, $fecha)
+    {
+        ?>
+        <form class="w3-container w3-card-4 w3-light-grey w3-margin table-overflow" method="post">
+        <div class="w3-row w3-section" style='font-weight: bolder; float: left;'>
+            Deudas del d&iacute;a
+        </div>
+        <div class="w3-row w3-section" style='font-weight: bolder; float: right;'>
+            <span style='cursor:pointer;' class='w3-button' onclick="return mostrar_ocultar_div('id-deuda-del-dia');">
+                <i id="id-deuda-del-dia-icon" class='icon-chevron-down'></i>
+            </span>
+        </div>
+        <div id="id-deuda-del-dia" class="w3-row w3-section" style="display:none;">
+        <?php
+        if (existe_fecha_en_arreglo_con_deuda($array_ingresos, $fecha))
+        {
+            ?>
+            <div id="id-deuda-del-dia-contenido-1" style="display:none;">
+                <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+                    <thead>
+                        <tr class="w3-dulcevanidad">
+                            <th align="center">Tipo</th>
+                            <th align="center">Empleado</th>
+                            <th align="center">Cliente</th>
+                            <th align="center">Deuda</th>
+                            <th align="center">Comentario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            $total_deuda = 0;
+
+                            foreach ($array_ingresos as $row)
+                            {
+                                if ($fecha == $row["fecha"] and $row["deuda"] == 1) 
+                                {
+                                    $total_deuda += $row["deuda_monto"] ? $row["deuda_monto"] : 0;
+                                    echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
+                                    echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
+                                    echo"<td class='table-celda-texto'>".$row["cliente"]."</td>";
+                                    echo"<td class='table-celda-numerica'>".$row["deuda_monto"]."</td>";
+                                    echo"<td class='table-celda-texto-ultima'>".$row["observacion"]."</td>";
+                                }
+                            }
+                        ?>
+                    </tbody>
+                </table>
+                <?php
+                    echo "<table border='0'>";
+                    echo "<tr><td><b>Total:</b></td><td align='right'>$total_deuda</td></tr>";
+                    echo "</table>";
+                ?>
+            </div>
+            <?php
+        }
+        else
+        {
+            ?>
+            <div id="id-deuda-del-dia-contenido-2" class="w3-panel w3-blue-grey" style="display: none">
+            <h3>Aviso</h3>
+            <p>No hubo deudas registradas</p>
             </div>  
             <?php
         }
@@ -2709,16 +2846,61 @@
         <?php
     }
 
-    function mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta)
+    function mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $array_empleados, $fecha, $fecha_num_consulta)
     {
-        
+        ?>
+        <form class="w3-container w3-card-4 w3-light-grey w3-margin table-overflow" method="post">
+        <div class="w3-row w3-section" style='font-weight: bolder; float: left;'>
+            Empleados
+        </div>
+        <div class="w3-row w3-section">
+        <?php
+            if (count($array_empleados))
+            {
+                ?>
+                <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+                    <thead>
+                        <tr class="w3-dulcevanidad">
+                            <th align="center">Empleado</th>
+                            <th align="center">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            foreach ($array_empleados as $empleado)
+                            {
+                                echo "<tr>";
+                                echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
+                                echo "<td class='table-celda-numerica'>".total_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta, $empleado["dueño"])."</td>";
+                                echo "</tr>";
+                            }
+                        ?>
+                    </tbody>
+                </table>
+                <?php
+            }
+            else
+            {
+                ?>
+                <div class="w3-panel w3-blue-grey">
+                <h3>Aviso</h3>
+                <p>No hay empleados registrados</p>
+                </div>  
+                <?php
+            }
+        ?>
+        </div>
+        </form>
+        <?php
     }
 
-    function mostrar_busqueda($bd, &$array_ingresos, &$array_egresos, &$array_porcentajes)
+    function mostrar_busqueda($bd, &$array_ingresos, &$array_egresos, &$array_porcentajes, &$array_empleados)
     {
         $admin = usuario_admin();
         $cajero = usuario_cajero();
         $consulta = usuario_consulta();
+
+        consultar_empleado($bd, $array_empleados);
 
         consultar_ingresos_totales($bd, $array_ingresos);
 
@@ -2733,11 +2915,13 @@
 
         mostrar_ingresos_netos_del_dia($array_ingresos, $fecha);
 
+        mostrar_deudas_del_dia($array_ingresos, $fecha);
+
         mostrar_ventas_del_dia($array_ingresos, $fecha);
 
         mostrar_egresos_del_dia($array_egresos, $fecha);
 
-        //mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta);
+        mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $array_empleados, $fecha, $fecha_num_consulta);
 
         // if ($admin) {
         //     acumulado_peluqueria_dueño($bd);
@@ -2763,6 +2947,7 @@
         $array_ingresos = array();
         $array_egresos = array();
         $array_porcentajes = array();
-        mostrar_busqueda($bd, $array_ingresos, $array_egresos, $array_porcentajes);
+        $array_empleados = array();
+        mostrar_busqueda($bd, $array_ingresos, $array_egresos, $array_porcentajes, $array_empleados);
     }
 ?>
