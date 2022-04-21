@@ -161,15 +161,37 @@
 
         foreach ($array_ingresos as $row)
         {
-            if ($dueño)
+            if ($row["tipo_ingreso"] == "trabajo" and $row["fecha_num"] <= $fecha_num_consulta and $row["por_pago_de_deuda"] == 0)
             {
-                if ($row["tipo_ingreso"] == "trabajo")
+                if ($dueño)
                 {
-                    //Se toma el porcentaje de cada empleado
-                    $total += ($row["efectivo_monto"]) / 100;
+                    $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $fecha_num_consulta, $row["empleado_telf"]);                    
+                    $total += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño) / 100;
+                    $total += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño) / 100;
+                    $total += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100;
+                    $total += (($row["deuda_monto"] ? $row["deuda_monto"] : 0) * $porcentaje_dueño) / 100;
+                }
+                
+                if ($empleado == $row["empleado_telf"])
+                {
+                    $total += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_empleado) / 100;
+                    $total += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_empleado) / 100;
+                    $total += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_empleado) / 100;
+                    $total += (($row["deuda_monto"] ? $row["deuda_monto"] : 0) * $porcentaje_empleado) / 100;
                 }
             }
-            //Se toma el porcenta del empleado a buscar
+        }
+
+        foreach ($array_egresos as $row)
+        {
+            if ($row["tipo_egreso"] == "pago_empleado" and $row["fecha_num"] <= $fecha_num_consulta)
+            {
+                if ($empleado == $row["empleado_telf"])
+                {
+                    $total -= ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0);
+                    $total -= ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+                }
+            }
         }
 
         return $total;
@@ -1909,7 +1931,8 @@
             case 
                 when e.debito = 1 then ed.monto 
                 else 0 
-            end debito_monto, 
+            end debito_monto,
+            '' empleado_telf, 
             '' empleado,
             'compra_servicio' tipo_egreso
         from
@@ -1938,7 +1961,8 @@
                 when vp.transferencia = 1 then vpt.referencia 
                 else '' 
             end transferencia_referencia, 
-            0 debito_monto, 
+            0 debito_monto,
+            e.empleado_telf empleado_telf, 
             concat(e.nombre,' ',e.apellido) empleado,
             'pago_empleado' tipo_egreso
         from
@@ -1967,7 +1991,8 @@
                 when ae.transferencia = 1 then aet.referencia 
                 else '' 
             end transferencia_referencia, 
-            0 debito_monto, 
+            0 debito_monto,
+            e.empleado_telf empleado_telf, 
             concat(e.nombre,' ',e.apellido) empleado,
             'abono_empleado' tipo_egreso
         from
