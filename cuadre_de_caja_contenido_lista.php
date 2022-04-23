@@ -2351,7 +2351,7 @@
                 <div class="w3-quarter w3-container">
                     <div style="background-color: #6C6C6C; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
                         <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
-                            Ingresos por abono
+                            Ingresos por abono a peluquer&iacute;a
                         </div>
                         <table border="0" width="100%">
                             <tr>
