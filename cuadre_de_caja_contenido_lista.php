@@ -3014,8 +3014,8 @@
                         {
                             echo "<tr>";
                             if ($row2["tipo"] == "ingreso") {
-                                echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
                                 echo "<td class='table-celda-texto'>".$row2["empleado"]."</td>";
+                                echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
                                 echo "<td class='table-celda-numerica'>".$row2["efectivo_monto"]."</td>";
                                 echo "<td class='table-celda-numerica'>".$row2["debito_monto"]."</td>";
                                 echo "<td class='table-celda-numerica'>".$row2["transferencia_monto"]."</td>";
@@ -3058,8 +3058,8 @@
                             }
                             else {
                                 if ($row2["empleado_telf"] == $empleado_telf) {
-                                    echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
                                     echo "<td class='table-celda-texto'>".$row2["empleado"]."</td>";
+                                    echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
                                     echo "<td class='table-celda-numerica'>".$row2["efectivo_monto"]."</td>";
                                     echo "<td class='table-celda-numerica'>".$row2["debito_monto"]."</td>";
                                     echo "<td class='table-celda-numerica'>".$row2["transferencia_monto"]."</td>";
