@@ -2254,19 +2254,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo $total_ingreso_efectivo - $total_egreso_efectivo; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_efectivo - $total_egreso_efectivo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo $total_ingreso_datafono - $total_egreso_datafono; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_datafono - $total_egreso_datafono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo $total_ingreso_transferencia - $total_egreso_transferencia; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_transferencia - $total_egreso_transferencia); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo $total_ingreso - $total_egreso; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso - $total_egreso); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2279,19 +2279,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo $total_ingreso_efectivo; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_efectivo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo $total_ingreso_datafono; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_datafono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo $total_ingreso_transferencia; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_transferencia); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo $total_ingreso; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2304,19 +2304,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo $total_ingreso_efectivo_por_trabajo; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_efectivo_por_trabajo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo $total_ingreso_datafono_por_trabajo; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_datafono_por_trabajo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo $total_ingreso_transferencia_por_trabajo; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_transferencia_por_trabajo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo $total_ingreso_por_trabajo; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_por_trabajo); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2329,19 +2329,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo $total_ingreso_efectivo_por_venta; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_efectivo_por_venta); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo $total_ingreso_datafono_por_venta; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_datafono_por_venta); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo $total_ingreso_transferencia_por_venta; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_transferencia_por_venta); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo $total_ingreso_por_venta; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_por_venta); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2356,19 +2356,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo $total_ingreso_efectivo_por_abono; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_efectivo_por_abono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo $total_ingreso_datafono_por_abono; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_datafono_por_abono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo $total_ingreso_transferencia_por_abono; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_transferencia_por_abono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo $total_ingreso_por_abono; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_por_abono); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2381,19 +2381,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo $total_egreso_efectivo; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_efectivo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo $total_egreso_datafono; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_datafono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo $total_egreso_transferencia; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_transferencia); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo $total_egreso; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2406,15 +2406,15 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo $total_egreso_efectivo_pago_empleado; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_efectivo_pago_empleado); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo $total_egreso_transferencia_pago_empleado; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_transferencia_pago_empleado); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo $total_egreso_pago_empleado; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_pago_empleado); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2427,19 +2427,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo $total_egreso_efectivo_compra; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_efectivo_compra); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo $total_egreso_datafono_compra; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_datafono_compra); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo $total_egreso_transferencia_compra; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_transferencia_compra); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo $total_egreso_compra; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_compra); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2454,15 +2454,15 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo $total_egreso_efectivo_abono_empleado; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_efectivo_abono_empleado); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo $total_egreso_transferencia_abono_empleado; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_transferencia_abono_empleado); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo $total_egreso_abono_empleado; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_egreso_abono_empleado); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2475,19 +2475,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) >= 0 ? ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) : 0; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) >= 0 ? ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) : 0); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) >= 0 ? ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) : 0; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) >= 0 ? ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) : 0); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) >= 0 ? ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) : 0; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) >= 0 ? ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) : 0); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo ($total_ingreso_del_dia - $total_egreso_del_dia) >= 0 ? ($total_ingreso_del_dia - $total_egreso_del_dia) : 0; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', ($total_ingreso_del_dia - $total_egreso_del_dia) >= 0 ? ($total_ingreso_del_dia - $total_egreso_del_dia) : 0); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2500,19 +2500,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo $total_ganancia_peluqueria_efectivo; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ganancia_peluqueria_efectivo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo $total_ganancia_peluqueria_datafono; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ganancia_peluqueria_datafono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo $total_ganancia_peluqueria_transferencia; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ganancia_peluqueria_transferencia); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo $total_ganancia_peluqueria; ?></td>
+                                <td align="right"><?php echo money_format('%.2n', $total_ganancia_peluqueria); ?></td>
                             </tr>
                         </table>
                     </div>
