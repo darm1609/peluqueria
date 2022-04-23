@@ -2,7 +2,7 @@
 
     $(document).ready(function(){
 		$(function() {
-			$("#bfecha").datepicker({
+			$(".fecha").datepicker({
 				dateFormat:"dd-mm-yy",
 				dayNamesMin:[ "Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab" ],
 				monthNames:[ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" ]
@@ -72,7 +72,7 @@
                             <?php
                                 $hoy=date("d-m-Y",time());
                             ?>
-                            <input type="text" class="w3-input w3-border" id="bfecha" name="bfecha" placeholder="dd-mm-aaaa" value="<?php echo $hoy; ?>">
+                            <input type="text" class="w3-input w3-border fecha" id="bfecha" name="bfecha" placeholder="dd-mm-aaaa" value="<?php echo $hoy; ?>">
                         </td>
                     </tr>
                 </table>

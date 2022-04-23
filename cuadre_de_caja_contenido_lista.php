@@ -32,6 +32,38 @@
         });
     }
 
+    function consultar_fecha_empleado(empleado)
+    {
+        let fecha = $("#bfecha_" + empleado).val();
+        if (fecha.length)
+        {
+            let dateFecha = new Date(Date.parse(fecha) + 5 * 60 * 60 * 1000);
+            let dia  = dateFecha.getDate();
+            let mes  = dateFecha.getMonth() + 1;
+            if (Number(dia) < 10)
+                dia = "0" + dia.toString();
+            if (Number(mes) < 10)
+                mes = "0" + mes.toString();
+            let anio  = dateFecha.getFullYear();
+            let fechaFormato = dia.toString() + "-" + mes + "-" + anio.toString();
+            let divFecha = $("#empleado_" + empleado + "_fecha_" + fechaFormato);
+            if (divFecha.length)
+            {
+                $(".fecha-detalle-empleado").hide();
+                divFecha.show();
+            }
+            else {
+                $(".fecha-detalle-empleado").hide();
+                alertify.alert("","EL EMPLEADO NO TIENE TRABAJOS EN ESTA FECHA").set('label', 'Aceptar');
+            }
+                
+        }
+        else {
+            $(".fecha-detalle-empleado").hide();
+            alertify.alert("","DEBE COLOCAR UNA FECHA").set('label', 'Aceptar');
+        }
+    }
+
 </script>
 <style>
     .table-overflow {
@@ -2876,23 +2908,23 @@
         //Modal de detalles pagos a empleados
         echo "<div id='modal_detalle_empleado_".$empleado_telf."' class='w3-modal'>";
         echo "<div class='w3-modal-content'>";
-        echo "<span onclick=\"document.getElementById('modal_detalle_empleado_".$empleado_telf."').style.display='none'\" class='w3-button w3-display-topright'>&times;</span>";
-        echo "<span class='w3-display-topleft' style='padding: 1em;'><b>".$empleado_nombre."</b></span><br>";
-        echo "<br>";
+        echo "<div onclick=\"document.getElementById('modal_detalle_empleado_".$empleado_telf."').style.display='none'\" class='w3-button w3-display-topright'>&times;</div>";
+        echo "<div class='w3-display-topleft' style='padding: 1em;'><b>".$empleado_nombre."</b><br><br>"; 
+        echo "</div>";
+        echo "<br><br>";
+        echo "<div style='padding: 1em;'>";
+        echo "<input type='date' class='w3-input w3-border' id='bfecha_".$empleado_telf."' name='bfecha_".$empleado_telf."' placeholder='dd-mm-aaaa'>";
+        echo "<input class='w3-button w3-block w3-dulcevanidad' type='button' id='enviar' name='enviar' value='Consultar' onclick=\"consultar_fecha_empleado('".$empleado_telf."');\">";
+        echo "</div>";
         echo "<div class='table-overflow' style='padding: 1em;'>";
         $resultado_fecha = array();
         $resultado = array();
         $i = 0;
-
         if ($dueño)
-        {
-
-        }
-        else
         {
             foreach ($array_ingresos as $row)
             {
-                if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["empleado_telf"] == $empleado_telf)
+                if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["fecha_num"] <=  $fecha_num_consulta)
                 {
                     $resultado_fecha[$i]["fecha_num"] = $row["fecha_num"];
                     $resultado_fecha[$i]["fecha"] = $row["fecha"];
@@ -2903,7 +2935,176 @@
 
             foreach ($array_egresos as $row)
             {
-                if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["empleado_telf"] == $empleado_telf)
+                if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["fecha_num"] <=  $fecha_num_consulta)
+                {
+                    $resultado_fecha[$i]["fecha_num"] = $row["fecha_num"];
+                    $resultado_fecha[$i]["fecha"] = $row["fecha"];
+                    $resultado_fecha[$i]["empleado_telf"] = $row["empleado_telf"];
+                    $i++;
+                }
+            }
+
+            foreach ($array_ingresos as $row)
+            {
+                if ($row["tipo_ingreso"] == "trabajo") 
+                {
+                    $resultado[$i]["fecha_num"] = $row["fecha_num"];
+                    $resultado[$i]["fecha"] = $row["fecha"];
+                    $resultado[$i]["tipo"] = "ingreso";
+                    $resultado[$i]["motivo"] = $row["motivo"];
+                    $resultado[$i]["efectivo_monto"] = !empty($row["efectivo_monto"]) ? $row["efectivo_monto"] : 0;
+                    $resultado[$i]["debito_monto"] = !empty($row["debito_monto"]) ? $row["debito_monto"] : 0;
+                    $resultado[$i]["deuda_monto"] = !empty($row["deuda_monto"]) ? $row["deuda_monto"] : 0;
+                    $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
+                    $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
+                    $resultado[$i]["empleado_telf"] = $row["empleado_telf"];
+                    $resultado[$i]["empleado"] = $row["empleado"];
+                    $resultado[$i]["porcentaje_empleado"] = porcentaje_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
+                    $resultado[$i]["porcentaje_peluqueria"] = porcentaje_peluqueria($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
+                    $resultado[$i]["porcentaje_dueño"] = porcentaje_dueño_por_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
+                    $i++;
+                }
+            }
+
+            foreach ($array_egresos as $row)
+            {
+                if ($row["tipo_egreso"] == "pago_empleado") 
+                {
+                    $resultado[$i]["fecha_num"] = $row["fecha_num"];
+                    $resultado[$i]["fecha"] = $row["fecha"];
+                    $resultado[$i]["tipo"] = "pago";
+                    $resultado[$i]["motivo"] = $row["motivo"];
+                    $resultado[$i]["efectivo_monto"] = !empty($row["efectivo_monto"]) ? $row["efectivo_monto"] : 0;
+                    $resultado[$i]["debito_monto"] = 0;
+                    $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
+                    $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
+                    $resultado[$i]["empleado_telf"] = $row["empleado_telf"];
+                    $resultado[$i]["empleado"] = $row["empleado"];
+                    $i++;
+                }
+            }
+
+            array_multisort($resultado_fecha, SORT_DESC, SORT_REGULAR);
+
+            foreach ($resultado_fecha as $row)
+            {
+                echo "<div id='empleado_".$empleado_telf."_fecha_".$row["fecha"]."' class='fecha-detalle-empleado' style='display:none;'>";
+                    echo "<b>".$row["fecha"][0].$row["fecha"][1]."/".$row["fecha"][3].$row["fecha"][4]."/".$row["fecha"][6].$row["fecha"][7].$row["fecha"][8].$row["fecha"][9].":</b><br><br>";
+                    echo "<div id='detalle_fecha_".$row["fecha"]."_".$empleado_telf."' class='table-overflow' style='display: block;border: 0px solid #cccccc;margin-top: -1.5em;'>";
+                    echo "<table class=\"w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white\">";
+                    echo "<thead>";
+                    echo "<tr class=\"w3-dulcevanidad\">";
+                    echo "<th align='center'>Empleado</th>";
+                    echo "<th align='center'>Motivo</th>";
+                    echo "<th align='center'>Efectivo</th>";
+                    echo "<th align='center'>Debito</th>";
+                    echo "<th align='center'>Transferencia</th>";
+                    echo "<th align='center'>Deuda</th>";
+                    echo "<th align='center'>%</th>";
+                    echo "</tr>";
+                    echo "</thead>";
+                    echo "<tbody>";
+                    $total_por_dia = 0;
+                    $total_por_dia_ingreso = 0;
+                    $total_por_dia_pago = 0;
+                    foreach ($resultado as $row2)
+                    {
+                        $total_por_linea_con_porcentaje = 0;
+                        if ($row2["fecha"] == $row["fecha"])
+                        {
+                            echo "<tr>";
+                            echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
+                            if ($row2["tipo"] == "ingreso") {
+                                echo "<td class='table-celda-texto'>".$row2["empleado"]."</td>";
+                                echo "<td class='table-celda-numerica'>".$row2["efectivo_monto"]."</td>";
+                                echo "<td class='table-celda-numerica'>".$row2["debito_monto"]."</td>";
+                                echo "<td class='table-celda-numerica'>".$row2["transferencia_monto"]."</td>";
+                                echo "<td class='table-celda-numerica'>".$row2["deuda_monto"]."</td>";
+                                
+                                if ($row2["empleado_telf"] != $empleado_telf) {
+                                    $total_por_linea_con_porcentaje += ($row2["efectivo_monto"] * $row2["porcentaje_dueño"] / 100);
+                                    $total_por_linea_con_porcentaje += ($row2["debito_monto"] * $row2["porcentaje_dueño"] / 100);
+                                    $total_por_linea_con_porcentaje += ($row2["transferencia_monto"] * $row2["porcentaje_dueño"] / 100);
+                                    $total_por_linea_con_porcentaje += ($row2["deuda_monto"] * $row2["porcentaje_dueño"] / 100);
+                                    echo "<td class='table-celda-numerica-ultima'>".$total_por_linea_con_porcentaje."</td>";
+
+                                    $total_por_dia += ($row2["efectivo_monto"] * $row2["porcentaje_dueño"] / 100);
+                                    $total_por_dia += ($row2["debito_monto"] * $row2["porcentaje_dueño"] / 100);
+                                    $total_por_dia += ($row2["transferencia_monto"] * $row2["porcentaje_dueño"] / 100);
+                                    $total_por_dia += ($row2["deuda_monto"] * $row2["porcentaje_dueño"] / 100);
+
+                                    $total_por_dia_ingreso += ($row2["efectivo_monto"] * $row2["porcentaje_dueño"] / 100);
+                                    $total_por_dia_ingreso += ($row2["debito_monto"] * $row2["porcentaje_dueño"] / 100);
+                                    $total_por_dia_ingreso += ($row2["transferencia_monto"] * $row2["porcentaje_dueño"] / 100);
+                                    $total_por_dia_ingreso += ($row2["deuda_monto"] * $row2["porcentaje_dueño"] / 100);
+                                }
+                                else {
+                                    $total_por_linea_con_porcentaje += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
+                                    $total_por_linea_con_porcentaje += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
+                                    $total_por_linea_con_porcentaje += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
+                                    $total_por_linea_con_porcentaje += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
+                                    echo "<td class='table-celda-numerica-ultima'>".$total_por_linea_con_porcentaje."</td>";
+
+                                    $total_por_dia += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
+                                    $total_por_dia += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
+                                    $total_por_dia += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
+                                    $total_por_dia += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
+
+                                    $total_por_dia_ingreso += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
+                                    $total_por_dia_ingreso += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
+                                    $total_por_dia_ingreso += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
+                                    $total_por_dia_ingreso += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
+                                }
+                            }
+                            else {
+                                if ($row2["empleado_telf"] == $empleado_telf) {
+                                    echo "<td class='table-celda-texto'>".$row2["empleado"]."</td>";
+                                    echo "<td class='table-celda-numerica'>".$row2["efectivo_monto"]."</td>";
+                                    echo "<td class='table-celda-numerica'>".$row2["debito_monto"]."</td>";
+                                    echo "<td class='table-celda-numerica'>".$row2["transferencia_monto"]."</td>";
+                                    echo "<td class='table-celda-numerica'>0</td>";
+                                    $total_por_linea_con_porcentaje += $row2["efectivo_monto"];
+                                    $total_por_linea_con_porcentaje += $row2["debito_monto"];
+                                    $total_por_linea_con_porcentaje += $row2["transferencia_monto"];
+                                    echo "<td class='table-celda-numerica-ultima'>".$total_por_linea_con_porcentaje."</td>";
+                                    $total_por_dia -= $row2["efectivo_monto"];
+                                    $total_por_dia -= $row2["debito_monto"];
+                                    $total_por_dia -= $row2["transferencia_monto"];
+                                    $total_por_dia_pago += $row2["efectivo_monto"];
+                                    $total_por_dia_pago += $row2["debito_monto"];
+                                    $total_por_dia_pago += $row2["transferencia_monto"];
+                                }
+                            }
+                        }
+                    }
+                    echo "</tr>";
+                    echo "<tr>";
+                    echo "<td class='table-celda-texto'><b>Totales:</b></td>";
+                    echo "<td class='table-celda-texto-ultima' colspan='6' align='center'><b>Ingreso:&nbsp;".$total_por_dia_ingreso."&nbsp;&nbsp;Pago:&nbsp;".$total_por_dia_pago."</b></td>";
+                    echo "</tr>";
+                    $total_por_dia = 0;
+                    echo "</tbody>";
+                    echo "</table>";
+                    echo "</div>";
+                echo "</div>";
+            }
+        }
+        else
+        {
+            foreach ($array_ingresos as $row)
+            {
+                if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["empleado_telf"] == $empleado_telf and $row["fecha_num"] <=  $fecha_num_consulta)
+                {
+                    $resultado_fecha[$i]["fecha_num"] = $row["fecha_num"];
+                    $resultado_fecha[$i]["fecha"] = $row["fecha"];
+                    $resultado_fecha[$i]["empleado_telf"] = $row["empleado_telf"];
+                    $i++;
+                }
+            }
+
+            foreach ($array_egresos as $row)
+            {
+                if (!existe_fecha_en_arreglo($resultado_fecha, $row["fecha"]) and $row["empleado_telf"] == $empleado_telf and $row["fecha_num"] <=  $fecha_num_consulta)
                 {
                     $resultado_fecha[$i]["fecha_num"] = $row["fecha_num"];
                     $resultado_fecha[$i]["fecha"] = $row["fecha"];
@@ -2954,75 +3155,77 @@
 
             foreach ($resultado_fecha as $row)
             {
-                echo "<span style='cursor:pointer;' onclick='mostrar_detalle_empleado(\"".$row["fecha"]."\",\"".$empleado_telf."\");'>".$row["fecha"]."&nbsp;<i id='icon_detalle_fecha_".$row["fecha"]."_".$empleado_telf."' class='icon-chevron-down'></i></span><br><br>";
-                echo "<div id='detalle_fecha_".$row["fecha"]."_".$empleado_telf."' style='display: none;border: 1px solid #cccccc;margin-top: -1.5em;padding: 1em;'>";
-                echo "<table border='1' cellpadding='5' cellspacing='0' style='border-color: floralwhite;'>";
-                echo "<thead>";
-                echo "<tr>";
-                echo "<th align='center'>Motivo</th>";
-                echo "<th align='center'>Efectivo</th>";
-                echo "<th align='center'>Debito</th>";
-                echo "<th align='center'>Transferencia</th>";
-                echo "<th align='center'>Deuda</th>";
-                echo "<th align='center'>%</th>";
-                echo "</tr>";
-                echo "</thead>";
-                echo "<tbody>";
-                $total_por_dia = 0;
-                $total_por_dia_ingreso = 0;
-                $total_por_dia_pago = 0;
-                foreach ($resultado as $row2)
-                {
-                    $total_por_linea_con_porcentaje = 0;
-                    if ($row2["fecha"] == $row["fecha"] and $row2["empleado_telf"] == $empleado_telf)
+                echo "<div id='empleado_".$empleado_telf."_fecha_".$row["fecha"]."' class='fecha-detalle-empleado' style='display:none;'>";
+                    echo "<b>".$row["fecha"][0].$row["fecha"][1]."/".$row["fecha"][3].$row["fecha"][4]."/".$row["fecha"][6].$row["fecha"][7].$row["fecha"][8].$row["fecha"][9].":</b><br><br>";
+                    echo "<div id='detalle_fecha_".$row["fecha"]."_".$empleado_telf."' class='table-overflow' style='display: block;border: 0px solid #cccccc;margin-top: -1.5em;'>";
+                    echo "<table class=\"w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white\">";
+                    echo "<thead>";
+                    echo "<tr class=\"w3-dulcevanidad\">";
+                    echo "<th align='center'>Motivo</th>";
+                    echo "<th align='center'>Efectivo</th>";
+                    echo "<th align='center'>Debito</th>";
+                    echo "<th align='center'>Transferencia</th>";
+                    echo "<th align='center'>Deuda</th>";
+                    echo "<th align='center'>%</th>";
+                    echo "</tr>";
+                    echo "</thead>";
+                    echo "<tbody>";
+                    $total_por_dia = 0;
+                    $total_por_dia_ingreso = 0;
+                    $total_por_dia_pago = 0;
+                    foreach ($resultado as $row2)
                     {
-                        echo "<tr>";
-                        echo "<td>".$row2["motivo"]."</td>";
-                        if ($row2["tipo"] == "ingreso") {
-                            echo "<td align='right'>".$row2["efectivo_monto"]."</td>";
-                            echo "<td align='right'>".$row2["debito_monto"]."</td>";
-                            echo "<td align='right'>".$row2["transferencia_monto"]."</td>";
-                            echo "<td align='right'>".$row2["deuda_monto"]."</td>";
-                            $total_por_linea_con_porcentaje += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
-                            $total_por_linea_con_porcentaje += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
-                            $total_por_linea_con_porcentaje += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
-                            $total_por_linea_con_porcentaje += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
-                            echo "<td align='right'>".$total_por_linea_con_porcentaje."</td>";
-                            $total_por_dia += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
-                            $total_por_dia += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
-                            $total_por_dia += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
-                            $total_por_dia += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
-                            $total_por_dia_ingreso += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
-                            $total_por_dia_ingreso += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
-                            $total_por_dia_ingreso += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
-                            $total_por_dia_ingreso += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
-                        }
-                        else {
-                            echo "<td align='right'>".$row2["efectivo_monto"]."</td>";
-                            echo "<td align='right'>".$row2["debito_monto"]."</td>";
-                            echo "<td align='right'>".$row2["transferencia_monto"]."</td>";
-                            echo "<td align='right'>0</td>";
-                            $total_por_linea_con_porcentaje += $row2["efectivo_monto"];
-                            $total_por_linea_con_porcentaje += $row2["debito_monto"];
-                            $total_por_linea_con_porcentaje += $row2["debito_monto"];
-                            echo "<td align='right'>".$total_por_linea_con_porcentaje."</td>";
-                            $total_por_dia -= $row2["efectivo_monto"];
-                            $total_por_dia -= $row2["debito_monto"];
-                            $total_por_dia -= $row2["transferencia_monto"];
-                            $total_por_dia_pago += $row2["efectivo_monto"];
-                            $total_por_dia_pago += $row2["debito_monto"];
-                            $total_por_dia_pago += $row2["transferencia_monto"];
+                        $total_por_linea_con_porcentaje = 0;
+                        if ($row2["fecha"] == $row["fecha"] and $row2["empleado_telf"] == $empleado_telf)
+                        {
+                            echo "<tr>";
+                            echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
+                            if ($row2["tipo"] == "ingreso") {
+                                echo "<td class='table-celda-numerica'>".$row2["efectivo_monto"]."</td>";
+                                echo "<td class='table-celda-numerica'>".$row2["debito_monto"]."</td>";
+                                echo "<td class='table-celda-numerica'>".$row2["transferencia_monto"]."</td>";
+                                echo "<td class='table-celda-numerica'>".$row2["deuda_monto"]."</td>";
+                                $total_por_linea_con_porcentaje += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
+                                $total_por_linea_con_porcentaje += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
+                                $total_por_linea_con_porcentaje += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
+                                $total_por_linea_con_porcentaje += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
+                                echo "<td class='table-celda-numerica-ultima'>".$total_por_linea_con_porcentaje."</td>";
+                                $total_por_dia += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
+                                $total_por_dia += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
+                                $total_por_dia += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
+                                $total_por_dia += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
+                                $total_por_dia_ingreso += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
+                                $total_por_dia_ingreso += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
+                                $total_por_dia_ingreso += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
+                                $total_por_dia_ingreso += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
+                            }
+                            else {
+                                echo "<td class='table-celda-numerica'>".$row2["efectivo_monto"]."</td>";
+                                echo "<td class='table-celda-numerica'>".$row2["debito_monto"]."</td>";
+                                echo "<td class='table-celda-numerica'>".$row2["transferencia_monto"]."</td>";
+                                echo "<td class='table-celda-numerica'>0</td>";
+                                $total_por_linea_con_porcentaje += $row2["efectivo_monto"];
+                                $total_por_linea_con_porcentaje += $row2["debito_monto"];
+                                $total_por_linea_con_porcentaje += $row2["transferencia_monto"];
+                                echo "<td class='table-celda-numerica-ultima'>".$total_por_linea_con_porcentaje."</td>";
+                                $total_por_dia -= $row2["efectivo_monto"];
+                                $total_por_dia -= $row2["debito_monto"];
+                                $total_por_dia -= $row2["transferencia_monto"];
+                                $total_por_dia_pago += $row2["efectivo_monto"];
+                                $total_por_dia_pago += $row2["debito_monto"];
+                                $total_por_dia_pago += $row2["transferencia_monto"];
+                            }
                         }
                     }
-                }
-                echo "</tr>";
-                echo "<tr>";
-                echo "<td><b>Totales:</b></td>";
-                echo "<td colspan='5' align='center'><b>Ingreso: ".$total_por_dia_ingreso."&nbsp;&nbsp;Pago:".$total_por_dia_pago."</b></td>";
-                echo "</tr>";
-                $total_por_dia = 0;
-                echo "</tbody>";
-                echo "</table>";
+                    echo "</tr>";
+                    echo "<tr>";
+                    echo "<td class='table-celda-texto'><b>Totales:</b></td>";
+                    echo "<td class='table-celda-texto-ultima' colspan='5' align='center'><b>Ingreso:&nbsp;".$total_por_dia_ingreso."&nbsp;&nbsp;Pago:&nbsp;".$total_por_dia_pago."</b></td>";
+                    echo "</tr>";
+                    $total_por_dia = 0;
+                    echo "</tbody>";
+                    echo "</table>";
+                    echo "</div>";
                 echo "</div>";
             }
         }
