@@ -37,12 +37,19 @@
 			document.getElementById('bfecha').disabled=false;
 		else
 			document.getElementById('bfecha').disabled=true;;
+		document.getElementById('chbempleado_telf').disabled=false;
+		if(document.getElementById('chbempleado_telf').checked)
+			document.getElementById('bempleado_telf').disabled=false;
+		else
+			document.getElementById('bempleado_telf').disabled=true;;
 	}
 
 	function deshabilitar_especificar()
 	{
 		document.getElementById('chbfecha').disabled=true;
 		document.getElementById('bfecha').disabled=true;
+		document.getElementById('chbempleado_telf').disabled=true;
+		document.getElementById('bempleado_telf').disabled=true;
 	}
 
 	function confirmar_eliminar(id)
@@ -486,6 +493,35 @@
 								$hoy=date("d-m-Y",time());
 							?>
 							<input type="text" class="w3-input w3-border" id="bfecha" name="bfecha" placeholder="dd-mm-aaaa" value="<?php echo $hoy; ?>" disabled>
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							<input class="w3-check" type="checkbox" id="chbempleado_telf" name="chbempleado_telf" disabled onclick="if(document.getElementById('chbempleado_telf').checked){document.getElementById('bempleado_telf').disabled=false;}else{document.getElementById('bempleado_telf').disabled=true;}">
+						</td>
+						<td>
+							<label>
+								Empleado
+							</label>
+							<select class="w3-select" id="bempleado_telf" name="bempleado_telf" disabled>
+								<option value="">Empleado</option>
+								<?php
+									$sql="SELECT empleado_telf, nombre, apellido FROM empleado;";
+									$result = $bd->mysql->query($sql);
+									unset($sql);
+									if($result)
+									{
+										while($row = $result->fetch_array())
+										{
+											echo"<option value='".$row["empleado_telf"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
+										}
+										unset($row);
+										$result->free();
+									}
+									else
+										unset($result);
+								?>
+							</select>
 						</td>
 					</tr>
 				</table>

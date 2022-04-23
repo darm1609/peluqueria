@@ -44,10 +44,14 @@
 			$where=" ";
 			if(isset($_POST["chbfecha"]) and !empty($_POST["bfecha"]))
 				$where.="i.fecha='".$_POST["bfecha"]."' AND ";
-			$where[strlen($where)-1]=" ";
-			$where[strlen($where)-2]=" ";
-			$where[strlen($where)-3]=" ";
-			$where[strlen($where)-4]=" ";
+			if(isset($_POST["chbempleado_telf"]) and !empty($_POST["bempleado_telf"]))
+				$where.="i.empleado_telf='".$_POST["bempleado_telf"]."' AND ";
+			if (strlen($where) > 1) {
+				$where[strlen($where)-1]=" ";
+				$where[strlen($where)-2]=" ";
+				$where[strlen($where)-3]=" ";
+				$where[strlen($where)-4]=" ";
+			}
 			$where=trim($where);
 			$sql="select i.id_ingreso, i.fecha, mi.motivo as 'tipo de trabajo', case when i.efectivo = 1 then iff.monto else '' end as 'efectivo', case when i.transferencia = 1 then it.monto else '' end as 'transferencia', case when i.transferencia = 1 then it.referencia else '' end as 'referencia', case when i.debito = 1 then id.monto else '' end as 'datáfono', case when i.deuda = 1 then idd.monto else '' end as 'deuda', case when i.deuda = 1 then idd.monto_pagado else '' end as 'pagado', (ifnull(iff.monto,0) + ifnull(it.monto,0) + ifnull(id.monto,0) + ifnull(idd.monto_pagado,0)) as 'total', concat(e.nombre,' ',e.apellido) as 'empleado', case when c.nombre is null then '' else concat(c.nombre,' ',c.apellido) end as 'cliente', case when i.observacion is not null then i.observacion else '' end as 'observacion' from ingreso i inner join empleado e on e.empleado_telf = i.empleado_telf inner join motivo_ingreso mi on mi.id_motivo_ingreso = i.id_motivo_ingreso left join ingreso_debito id on i.id_ingreso = id.id_ingreso left join ingreso_transferencia it on it.id_ingreso = i.id_ingreso left join ingreso_efectivo iff on iff.id_ingreso = i.id_ingreso left join ingreso_deuda idd on idd.id_ingreso = i.id_ingreso left join cliente c on i.cliente_telf = c.telf WHERE ".$where." and i.id_ingreso_padre is null ORDER BY i.fecha_num ASC;";
 		}
@@ -114,6 +118,7 @@
 						<input type="button" class="w3-button w3-block w3-dulcevanidad" id="mostrarxpag" name="mostrarxpag" value="Mostrar" onclick="if($('#accion_eliminar').length) document.getElementById('accion_eliminar').value=''; if($('#accion_modificar').length) document.getElementById('accion_modificar').value='';return enviardatos_lista();">
 					</div>
 				</div>
+				<div style="overflow-x: scroll; overflow-x: auto;">
 				<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
 					<thead>
 						<tr class="w3-dulcevanidad">
@@ -182,6 +187,7 @@
 						?>
 					</tbody>
 				</table>
+				</div>
 				<?php
 					if(isset($_POST["sel_opcion"])) echo"<input type='hidden' id='sel_opcion' name='sel_opcion' value='".$_POST["sel_opcion"]."'>";
 					if(isset($_POST["chbfecha"])) echo"<input type='hidden' id='chbfecha' name='chbfecha' value='".$_POST["chbfecha"]."'>";
