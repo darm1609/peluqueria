@@ -14,5 +14,13 @@
 		require("venta_contenido.php");
 		unset($venta);
 	}
+	else
+	{
+		?>
+		<script>
+			window.location.replace('.');
+		</script>
+		<?php
+	}
 	require("pie.php");
 ?>

@@ -14,5 +14,13 @@
 		require("abono_peluqueria_contenido.php");
 		unset($abono_peluqueria);
 	}
+	else
+	{
+		?>
+		<script>
+			window.location.replace('.');
+		</script>
+		<?php
+	}
 	require("pie.php");
 ?>

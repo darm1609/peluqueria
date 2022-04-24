@@ -14,5 +14,13 @@
 		require("usuario_contenido.php");
 		unset($u);
 	}
+	else
+	{
+		?>
+		<script>
+			window.location.replace('.');
+		</script>
+		<?php
+	}
 	require("pie.php");
 ?>

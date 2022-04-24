@@ -14,5 +14,13 @@
 		require("cliente_contenido.php");
 		unset($c);
 	}
+	else
+	{
+		?>
+		<script>
+			window.location.replace('.');
+		</script>
+		<?php
+	}
 	require("pie.php");
 ?>

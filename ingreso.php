@@ -14,5 +14,13 @@
 		require("ingreso_contenido.php");
 		unset($ingreso);
 	}
+	else
+	{
+		?>
+		<script>
+			window.location.replace('.');
+		</script>
+		<?php
+	}
 	require("pie.php");
 ?>

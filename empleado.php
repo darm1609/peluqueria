@@ -14,5 +14,13 @@
 		require("empleado_contenido.php");
 		unset($e);
 	}
+	else
+	{
+		?>
+		<script>
+			window.location.replace('.');
+		</script>
+		<?php
+	}
 	require("pie.php");
 ?>
