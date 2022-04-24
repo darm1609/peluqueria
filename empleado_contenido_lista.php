@@ -155,7 +155,7 @@
 							while($row = $result->fetch_array())
 							{
 								$motivo=motivo($row["id_motivo_ingreso"],$bd);
-								echo "<b>".$row["fecha"][8].$row["fecha"][9]."-".$row["fecha"][5].$row["fecha"][6]."-".$row["fecha"][0].$row["fecha"][1].$row["fecha"][2].$row["fecha"][3]."</b>";
+								echo "<b>".$row["fecha"]."</b>";
 								echo " ".$motivo." ".$row["porcentaje_empleado"]."% Empleado ".$row["porcentaje_peluqueria"]."% Peluquer&iacute;a ".$row["porcentaje_dueño"]."% Due&ntilde;o";
 								echo "<br>";
 								unset($motivo);
@@ -211,17 +211,17 @@
 				$n=count($arreglo);
 				$arreglo=json_encode($arreglo);
 			?>
-			<!-- <div class="w3-row w3-section">
+			<div class="w3-row w3-section">
 				<div class="w3-rest">
 					<b>Agregar Porcentajes Por Tipo de Trabajo:&nbsp;</b>
 					<?php
-						//echo"<i class='icon-plus4 icon_mas' onclick='agregar_campos(".$arreglo.",".$n.");'></i>";
+						echo"<i class='icon-plus4 icon_mas' onclick='agregar_campos(".$arreglo.",".$n.");'></i>";
 					?>
 					&nbsp;
 					<i class="icon-minus3 icon_menos" onclick="eliminar_campos();"></i>
 				</div>
 			</div>
-			<div id="div_por_motivo"></div> -->
+			<div id="div_por_motivo"></div>
 			<div class="w3-row w3-section">
 				<p>
 				<div class="w3-half">
