@@ -7,6 +7,51 @@
 	function eliminar_ingreso($bd)
 	{
 		global $basedatos;
+
+		//Eliminar pago de deuda
+		$sql = "select 
+			i.id_ingreso_padre, 
+			case 
+				when i.efectivo = 1 then ie.monto 
+				else '' 
+			end efectivo_monto, 
+			case 
+				when i.transferencia = 1 then it.monto 
+				else '' 
+			end transferencia_monto, 
+			case 
+				when i.debito = 1 then id.monto 
+				else '' 
+			end debito_monto
+		from 
+			ingreso i 
+			left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
+			left join ingreso_efectivo ie on ie.id_ingreso = i.id_ingreso
+			left join ingreso_transferencia it on it.id_ingreso = i.id_ingreso
+		where i.id_ingreso = '".$_POST["accion_eliminar"]."' and i.id_ingreso_padre is not null;";
+		$result = $bd->mysql->query($sql);
+		unset($sql);
+		if ($result)
+		{
+			if (!empty($result->num_rows))
+			{
+				$array = $result->fetch_all(MYSQLI_ASSOC);
+				$totalARestar = 0;
+				$idIngresoPadre = 0;
+				foreach ($array as $row)
+				{
+					$totalARestar += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+					$totalARestar += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+					$totalARestar += $row["debito_monto"] ? $row["debito_monto"] : 0;
+					$idIngresoPadre = $row["id_ingreso_padre"];
+				}
+				$sql = "update ingreso_deuda set monto_pagado = (monto_pagado - ".$totalARestar.") where id_ingreso = ".$idIngresoPadre.";";
+				$result = $bd->mysql->query($sql);
+			}
+		}
+		else
+			unset($result);
+		//Fin eliminar deuda
 		$bd->eliminar_datos(1,$basedatos,"ingreso_debito","id_ingreso",$_POST["accion_eliminar"]);
 		$bd->eliminar_datos(1,$basedatos,"ingreso_deuda","id_ingreso",$_POST["accion_eliminar"]);
 		$bd->eliminar_datos(1,$basedatos,"ingreso_efectivo","id_ingreso",$_POST["accion_eliminar"]);
@@ -53,11 +98,11 @@
 				$where[strlen($where)-4]=" ";
 			}
 			$where=trim($where);
-			$sql="select i.id_ingreso, i.fecha, mi.motivo as 'tipo de trabajo', case when i.efectivo = 1 then iff.monto else '' end as 'efectivo', case when i.transferencia = 1 then it.monto else '' end as 'transferencia', case when i.transferencia = 1 then it.referencia else '' end as 'referencia', case when i.debito = 1 then id.monto else '' end as 'datáfono', case when i.deuda = 1 then idd.monto else '' end as 'deuda', case when i.deuda = 1 then idd.monto_pagado else '' end as 'pagado', (ifnull(iff.monto,0) + ifnull(it.monto,0) + ifnull(id.monto,0) + ifnull(idd.monto_pagado,0)) as 'total', concat(e.nombre,' ',e.apellido) as 'empleado', case when c.nombre is null then '' else concat(c.nombre,' ',c.apellido) end as 'cliente', case when i.observacion is not null then i.observacion else '' end as 'observacion' from ingreso i inner join empleado e on e.empleado_telf = i.empleado_telf inner join motivo_ingreso mi on mi.id_motivo_ingreso = i.id_motivo_ingreso left join ingreso_debito id on i.id_ingreso = id.id_ingreso left join ingreso_transferencia it on it.id_ingreso = i.id_ingreso left join ingreso_efectivo iff on iff.id_ingreso = i.id_ingreso left join ingreso_deuda idd on idd.id_ingreso = i.id_ingreso left join cliente c on i.cliente_telf = c.telf WHERE ".$where." and i.id_ingreso_padre is null ORDER BY i.fecha_num ASC;";
+			$sql="select i.id_ingreso, i.fecha, mi.motivo as 'tipo de trabajo', case when i.efectivo = 1 then iff.monto else '' end as 'efectivo', case when i.transferencia = 1 then it.monto else '' end as 'transferencia', case when i.transferencia = 1 then it.referencia else '' end as 'referencia', case when i.debito = 1 then id.monto else '' end as 'datáfono', case when i.deuda = 1 then idd.monto else '' end as 'deuda', case when i.deuda = 1 then idd.monto_pagado else '' end as 'pagado', (ifnull(iff.monto,0) + ifnull(it.monto,0) + ifnull(id.monto,0) + ifnull(idd.monto_pagado,0)) as 'total', concat(e.nombre,' ',e.apellido) as 'empleado', case when c.nombre is null then '' else concat(c.nombre,' ',c.apellido) end as 'cliente', case when i.observacion is not null then i.observacion else '' end as 'observacion' from ingreso i inner join empleado e on e.empleado_telf = i.empleado_telf inner join motivo_ingreso mi on mi.id_motivo_ingreso = i.id_motivo_ingreso left join ingreso_debito id on i.id_ingreso = id.id_ingreso left join ingreso_transferencia it on it.id_ingreso = i.id_ingreso left join ingreso_efectivo iff on iff.id_ingreso = i.id_ingreso left join ingreso_deuda idd on idd.id_ingreso = i.id_ingreso left join cliente c on i.cliente_telf = c.telf WHERE ".$where." ORDER BY i.fecha_num ASC;";
 		}
 		elseif(isset($_POST["sel_opcion"]) and $_POST["sel_opcion"]=="listar")
 		{
-			$sql="select i.id_ingreso, i.fecha, mi.motivo as 'tipo de trabajo', case when i.efectivo = 1 then iff.monto else '' end as 'efectivo', case when i.transferencia = 1 then it.monto else '' end as 'transferencia', case when i.transferencia = 1 then it.referencia else '' end as 'referencia', case when i.debito = 1 then id.monto else '' end as 'datáfono', case when i.deuda = 1 then idd.monto else '' end as 'deuda', case when i.deuda = 1 then idd.monto_pagado else '' end as 'pagado', (ifnull(iff.monto,0) + ifnull(it.monto,0) + ifnull(id.monto,0) + ifnull(idd.monto_pagado,0)) as 'total', concat(e.nombre,' ',e.apellido) as 'empleado', case when c.nombre is null then '' else concat(c.nombre,' ',c.apellido) end as 'cliente', case when i.observacion is not null then i.observacion else '' end as 'observacion' from ingreso i inner join empleado e on e.empleado_telf = i.empleado_telf inner join motivo_ingreso mi on mi.id_motivo_ingreso = i.id_motivo_ingreso left join ingreso_debito id on i.id_ingreso = id.id_ingreso left join ingreso_transferencia it on it.id_ingreso = i.id_ingreso left join ingreso_efectivo iff on iff.id_ingreso = i.id_ingreso left join ingreso_deuda idd on idd.id_ingreso = i.id_ingreso left join cliente c on i.cliente_telf = c.telf where i.id_ingreso_padre is null ORDER BY i.fecha_num ASC;";
+			$sql="select i.id_ingreso, i.fecha, mi.motivo as 'tipo de trabajo', case when i.efectivo = 1 then iff.monto else '' end as 'efectivo', case when i.transferencia = 1 then it.monto else '' end as 'transferencia', case when i.transferencia = 1 then it.referencia else '' end as 'referencia', case when i.debito = 1 then id.monto else '' end as 'datáfono', case when i.deuda = 1 then idd.monto else '' end as 'deuda', case when i.deuda = 1 then idd.monto_pagado else '' end as 'pagado', (ifnull(iff.monto,0) + ifnull(it.monto,0) + ifnull(id.monto,0) + ifnull(idd.monto_pagado,0)) as 'total', concat(e.nombre,' ',e.apellido) as 'empleado', case when c.nombre is null then '' else concat(c.nombre,' ',c.apellido) end as 'cliente', case when i.observacion is not null then i.observacion else '' end as 'observacion' from ingreso i inner join empleado e on e.empleado_telf = i.empleado_telf inner join motivo_ingreso mi on mi.id_motivo_ingreso = i.id_motivo_ingreso left join ingreso_debito id on i.id_ingreso = id.id_ingreso left join ingreso_transferencia it on it.id_ingreso = i.id_ingreso left join ingreso_efectivo iff on iff.id_ingreso = i.id_ingreso left join ingreso_deuda idd on idd.id_ingreso = i.id_ingreso left join cliente c on i.cliente_telf = c.telf ORDER BY i.fecha_num ASC;";
 		}
 		$result = $bd->mysql->query($sql);
 		unset($sql);

@@ -2254,19 +2254,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_efectivo - $total_egreso_efectivo); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_efectivo - $total_egreso_efectivo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_datafono - $total_egreso_datafono); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_datafono - $total_egreso_datafono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_transferencia - $total_egreso_transferencia); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_transferencia - $total_egreso_transferencia); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso - $total_egreso); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso - $total_egreso); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2279,19 +2279,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_efectivo); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_efectivo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_datafono); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_datafono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_transferencia); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_transferencia); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2304,19 +2304,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_efectivo_por_trabajo); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_efectivo_por_trabajo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_datafono_por_trabajo); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_datafono_por_trabajo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_transferencia_por_trabajo); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_transferencia_por_trabajo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_por_trabajo); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_por_trabajo); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2329,19 +2329,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_efectivo_por_venta); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_efectivo_por_venta); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_datafono_por_venta); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_datafono_por_venta); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_transferencia_por_venta); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_transferencia_por_venta); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_por_venta); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_por_venta); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2356,19 +2356,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_efectivo_por_abono); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_efectivo_por_abono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_datafono_por_abono); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_datafono_por_abono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_transferencia_por_abono); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_transferencia_por_abono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ingreso_por_abono); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso_por_abono); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2381,19 +2381,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_efectivo); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_efectivo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_datafono); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_datafono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_transferencia); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_transferencia); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2406,15 +2406,15 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_efectivo_pago_empleado); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_efectivo_pago_empleado); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_transferencia_pago_empleado); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_transferencia_pago_empleado); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_pago_empleado); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_pago_empleado); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2427,19 +2427,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_efectivo_compra); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_efectivo_compra); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_datafono_compra); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_datafono_compra); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_transferencia_compra); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_transferencia_compra); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_compra); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_compra); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2454,15 +2454,15 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_efectivo_abono_empleado); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_efectivo_abono_empleado); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_transferencia_abono_empleado); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_transferencia_abono_empleado); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_egreso_abono_empleado); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_egreso_abono_empleado); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2475,19 +2475,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo money_format('%.2n', ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) >= 0 ? ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) : 0); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) >= 0 ? ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) : 0); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo money_format('%.2n', ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) >= 0 ? ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) : 0); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) >= 0 ? ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) : 0); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo money_format('%.2n', ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) >= 0 ? ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) : 0); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) >= 0 ? ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) : 0); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo money_format('%.2n', ($total_ingreso_del_dia - $total_egreso_del_dia) >= 0 ? ($total_ingreso_del_dia - $total_egreso_del_dia) : 0); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', ($total_ingreso_del_dia - $total_egreso_del_dia) >= 0 ? ($total_ingreso_del_dia - $total_egreso_del_dia) : 0); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2500,19 +2500,19 @@
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ganancia_peluqueria_efectivo); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_peluqueria_efectivo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ganancia_peluqueria_datafono); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_peluqueria_datafono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ganancia_peluqueria_transferencia); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_peluqueria_transferencia); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right"><?php echo money_format('%.2n', $total_ganancia_peluqueria); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_peluqueria); ?></td>
                             </tr>
                         </table>
                     </div>
@@ -2588,11 +2588,11 @@
                                     echo "'>";
                                     echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
                                     echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
-                                    echo"<td class='table-celda-numerica'>".$row["efectivo_monto"]."</td>";
-                                    echo"<td class='table-celda-numerica'>".$row["debito_monto"]."</td>";
-                                    echo"<td class='table-celda-numerica'>".$row["transferencia_monto"]."</td>";
+                                    echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["efectivo_monto"])."</td>";
+                                    echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["debito_monto"])."</td>";
+                                    echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["transferencia_monto"])."</td>";
                                     echo"<td class='table-celda-texto'>".$row["transferencia_referencia"]."</td>";
-                                    echo"<td class='table-celda-numerica-ultima'>".$total_ingreso_linea."</td>";
+                                    echo"<td class='table-celda-numerica-ultima' nowrap>".money_format('%.2n', $total_ingreso_linea)."</td>";
                                     echo "</tr>";
                                     $total_ingreso_linea = 0;
                                 }
@@ -2606,10 +2606,10 @@
                     echo"<table border=0><tr><td style='background-color: #C8A2C8' width='25em'></td><td>Pago por deuda</td></tr></table><br>";
                 }
                 echo "<table border='0'>";
-                echo "<tr><td><b>Total&nbsp;efectivo:</b></td><td align='right'>$total_ingreso_efectivo</td></tr>";
-                echo "<tr><td><b>Total&nbsp;dat&aacute;fono:</b></td><td align='right'>$total_ingreso_datafono</td></tr>";
-                echo "<tr><td><b>Total&nbsp;transferencia:</b></td><td align='right'>$total_ingreso_transferencia</td></tr>";
-                echo "<tr><td><b>Total:</b></td><td align='right'>$total_ingreso_del_dia</td></tr>";
+                echo "<tr><td><b>Total&nbsp;efectivo:</b></td><td align='right' nowrap>".money_format('%.2n', $total_ingreso_efectivo)."</td></tr>";
+                echo "<tr><td><b>Total&nbsp;dat&aacute;fono:</b></td><td align='right' nowrap>".money_format('%.2n', $total_ingreso_datafono)."</td></tr>";
+                echo "<tr><td><b>Total&nbsp;transferencia:</b></td><td align='right' nowrap>".money_format('%.2n', $total_ingreso_transferencia);"</td></tr>";
+                echo "<tr><td><b>Total:</b></td><td align='right' nowrap>".money_format('%.2n', $total_ingreso_del_dia);"</td></tr>";
                 echo "</table>";
                 unset($total_ingreso_del_dia, $total_ingreso_linea, $total_ingreso_efectivo, $total_ingreso_datafono, $total_ingreso_transferencia);
                 ?>
@@ -2671,7 +2671,7 @@
                                     echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
                                     echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
                                     echo"<td class='table-celda-texto'>".$row["cliente"]."</td>";
-                                    echo"<td class='table-celda-numerica'>".$row["deuda_monto"]."</td>";
+                                    echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["deuda_monto"])."</td>";
                                     echo"<td class='table-celda-texto-ultima'>".$row["observacion"]."</td>";
                                 }
                             }
@@ -2680,7 +2680,7 @@
                 </table>
                 <?php
                     echo "<table border='0'>";
-                    echo "<tr><td><b>Total:</b></td><td align='right'>$total_deuda</td></tr>";
+                    echo "<tr><td><b>Total:</b></td><td align='right' nowrap>".money_format('%.2n', $total_deuda);"</td></tr>";
                     echo "</table>";
                 ?>
             </div>
@@ -2765,11 +2765,11 @@
                                     }
                                     echo"'>";
                                     echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
-                                    echo"<td class='table-celda-numerica'>".$row["efectivo_monto"]."</td>";
-                                    echo"<td class='table-celda-numerica'>".$row["debito_monto"]."</td>";
-                                    echo"<td class='table-celda-numerica'>".$row["transferencia_monto"]."</td>";
+                                    echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["efectivo_monto"])."</td>";
+                                    echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["debito_monto"])."</td>";
+                                    echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["transferencia_monto"])."</td>";
                                     echo"<td class='table-celda-texto'>".$row["transferencia_referencia"]."</td>";
-                                    echo"<td class='table-celda-numerica-ultima'>".$total_ingreso_linea."</td>";
+                                    echo"<td class='table-celda-numerica-ultima' nowrap>".money_format('%.2n', $total_ingreso_linea)."</td>";
                                     echo"</tr>";
                                     $total_ingreso_linea = 0;
                                 }
@@ -2783,10 +2783,10 @@
                     echo"<table border=0><tr><td style='background-color: #C8A2C8' width='25em'></td><td>Pago por deuda</td></tr></table><br>";
                 }
                 echo "<table border='0'>";
-                echo "<tr><td><b>Total&nbsp;efectivo:</b></td><td align='right'>$total_ingreso_efectivo</td></tr>";
-                echo "<tr><td><b>Total&nbsp;dat&aacute;fono:</b></td><td align='right'>$total_ingreso_datafono</td></tr>";
-                echo "<tr><td><b>Total&nbsp;transferencia:</b></td><td align='right'>$total_ingreso_transferencia</td></tr>";
-                echo "<tr><td><b>Total:</b></td><td align='right'>$total_ingreso_del_dia</td></tr>";
+                echo "<tr><td><b>Total&nbsp;efectivo:</b></td><td align='right' nowrap>".money_format('%.2n', $total_ingreso_efectivo)."</td></tr>";
+                echo "<tr><td><b>Total&nbsp;dat&aacute;fono:</b></td><td align='right' nowrap>".money_format('%.2n', $total_ingreso_datafono)."</td></tr>";
+                echo "<tr><td><b>Total&nbsp;transferencia:</b></td><td align='right' nowrap>".money_format('%.2n', $total_ingreso_transferencia)."</td></tr>";
+                echo "<tr><td><b>Total:</b></td><td align='right' nowrap>".money_format('%.2n', $total_ingreso_del_dia)."</td></tr>";
                 echo "</table>";
                 unset($total_ingreso_del_dia, $total_ingreso_linea, $total_ingreso_efectivo, $total_ingreso_datafono, $total_ingreso_transferencia);
                 ?>
@@ -2864,11 +2864,11 @@
                                 echo"<tr>";
                                 echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
                                 echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
-                                echo"<td class='table-celda-numerica'>".$row["efectivo_monto"]."</td>";
-                                echo"<td class='table-celda-numerica'>".$row["debito_monto"]."</td>";
-                                echo"<td class='table-celda-numerica'>".$row["transferencia_monto"]."</td>";
+                                echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["efectivo_monto"])."</td>";
+                                echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["debito_monto"])."</td>";
+                                echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["transferencia_monto"])."</td>";
                                 echo"<td class='table-celda-texto'>".$row["transferencia_referencia"]."</td>";
-                                echo"<td class='table-celda-numerica-ultima'>".$total_egreso_linea."</td>";
+                                echo"<td class='table-celda-numerica-ultima' nowrap>".money_format('%.2n', $total_egreso_linea)."</td>";
                                 echo"</tr>";
 
                                 $total_egreso_linea = 0;
@@ -2879,10 +2879,10 @@
                 </table>
                 <?php
                 echo "<table border='0'>";
-                echo "<tr><td><b>Total&nbsp;efectivo:</b></td><td align='right'>$total_egreso_efectivo</td></tr>";
-                echo "<tr><td><b>Total&nbsp;dat&aacute;fono:</b></td><td align='right'>$total_egreso_datafono</td></tr>";
-                echo "<tr><td><b>Total&nbsp;transferencia:</b></td><td align='right'>$total_egreso_transferencia</td></tr>";
-                echo "<tr><td><b>Total:</b></td><td align='right'>$total_egreso_del_dia</td></tr>";
+                echo "<tr><td><b>Total&nbsp;efectivo:</b></td><td align='right' nowrap>".money_format('%.2n', $total_egreso_efectivo)."</td></tr>";
+                echo "<tr><td><b>Total&nbsp;dat&aacute;fono:</b></td><td align='right' nowrap>".money_format('%.2n', $total_egreso_datafono)."</td></tr>";
+                echo "<tr><td><b>Total&nbsp;transferencia:</b></td><td align='right' nowrap>".money_format('%.2n', $total_egreso_transferencia)."</td></tr>";
+                echo "<tr><td><b>Total:</b></td><td align='right' nowrap>".money_format('%.2n', $total_egreso_del_dia)."</td></tr>";
                 echo "</table>";
                 ?>
             </div>
@@ -2962,6 +2962,7 @@
                     $resultado[$i]["porcentaje_empleado"] = porcentaje_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
                     $resultado[$i]["porcentaje_peluqueria"] = porcentaje_peluqueria($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
                     $resultado[$i]["porcentaje_dueño"] = porcentaje_dueño_por_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
+                    $resultado[$i]["por_pago_de_deuda"] = $row["por_pago_de_deuda"];
                     $i++;
                 }
             }
@@ -3013,20 +3014,20 @@
                         if ($row2["fecha"] == $row["fecha"])
                         {
                             echo "<tr>";
-                            if ($row2["tipo"] == "ingreso") {
+                            if ($row2["tipo"] == "ingreso" and $row2["por_pago_de_deuda"] != 1) {
                                 echo "<td class='table-celda-texto'>".$row2["empleado"]."</td>";
                                 echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
-                                echo "<td class='table-celda-numerica'>".$row2["efectivo_monto"]."</td>";
-                                echo "<td class='table-celda-numerica'>".$row2["debito_monto"]."</td>";
-                                echo "<td class='table-celda-numerica'>".$row2["transferencia_monto"]."</td>";
-                                echo "<td class='table-celda-numerica'>".$row2["deuda_monto"]."</td>";
+                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["efectivo_monto"])."</td>";
+                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["debito_monto"])."</td>";
+                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["transferencia_monto"])."</td>";
+                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["deuda_monto"])."</td>";
                                 
                                 if ($row2["empleado_telf"] != $empleado_telf) {
                                     $total_por_linea_con_porcentaje += ($row2["efectivo_monto"] * $row2["porcentaje_dueño"] / 100);
                                     $total_por_linea_con_porcentaje += ($row2["debito_monto"] * $row2["porcentaje_dueño"] / 100);
                                     $total_por_linea_con_porcentaje += ($row2["transferencia_monto"] * $row2["porcentaje_dueño"] / 100);
                                     $total_por_linea_con_porcentaje += ($row2["deuda_monto"] * $row2["porcentaje_dueño"] / 100);
-                                    echo "<td class='table-celda-numerica-ultima'>".$total_por_linea_con_porcentaje."</td>";
+                                    echo "<td class='table-celda-numerica-ultima' nowrap>".money_format('%.2n', $total_por_linea_con_porcentaje)."</td>";
 
                                     $total_por_dia += ($row2["efectivo_monto"] * $row2["porcentaje_dueño"] / 100);
                                     $total_por_dia += ($row2["debito_monto"] * $row2["porcentaje_dueño"] / 100);
@@ -3043,7 +3044,7 @@
                                     $total_por_linea_con_porcentaje += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
                                     $total_por_linea_con_porcentaje += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
                                     $total_por_linea_con_porcentaje += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
-                                    echo "<td class='table-celda-numerica-ultima'>".$total_por_linea_con_porcentaje."</td>";
+                                    echo "<td class='table-celda-numerica-ultima' nowrap>".money_format('%.2n', $total_por_linea_con_porcentaje)."</td>";
 
                                     $total_por_dia += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
                                     $total_por_dia += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
@@ -3057,17 +3058,17 @@
                                 }
                             }
                             else {
-                                if ($row2["empleado_telf"] == $empleado_telf) {
+                                if ($row2["empleado_telf"] == $empleado_telf and $row2["por_pago_de_deuda"] != 1) {
                                     echo "<td class='table-celda-texto'>".$row2["empleado"]."</td>";
                                     echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
-                                    echo "<td class='table-celda-numerica'>".$row2["efectivo_monto"]."</td>";
-                                    echo "<td class='table-celda-numerica'>".$row2["debito_monto"]."</td>";
-                                    echo "<td class='table-celda-numerica'>".$row2["transferencia_monto"]."</td>";
-                                    echo "<td class='table-celda-numerica'>0</td>";
+                                    echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["efectivo_monto"])."</td>";
+                                    echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["debito_monto"])."</td>";
+                                    echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["transferencia_monto"])."</td>";
+                                    echo "<td class='table-celda-numerica' nowrap>0</td>";
                                     $total_por_linea_con_porcentaje += $row2["efectivo_monto"];
                                     $total_por_linea_con_porcentaje += $row2["debito_monto"];
                                     $total_por_linea_con_porcentaje += $row2["transferencia_monto"];
-                                    echo "<td class='table-celda-numerica-ultima'>".$total_por_linea_con_porcentaje."</td>";
+                                    echo "<td class='table-celda-numerica-ultima' nowrap>".money_format('%.2n', $total_por_linea_con_porcentaje)."</td>";
                                     $total_por_dia -= $row2["efectivo_monto"];
                                     $total_por_dia -= $row2["debito_monto"];
                                     $total_por_dia -= $row2["transferencia_monto"];
@@ -3081,7 +3082,7 @@
                     echo "</tr>";
                     echo "<tr>";
                     echo "<td class='table-celda-texto'><b>Totales:</b></td>";
-                    echo "<td class='table-celda-texto-ultima' colspan='6' align='center'><b>Ingreso:&nbsp;".$total_por_dia_ingreso."&nbsp;&nbsp;Pago:&nbsp;".$total_por_dia_pago."</b></td>";
+                    echo "<td class='table-celda-texto-ultima' colspan='6' align='center' nowrap><b>Ingreso:&nbsp;".money_format('%.2n', $total_por_dia_ingreso)."&nbsp;&nbsp;Pago:&nbsp;".money_format('%.2n', $total_por_dia_pago)."</b></td>";
                     echo "</tr>";
                     $total_por_dia = 0;
                     echo "</tbody>";
@@ -3131,6 +3132,7 @@
                     $resultado[$i]["porcentaje_empleado"] = porcentaje_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
                     $resultado[$i]["porcentaje_peluqueria"] = porcentaje_peluqueria($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
                     $resultado[$i]["porcentaje_dueño"] = porcentaje_dueño_por_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
+                    $resultado[$i]["por_pago_de_deuda"] = $row["por_pago_de_deuda"];
                     $i++;
                 }
             }
@@ -3180,17 +3182,17 @@
                         if ($row2["fecha"] == $row["fecha"] and $row2["empleado_telf"] == $empleado_telf)
                         {
                             echo "<tr>";
-                            echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
-                            if ($row2["tipo"] == "ingreso") {
-                                echo "<td class='table-celda-numerica'>".$row2["efectivo_monto"]."</td>";
-                                echo "<td class='table-celda-numerica'>".$row2["debito_monto"]."</td>";
-                                echo "<td class='table-celda-numerica'>".$row2["transferencia_monto"]."</td>";
-                                echo "<td class='table-celda-numerica'>".$row2["deuda_monto"]."</td>";
+                            if ($row2["tipo"] == "ingreso" and $row2["por_pago_de_deuda"] != 1) {
+                                echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
+                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["efectivo_monto"])."</td>";
+                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["debito_monto"])."</td>";
+                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["transferencia_monto"])."</td>";
+                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["deuda_monto"])."</td>";
                                 $total_por_linea_con_porcentaje += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
                                 $total_por_linea_con_porcentaje += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
                                 $total_por_linea_con_porcentaje += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
                                 $total_por_linea_con_porcentaje += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
-                                echo "<td class='table-celda-numerica-ultima'>".$total_por_linea_con_porcentaje."</td>";
+                                echo "<td class='table-celda-numerica-ultima' nowrap>".money_format('%.2n', $total_por_linea_con_porcentaje)."</td>";
                                 $total_por_dia += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
                                 $total_por_dia += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
                                 $total_por_dia += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
@@ -3201,27 +3203,30 @@
                                 $total_por_dia_ingreso += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
                             }
                             else {
-                                echo "<td class='table-celda-numerica'>".$row2["efectivo_monto"]."</td>";
-                                echo "<td class='table-celda-numerica'>".$row2["debito_monto"]."</td>";
-                                echo "<td class='table-celda-numerica'>".$row2["transferencia_monto"]."</td>";
-                                echo "<td class='table-celda-numerica'>0</td>";
-                                $total_por_linea_con_porcentaje += $row2["efectivo_monto"];
-                                $total_por_linea_con_porcentaje += $row2["debito_monto"];
-                                $total_por_linea_con_porcentaje += $row2["transferencia_monto"];
-                                echo "<td class='table-celda-numerica-ultima'>".$total_por_linea_con_porcentaje."</td>";
-                                $total_por_dia -= $row2["efectivo_monto"];
-                                $total_por_dia -= $row2["debito_monto"];
-                                $total_por_dia -= $row2["transferencia_monto"];
-                                $total_por_dia_pago += $row2["efectivo_monto"];
-                                $total_por_dia_pago += $row2["debito_monto"];
-                                $total_por_dia_pago += $row2["transferencia_monto"];
+                                if ($row2["por_pago_de_deuda"] != 1) {
+                                    echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
+                                    echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["efectivo_monto"])."</td>";
+                                    echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["debito_monto"])."</td>";
+                                    echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["transferencia_monto"])."</td>";
+                                    echo "<td class='table-celda-numerica' nowrap>0</td>";
+                                    $total_por_linea_con_porcentaje += $row2["efectivo_monto"];
+                                    $total_por_linea_con_porcentaje += $row2["debito_monto"];
+                                    $total_por_linea_con_porcentaje += $row2["transferencia_monto"];
+                                    echo "<td class='table-celda-numerica-ultima' nowrap>".money_format('%.2n', $total_por_linea_con_porcentaje)."</td>";
+                                    $total_por_dia -= $row2["efectivo_monto"];
+                                    $total_por_dia -= $row2["debito_monto"];
+                                    $total_por_dia -= $row2["transferencia_monto"];
+                                    $total_por_dia_pago += $row2["efectivo_monto"];
+                                    $total_por_dia_pago += $row2["debito_monto"];
+                                    $total_por_dia_pago += $row2["transferencia_monto"];
+                                }
                             }
                         }
                     }
                     echo "</tr>";
                     echo "<tr>";
                     echo "<td class='table-celda-texto'><b>Totales:</b></td>";
-                    echo "<td class='table-celda-texto-ultima' colspan='5' align='center'><b>Ingreso:&nbsp;".$total_por_dia_ingreso."&nbsp;&nbsp;Pago:&nbsp;".$total_por_dia_pago."</b></td>";
+                    echo "<td class='table-celda-texto-ultima' colspan='5' align='center' nowrap><b>Ingreso:&nbsp;".money_format('%.2n', $total_por_dia_ingreso)."&nbsp;&nbsp;Pago:&nbsp;".money_format('%.2n', $total_por_dia_pago)."</b></td>";
                     echo "</tr>";
                     $total_por_dia = 0;
                     echo "</tbody>";
@@ -3229,8 +3234,7 @@
                     echo "</div>";
                 echo "</div>";
             }
-        }
-    
+        }    
         echo "</table>";
         echo "</div>";
         echo "</div>";
@@ -3263,7 +3267,7 @@
                             {
                                 echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
                                 echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
-                                echo "<td class='table-celda-numerica'>".total_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta, $empleado["dueño"])."</td>";
+                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta, $empleado["dueño"]))."</td>";
                                 echo "</tr>";
                             }
                         ?>
