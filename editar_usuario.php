@@ -7,12 +7,12 @@
 	if(isset($_SESSION["login"]))
 	{
 		require("superior.php");
-		$tipo=true;
+		$abono_pecuadreluqueria=true;
 		require_once("menu_lateral.php");
 		require_once("contenido_head.php");
 		echo"<br>";
-		require("tipo_trabajo_contenido.php");
-		unset($tipo);
+		require("editar_usuario_contenido.php");
+		unset($abono_peluqueria);
 	}
 	else
 	{

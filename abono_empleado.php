@@ -14,5 +14,13 @@
 		require("abono_empleado_contenido.php");
 		unset($abono_empleado);
 	}
+	else 
+	{
+		?>
+		<script>
+			window.location.replace('...');
+		</script>
+		<?php
+	}
 	require("pie.php");
 ?>

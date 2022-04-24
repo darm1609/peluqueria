@@ -14,5 +14,13 @@
 		require("cuadre_de_caja_contenido.php");
 		unset($cuadre);
 	}
+	else
+	{
+		?>
+		<script>
+			window.location.replace('.');
+		</script>
+		<?php
+	}
 	require("pie.php");
 ?>

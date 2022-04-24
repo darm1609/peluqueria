@@ -11,5 +11,5 @@
 	$basedatos='peluqueria';
 	ini_set("display_errors","On");
 	date_default_timezone_set("America/Bogota");
-	setlocale(LC_MONETARY, 'it_IT');
+	setlocale(LC_MONETARY, 'es_CO');
 ?>

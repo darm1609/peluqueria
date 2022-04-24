@@ -14,5 +14,13 @@
 		require("vale_pago_contenido.php");
 		unset($vale_pago);
 	}
+	else
+	{
+		?>
+		<script>
+			window.location.replace('.');
+		</script>
+		<?php
+	}
 	require("pie.php");
 ?>
