@@ -146,12 +146,12 @@
 			$where=" ";
 			if(isset($_POST["bfecha"]) and !empty($_POST["bfecha"])) 
 				$where="fecha='".$_POST["bfecha"]."' ";
-			$sql="select e.id_egreso, e.fecha, case when e.efectivo = 1 then ee.monto else '' end as 'efectivo', case when e.debito = 1 then ed.monto else '' end as 'datáfono', case when e.transferencia = 1 then et.monto else '' end as 'transferencia', case when e.transferencia = 1 then et.referencia else '' end as 'referencia', ifnull(ee.monto,0) + ifnull(et.monto,0) + ifnull(ed.monto,0) total from egreso e left join egreso_efectivo ee on e.id_egreso = ee.id_egreso left join egreso_transferencia et on e.id_egreso = et.id_egreso left join egreso_debito ed on e.id_egreso = ed.id_egreso where ".$where." order by e.fecha_num asc;";
+			$sql="select e.id_egreso, e.fecha, case when e.efectivo = 1 then ee.monto else '' end as 'efectivo', case when e.debito = 1 then ed.monto else '' end as 'datáfono', case when e.transferencia = 1 then et.monto else '' end as 'transferencia', case when e.transferencia = 1 then et.referencia else '' end as 'referencia', ifnull(ee.monto,0) + ifnull(et.monto,0) + ifnull(ed.monto,0) total, e.motivo from egreso e left join egreso_efectivo ee on e.id_egreso = ee.id_egreso left join egreso_transferencia et on e.id_egreso = et.id_egreso left join egreso_debito ed on e.id_egreso = ed.id_egreso where ".$where." order by e.fecha_num asc;";
 			unset($where);
 		}
 		elseif(isset($_POST["sel_opcion"]) and $_POST["sel_opcion"]=="todo")
 		{
-			$sql="select e.id_egreso, e.fecha, case when e.efectivo = 1 then ee.monto else '' end as 'efectivo', case when e.debito = 1 then ed.monto else '' end as 'datáfono', case when e.transferencia = 1 then et.monto else '' end as 'transferencia', case when e.transferencia = 1 then et.referencia else '' end as 'referencia', ifnull(ee.monto,0) + ifnull(et.monto,0) + ifnull(ed.monto,0) total from egreso e left join egreso_efectivo ee on e.id_egreso = ee.id_egreso left join egreso_transferencia et on e.id_egreso = et.id_egreso left join egreso_debito ed on e.id_egreso = ed.id_egreso order by e.fecha_num asc;";
+			$sql="select e.id_egreso, e.fecha, case when e.efectivo = 1 then ee.monto else '' end as 'efectivo', case when e.debito = 1 then ed.monto else '' end as 'datáfono', case when e.transferencia = 1 then et.monto else '' end as 'transferencia', case when e.transferencia = 1 then et.referencia else '' end as 'referencia', ifnull(ee.monto,0) + ifnull(et.monto,0) + ifnull(ed.monto,0) total, e.motivo from egreso e left join egreso_efectivo ee on e.id_egreso = ee.id_egreso left join egreso_transferencia et on e.id_egreso = et.id_egreso left join egreso_debito ed on e.id_egreso = ed.id_egreso order by e.fecha_num asc;";
 		}
 		$result = $bd->mysql->query($sql);
 		unset($sql);
