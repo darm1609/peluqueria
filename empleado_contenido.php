@@ -51,7 +51,7 @@
 		valido=true;
 		if(document.getElementById('especificar').checked)
 		{
-			if(!document.getElementById('chbempleado_telf').checked && !document.getElementById('chbnombre').checked)
+			if(!document.getElementById('chbempleado_telf').checked /*&& !document.getElementById('chbnombre').checked*/)
 			{
 				valido=false;
 				alertify.alert("","DEBE ESPECIFICAR UNA OPCIÓN DE BUSQUEDA").set('label', 'Aceptar');
@@ -64,14 +64,14 @@
 					alertify.alert("","EL TELÉFONO A BUSCAR NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
 				}
 			}
-			if(document.getElementById('chbnombre').checked)
-			{
-				if(document.getElementById('bnombre').value=="")
-				{
-					valido=false;
-					alertify.alert("","EL NOMBRE A BUSCAR NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
-				}
-			}
+			// if(document.getElementById('chbnombre').checked)
+			// {
+			// 	if(document.getElementById('bnombre').value=="")
+			// 	{
+			// 		valido=false;
+			// 		alertify.alert("","EL NOMBRE A BUSCAR NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+			// 	}
+			// }
 		}
 		if(valido)
 		{
@@ -111,19 +111,19 @@
 			document.getElementById('bempleado_telf').disabled=false;
 		else
 			document.getElementById('bempleado_telf').disabled=true;
-		document.getElementById('chbnombre').disabled=false;
-		if(document.getElementById('chbnombre').checked)
-			document.getElementById('bnombre').disabled=false;
-		else
-			document.getElementById('bnombre').disabled=true;
+		// document.getElementById('chbnombre').disabled=false;
+		// if(document.getElementById('chbnombre').checked)
+		// 	document.getElementById('bnombre').disabled=false;
+		// else
+		// 	document.getElementById('bnombre').disabled=true;
 	}
 
 	function deshabilitar_especificar()
 	{
 		document.getElementById('chbempleado_telf').disabled=true;
 		document.getElementById('bempleado_telf').disabled=true;
-		document.getElementById('chbnombre').disabled=true;
-		document.getElementById('bnombre').disabled=true;	
+		// document.getElementById('chbnombre').disabled=true;
+		// document.getElementById('bnombre').disabled=true;
 	}
 
 	function enviardatos_lista()
@@ -540,7 +540,7 @@
 			</p>
 			<div class="w3-row w3-section">
 				<table border="0" style="width: 100%;">
-					<tr>
+					<!-- <tr>
 						<td align="right">
 							<input class="w3-check" type="checkbox" id="chbempleado_telf" name="chbempleado_telf" disabled onclick="if(document.getElementById('chbempleado_telf').checked){document.getElementById('bempleado_telf').disabled=false;}else{document.getElementById('bempleado_telf').disabled=true;}">
 						</td>
@@ -560,6 +560,35 @@
 								Nombre
 								<input class="w3-input w3-border" type="text" id="bnombre" name="bnombre" disabled>
 							</label>
+						</td>
+					</tr> -->
+					<tr>
+						<td align="right">
+							<input class="w3-check" type="checkbox" id="chbempleado_telf" name="chbempleado_telf" disabled onclick="if(document.getElementById('chbempleado_telf').checked){document.getElementById('bempleado_telf').disabled=false;}else{document.getElementById('bempleado_telf').disabled=true;}">
+						</td>
+						<td>
+							<label>
+								Empleado
+							</label>
+							<select class="w3-select" id="bempleado_telf" name="bempleado_telf" disabled>
+								<option value="">Empleado</option>
+								<?php
+									$sql="SELECT empleado_telf, nombre, apellido FROM empleado;";
+									$result = $bd->mysql->query($sql);
+									unset($sql);
+									if($result)
+									{
+										while($row = $result->fetch_array())
+										{
+											echo"<option value='".$row["empleado_telf"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
+										}
+										unset($row);
+										$result->free();
+									}
+									else
+										unset($result);
+								?>
+							</select>
 						</td>
 					</tr>
 				</table>
