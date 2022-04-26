@@ -477,12 +477,14 @@
 			$where=" ";
 			if(isset($_POST["chbempleado_telf"]) and !empty($_POST["bempleado_telf"]))
 				$where.="empleado_telf='".$_POST["bempleado_telf"]."' AND ";
-			if(isset($_POST["chbnombre"]) and !empty($_POST["bnombre"]))
-				$where.="nombre LIKE '%".$_POST["bnombre"]."%' OR apellido LIKE '%".$_POST["bnombre"]."%' AND ";
-			$where[strlen($where)-1]=" ";
-			$where[strlen($where)-2]=" ";
-			$where[strlen($where)-3]=" ";
-			$where[strlen($where)-4]=" ";
+			// if(isset($_POST["chbnombre"]) and !empty($_POST["bnombre"]))
+			// 	$where.="nombre LIKE '%".$_POST["bnombre"]."%' OR apellido LIKE '%".$_POST["bnombre"]."%' AND ";
+			if (strlen($where) > 1) {
+				$where[strlen($where)-1]=" ";
+				$where[strlen($where)-2]=" ";
+				$where[strlen($where)-3]=" ";
+				$where[strlen($where)-4]=" ";
+			}
 			$where=trim($where);
 			$sql="SELECT empleado_telf, empleado_telf AS teléfono, nombre, apellido, correo FROM empleado WHERE ".$where.";";
 		}
