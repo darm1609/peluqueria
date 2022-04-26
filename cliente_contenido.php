@@ -203,6 +203,15 @@
 			cambio=true;
 		if(document.getElementById('otelf').value!=document.getElementById('mtelf').value)
 			cambio=true;
+		debugger;
+		let oespecial = document.getElementById('oespecial').value;
+		let mespecial;
+		if ($("#mespecial").is(':checked'))
+			mespecial = "1";
+		else
+			mespecial = "0";
+		if (oespecial != mespecial)
+			cambio = true;
 		let validoAbono = true;
 		let validoFecha = true;
 		let validoTransferenciaConReferencia = true;
@@ -368,7 +377,10 @@
 	function guardar($bd)
 	{
 		global $basedatos;
-		if($bd->insertar_datos(6,$basedatos,"cliente","nombre","apellido","alias","telf","login","fecha_num",$_POST["nombre"],$_POST["apellido"],$_POST["alias"],$_POST["telf"],$_SESSION["login"],time()))
+		$especial = "0";
+		if (isset($_POST["especial"]))
+			$especial = $_POST["especial"];
+		if($bd->insertar_datos(7,$basedatos,"cliente","nombre","apellido","alias","telf","login","fecha_num","especial",$_POST["nombre"],$_POST["apellido"],$_POST["alias"],$_POST["telf"],$_SESSION["login"],time(),$especial))
 			return true;
 		else
 			return false;
@@ -410,6 +422,14 @@
 				<div class="w3-rest">
 					<input class="w3-input w3-border" id="alias" name="alias" type="text" placeholder="Alias" maxlength="30" tabindex="4">
 				</div>
+			</div>
+			<div class="w3-row w3-section">
+				<label>
+					<div class="w3-col" style="width:50px"><input class="w3-check" type="checkbox" id="especial" name="especial" value="1"></div>
+					<div class="w3-rest">	
+						Especial
+					</div>
+				</label>
 			</div>
 			<div class="w3-row w3-section">
 				<input type="button" class="w3-button w3-block w3-green" onclick="submit_cliente();" value="Guardar">

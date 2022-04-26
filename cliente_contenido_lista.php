@@ -25,7 +25,9 @@
 		{
 			if($bd->actualizar_datos(1,1,$basedatos,"venta","cliente_telf",$_POST["otelf"],"cliente_telf",$_POST["otelf"],$_POST["mtelf"]))
 			{
-				if($bd->actualizar_datos(1,4,$basedatos,"cliente","telf",$_POST["otelf"],"telf",$_POST["otelf"],$_POST["mtelf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"alias",$_POST["oalias"],$_POST["malias"]))
+				$oespecial = $_POST["oespecial"];
+				$mespecial = isset($_POST["mespecial"]) ? 1 : 0;
+				if($bd->actualizar_datos(1,5,$basedatos,"cliente","telf",$_POST["otelf"],"telf",$_POST["otelf"],$_POST["mtelf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"alias",$_POST["oalias"],$_POST["malias"],"especial",$oespecial,$mespecial))
 				{
 					foreach($_POST as $index => $value)
 					{
@@ -241,7 +243,7 @@
 
 	function formulario_modificar($bd)
 	{
-		$sql="SELECT nombre, apellido, alias, telf FROM cliente WHERE telf='".$_POST["accion_modificar"]."';";
+		$sql="SELECT nombre, apellido, alias, telf, especial FROM cliente WHERE telf='".$_POST["accion_modificar"]."';";
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if($result)
@@ -278,6 +280,22 @@
 						<input type="hidden" id="oalias" name="oalias" value="<?php echo $row[0]['alias']; ?>">
 						<input class="w3-input w3-border" id="malias" name="malias" type="text" placeholder="Alias" maxlength="30" tabindex="4" value="<?php echo $row[0]['alias']; ?>">
 					</div>
+				</div>
+				<div class="w3-row w3-section">
+					<label>
+						<div class="w3-col" style="width:50px">
+							<?php
+								echo "<input type=\"hidden\" id=\"oespecial\" name=\"oespecial\" value=\"".$row[0]["especial"]."\">";
+								echo "<input class=\"w3-check\" type=\"checkbox\" id=\"mespecial\" name=\"mespecial\" value=\"1\" ";
+								if ($row[0]["especial"] == 1)
+									echo "checked";
+								echo ">";
+							?>
+						</div>
+						<div class="w3-rest">
+							Especial
+						</div>
+					</label>
 				</div>
 				<div class="w3-row w3-section">
 					<div class="w3-col" style="width:300px"><label for="">
