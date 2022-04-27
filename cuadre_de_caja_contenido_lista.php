@@ -197,11 +197,14 @@
             {
                 if ($dueño)
                 {
-                    $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $fecha_num_consulta, $row["empleado_telf"]);                    
+                    $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $fecha_num_consulta, $row["empleado_telf"]);
                     $total += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño) / 100;
                     $total += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño) / 100;
                     $total += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100;
-                    $total += (($row["deuda_monto"] ? $row["deuda_monto"] : 0) * $porcentaje_dueño) / 100;
+                    if ($row["cliente_especial"] != "1" and $empleado != $row["empleado_telf"]) 
+                    {
+                        $total += (($row["deuda_monto"] ? $row["deuda_monto"] : 0) * $porcentaje_dueño) / 100;
+                    }
                 }
                 
                 if ($empleado == $row["empleado_telf"])
@@ -290,7 +293,8 @@
         end deuda_monto,
         e.empleado_telf empleado_telf, 
         concat(e.nombre,' ',e.apellido) empleado,
-        e.dueño dueño, 
+        e.dueño dueño,
+        c.especial cliente_especial, 
         concat(c.nombre,' ',c.apellido) cliente, 
         case 
             when i.id_ingreso_padre is not null then 1 
@@ -339,7 +343,8 @@
             end deuda_monto,
             '' empleado_telf, 
             'Venta' empleado,
-            '' dueño, 
+            '' dueño,
+            c.especial cliente_especial, 
             concat(c.nombre,' ',c.apellido) cliente, 
             case 
                 when v.id_venta_padre is not null then 1 
@@ -380,7 +385,8 @@
             0 debito_monto,
             '' empleado_telf, 
             '' empleado,
-            '' dueño, 
+            '' dueño,
+            0 cliente_especial, 
             '' cliente,
             '' por_pago_de_deuda,
             'abono_peluqueria' tipo_ingreso
@@ -1430,6 +1436,7 @@
                     $resultado[$i]["porcentaje_peluqueria"] = porcentaje_peluqueria($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
                     $resultado[$i]["porcentaje_dueño"] = porcentaje_dueño_por_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
                     $resultado[$i]["por_pago_de_deuda"] = $row["por_pago_de_deuda"];
+                    $resultado[$i]["cliente_especial"] = $row["cliente_especial"];
                     $i++;
                 }
             }
@@ -1481,7 +1488,8 @@
                         if ($row2["fecha"] == $row["fecha"])
                         {
                             echo "<tr>";
-                            if ($row2["tipo"] == "ingreso" and $row2["por_pago_de_deuda"] != 1) {
+                            if ($row2["tipo"] == "ingreso" and $row2["por_pago_de_deuda"] != 1 and $row2["cliente_especial"] != 1 and $empleado_telf != $row2["empleado_telf"]) 
+                            {
                                 echo "<td class='table-celda-texto'>".$row2["empleado"]."</td>";
                                 echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
                                 echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["efectivo_monto"])."</td>";
@@ -1489,7 +1497,8 @@
                                 echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["transferencia_monto"])."</td>";
                                 echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["deuda_monto"])."</td>";
                                 
-                                if ($row2["empleado_telf"] != $empleado_telf) {
+                                if ($row2["empleado_telf"] != $empleado_telf) 
+                                {
                                     $total_por_linea_con_porcentaje += ($row2["efectivo_monto"] * $row2["porcentaje_dueño"] / 100);
                                     $total_por_linea_con_porcentaje += ($row2["debito_monto"] * $row2["porcentaje_dueño"] / 100);
                                     $total_por_linea_con_porcentaje += ($row2["transferencia_monto"] * $row2["porcentaje_dueño"] / 100);
@@ -1506,7 +1515,8 @@
                                     $total_por_dia_ingreso += ($row2["transferencia_monto"] * $row2["porcentaje_dueño"] / 100);
                                     $total_por_dia_ingreso += ($row2["deuda_monto"] * $row2["porcentaje_dueño"] / 100);
                                 }
-                                else {
+                                else 
+                                {
                                     $total_por_linea_con_porcentaje += ($row2["efectivo_monto"] * $row2["porcentaje_empleado"] / 100);
                                     $total_por_linea_con_porcentaje += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
                                     $total_por_linea_con_porcentaje += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
@@ -1524,7 +1534,8 @@
                                     $total_por_dia_ingreso += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
                                 }
                             }
-                            else {
+                            else 
+                            {
                                 if ($row2["empleado_telf"] == $empleado_telf and $row2["por_pago_de_deuda"] != 1) {
                                     echo "<td class='table-celda-texto'>".$row2["empleado"]."</td>";
                                     echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
