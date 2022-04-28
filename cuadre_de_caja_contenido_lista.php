@@ -1141,11 +1141,13 @@
                                 if ($fecha == $row["fecha"] and $row["deuda"] == 1) 
                                 {
                                     $total_deuda += $row["deuda_monto"] ? $row["deuda_monto"] : 0;
+                                    echo"<tr>";
                                     echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
                                     echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
                                     echo"<td class='table-celda-texto'>".$row["cliente"]."</td>";
                                     echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["deuda_monto"])."</td>";
                                     echo"<td class='table-celda-texto-ultima'>".$row["observacion"]."</td>";
+                                    echo"</tr>";
                                 }
                             }
                         ?>
