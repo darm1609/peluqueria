@@ -95,6 +95,16 @@
     require("funciones_generales.php");
 	require("librerias/basedatos.php");
 
+    function existe_rango_fecha_en_arreglo($array, $fecha_num_desde, $fecha_num_hasta)
+    {
+        foreach ($array as $i => $v)
+        {
+            if ($v["fecha_num"] >= $fecha_num_desde and $v["fecha_num"] <= $fecha_num_hasta)
+                return true;
+        }
+        return false;
+    }
+
     function existe_fecha_en_arreglo($resultado, $fecha)
     {
         foreach ($resultado as $i => $v)
@@ -105,11 +115,31 @@
         return false;
     }
 
+    function existe_rango_fecha_en_arreglo_con_deuda($array, $fecha_num_desde, $fecha_num_hasta)
+    {
+        foreach ($array as $i => $v)
+        {
+            if ($v["fecha_num"] >= $fecha_num_desde and $v["fecha_num"] <= $fecha_num_hasta and $v["deuda"] == 1)
+                return true;
+        }
+        return false;
+    }
+
     function existe_fecha_en_arreglo_con_deuda($array, $fecha)
     {
         foreach ($array as $i => $v)
         {
             if ($v["fecha"] == $fecha and $v["deuda"] == 1)
+                return true;
+        }
+        return false;
+    }
+
+    function existe_rango_venta_en_el_arreglo($array, $fecha_num_desde, $fecha_num_hasta)
+    {
+        foreach ($array as $i => $v)
+        {
+            if ($v["tipo_ingreso"] == "venta" and $v["fecha_num"] >= $fecha_num_desde and $v["fecha_num"] <= $fecha_num_hasta)
                 return true;
         }
         return false;
@@ -995,12 +1025,12 @@
         <?php
     }
 
-    function mostrar_ingresos_netos_del_dia($array_ingresos, $fecha)
+    function mostrar_ingresos_netos_del_dia($array_ingresos, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta)
     {
         ?>
         <form class="w3-container w3-card-4 w3-light-grey w3-margin table-overflow" method="post">
         <div class="w3-row w3-section" style='font-weight: bolder; float: left;'>
-            Ingresos netos del d&iacute;a
+            Ingresos netos desde <?php echo $fecha_desde; ?> hasta <?php echo $fecha_hasta; ?>
         </div>
         <div class="w3-row w3-section" style='font-weight: bolder; float: right;'>
             <span style='cursor:pointer;' class='w3-button' onclick="return mostrar_ocultar_div('id-ingreso-del-dia');">
@@ -1009,13 +1039,14 @@
         </div>
         <div id="id-ingreso-del-dia" class="w3-row w3-section" style="display:none;">
         <?php
-        if (existe_fecha_en_arreglo($array_ingresos, $fecha))
+        if (existe_rango_fecha_en_arreglo($array_ingresos, $fecha_num_consulta_desde, $fecha_num_consulta_hasta))
         {
             ?>
             <div id="id-ingreso-del-dia-contenido-1" style="display:none;">
                 <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
                     <thead>
                         <tr class="w3-dulcevanidad">
+                            <th align="center">Fecha</th>
                             <th align="center">Tipo</th>
                             <th align="center">Empleado</th>
                             <th align="center">Efectivo</th>
@@ -1036,7 +1067,7 @@
                             $por_pago_de_deuda_encontrado = 0;
                             foreach($array_ingresos as $row)
                             {
-                                if ($fecha == $row["fecha"] and $row["deuda"] != 1) 
+                                if ($row["fecha_num"] >= $fecha_num_consulta_desde and $row["fecha_num"] <= $fecha_num_consulta_hasta and $row["deuda"] != 1) 
                                 {
                                     $total_ingreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
                                     $total_ingreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
@@ -1059,6 +1090,7 @@
                                         echo"background-color: #C8A2C8";
                                     }
                                     echo "'>";
+                                    echo"<td class='table-celda-texto'>".$row["fecha"]."</td>";
                                     echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
                                     echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
                                     echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["efectivo_monto"])."</td>";
@@ -1104,12 +1136,12 @@
         <?php
     }
 
-    function mostrar_deudas_del_dia($array_ingresos, $fecha)
+    function mostrar_deudas_del_dia($array_ingresos, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta)
     {
         ?>
         <form class="w3-container w3-card-4 w3-light-grey w3-margin table-overflow" method="post">
         <div class="w3-row w3-section" style='font-weight: bolder; float: left;'>
-            Deudas del d&iacute;a
+            Deudas desde <?php echo $fecha_desde; ?> hasta <?php echo $fecha_hasta; ?>
         </div>
         <div class="w3-row w3-section" style='font-weight: bolder; float: right;'>
             <span style='cursor:pointer;' class='w3-button' onclick="return mostrar_ocultar_div('id-deuda-del-dia');">
@@ -1118,13 +1150,14 @@
         </div>
         <div id="id-deuda-del-dia" class="w3-row w3-section" style="display:none;">
         <?php
-        if (existe_fecha_en_arreglo_con_deuda($array_ingresos, $fecha))
+        if (existe_rango_fecha_en_arreglo_con_deuda($array_ingresos, $fecha_num_consulta_desde, $fecha_num_consulta_hasta))
         {
             ?>
             <div id="id-deuda-del-dia-contenido-1" style="display:none;">
                 <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
                     <thead>
                         <tr class="w3-dulcevanidad">
+                            <th align="center">Fecha</th>
                             <th align="center">Tipo</th>
                             <th align="center">Empleado</th>
                             <th align="center">Cliente</th>
@@ -1135,13 +1168,13 @@
                     <tbody>
                         <?php
                             $total_deuda = 0;
-
                             foreach ($array_ingresos as $row)
                             {
-                                if ($fecha == $row["fecha"] and $row["deuda"] == 1) 
+                                if ($row["fecha_num"] >= $fecha_num_consulta_desde and $row["fecha_num"] <= $fecha_num_consulta_hasta and $row["deuda"] == 1) 
                                 {
                                     $total_deuda += $row["deuda_monto"] ? $row["deuda_monto"] : 0;
                                     echo"<tr>";
+                                    echo"<td class='table-celda-texto'>".$row["fecha"]."</td>";
                                     echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
                                     echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
                                     echo"<td class='table-celda-texto'>".$row["cliente"]."</td>";
@@ -1176,12 +1209,12 @@
         <?php
     }
 
-    function mostrar_ventas_del_dia($array_ingresos, $fecha)
+    function mostrar_ventas_del_dia($array_ingresos, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta)
     {
         ?>
         <form class="w3-container w3-card-4 w3-light-grey w3-margin table-overflow" method="post">
         <div class="w3-row w3-section" style='font-weight: bolder; float: left;'>
-            Ventas del d&iacute;a
+            Ventas desde <?php echo $fecha_desde; ?> hasta <?php echo $fecha_hasta; ?>
         </div>
         <div class="w3-row w3-section" style='font-weight: bolder; float: right;'>
             <span style='cursor:pointer;' class='w3-button' onclick="return mostrar_ocultar_div('id-ventas-del-dia');">
@@ -1190,13 +1223,14 @@
         </div>
         <div id="id-ventas-del-dia" class="w3-row w3-section" style="display:none;">
         <?php
-        if (existe_fecha_en_arreglo($array_ingresos, $fecha) and existe_venta_en_el_arreglo($array_ingresos, $fecha))
+        if (existe_rango_fecha_en_arreglo($array_ingresos, $fecha_num_consulta_desde, $fecha_num_consulta_hasta) and existe_rango_venta_en_el_arreglo($array_ingresos, $fecha_num_consulta_desde, $fecha_num_consulta_hasta))
         {
             ?>
             <div id="id-ventas-del-dia-contenido-1" style="display:none;">
                 <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
                     <thead>
                         <tr class="w3-dulcevanidad">
+                            <th align="center">Fecha</th>
                             <th align="center">Tipo</th>
                             <th align="center">Efectivo</th>
                             <th align="center">Dat&aacute;fono</th>
@@ -1216,7 +1250,7 @@
                             $por_pago_de_deuda_encontrado = 0;
                             foreach ($array_ingresos as $row)
                             {
-                                if ($row["tipo_ingreso"] == "venta" and $fecha == $row["fecha"])
+                                if ($row["tipo_ingreso"] == "venta" and $row["fecha_num"] >= $fecha_num_consulta_desde and $row["fecha_num"] <= $fecha_num_consulta_hasta)
                                 {
                                     $total_ingreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
                                     $total_ingreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
@@ -1239,6 +1273,7 @@
                                         echo"background-color: #C8A2C8";
                                     }
                                     echo"'>";
+                                    echo"<td class='table-celda-texto'>".$row["fecha"]."</td>";
                                     echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
                                     echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["efectivo_monto"])."</td>";
                                     echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["debito_monto"])."</td>";
@@ -1283,12 +1318,12 @@
         <?php
     }
 
-    function mostrar_egresos_del_dia($array_egresos, $fecha)
+    function mostrar_egresos_del_dia($array_egresos, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta)
     {
         ?>
         <form class="w3-container w3-card-4 w3-light-grey w3-margin table-overflow" method="post">
         <div class="w3-row w3-section" style='font-weight: bolder; float: left;'>
-            Egresos del d&iacute;a
+            Egresos desde <?php echo $fecha_desde; ?> hasta <?php echo $fecha_hasta; ?>
         </div>
         <div class="w3-row w3-section" style='font-weight: bolder; float: right;'>
             <span style='cursor:pointer;' class='w3-button' onclick="return mostrar_ocultar_div('id-egreso-del-dia');">
@@ -1297,13 +1332,14 @@
         </div>
         <div id="id-egreso-del-dia" class="w3-row w3-section" style="display:none;">
         <?php
-        if (existe_fecha_en_arreglo($array_egresos, $fecha))
+        if (existe_rango_fecha_en_arreglo($array_egresos, $fecha_num_consulta_desde, $fecha_num_consulta_hasta))
         {
             ?>
             <div id="id-egreso-del-dia-contenido-1" style="display:none;">
                 <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
                     <thead>
                         <tr class="w3-dulcevanidad">
+                            <th align="center">Fecha</th>
                             <th align="center">Tipo</th>
                             <th align="center">Empleado</th>
                             <th align="center">Efectivo</th>
@@ -1322,7 +1358,7 @@
                         $total_egreso_transferencia = 0;
                         foreach ($array_egresos as $row)
                         {
-                            if ($row["fecha"] == $fecha)
+                            if ($row["fecha_num"] >= $fecha_num_consulta_desde and $row["fecha_num"] <= $fecha_num_consulta_hasta)
                             {
                                 $total_egreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
                                 $total_egreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
@@ -1337,6 +1373,7 @@
                                 $total_egreso_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
 
                                 echo"<tr>";
+                                echo"<td class='table-celda-texto'>".$row["fecha"]."</td>";
                                 echo"<td class='table-celda-texto'>".$row["motivo"]."</td>";
                                 echo"<td class='table-celda-texto'>".$row["empleado"]."</td>";
                                 echo"<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row["efectivo_monto"])."</td>";
@@ -1788,20 +1825,22 @@
 
         consultar_porcentaje_empleados_totales($bd, $array_porcentajes);
 
-        $fecha_num_consulta = strtotime($_POST["bfecha"][6].$_POST["bfecha"][7].$_POST["bfecha"][8].$_POST["bfecha"][9]."-".$_POST["bfecha"][3].$_POST["bfecha"][4]."-".$_POST["bfecha"][0].$_POST["bfecha"][1]);
-        $fecha = $_POST["bfecha"];
+        $fecha_num_consulta_desde = strtotime($_POST["bfecha_desde"][6].$_POST["bfecha_desde"][7].$_POST["bfecha_desde"][8].$_POST["bfecha_desde"][9]."-".$_POST["bfecha_desde"][3].$_POST["bfecha_desde"][4]."-".$_POST["bfecha_desde"][0].$_POST["bfecha_desde"][1]);
+        $fecha_num_consulta_hasta = strtotime($_POST["bfecha_hasta"][6].$_POST["bfecha_hasta"][7].$_POST["bfecha_hasta"][8].$_POST["bfecha_hasta"][9]."-".$_POST["bfecha_hasta"][3].$_POST["bfecha_hasta"][4]."-".$_POST["bfecha_hasta"][0].$_POST["bfecha_hasta"][1]);
+        $fecha_desde = $_POST["bfecha_desde"];
+        $fecha_hasta = $_POST["bfecha_hasta"];
 
-        mostrar_acumulado_empresa($array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta);
+        //mostrar_acumulado_empresa($array_ingresos, $array_egresos, $array_porcentajes, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
 
-        mostrar_ingresos_netos_del_dia($array_ingresos, $fecha);
+        mostrar_ingresos_netos_del_dia($array_ingresos, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
 
-        mostrar_deudas_del_dia($array_ingresos, $fecha);
+        mostrar_deudas_del_dia($array_ingresos, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
 
-        mostrar_ventas_del_dia($array_ingresos, $fecha);
+        mostrar_ventas_del_dia($array_ingresos, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
 
-        mostrar_egresos_del_dia($array_egresos, $fecha);
+        mostrar_egresos_del_dia($array_egresos, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
 
-        mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $array_empleados, $fecha, $fecha_num_consulta);
+        //mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $array_empleados, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
 
     }
 

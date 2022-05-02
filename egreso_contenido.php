@@ -262,7 +262,8 @@
 	{
 		global $basedatos;
 		$fecha=$_POST["fecha"];
-		$fecha_num=time();
+		//$fecha_num=time();
+		$fecha_num = strtotime($_POST["fecha"][6].$_POST["fecha"][7].$_POST["fecha"][8].$_POST["fecha"][9]."-".$_POST["fecha"][3].$_POST["fecha"][4]."-".$_POST["fecha"][0].$_POST["fecha"][1]);
 		$efectivo = 0;
 		$transferencia = 0;
 		$datafono = 0;
@@ -358,6 +359,27 @@
 		</form>
 		<?php
 	}
+
+	// function corregir_fecha_egreso($bd)
+	// {
+	// 	$sql = "select * from egreso";
+	// 	$result = $bd->mysql->query($sql);
+	// 	unset($sql);
+	// 	if ($result)
+	// 	{
+	// 		if (!empty($result->num_rows))
+    //         {
+    //             $array = $result->fetch_all(MYSQLI_ASSOC);
+	// 			foreach ($array as $row)
+	// 			{
+	// 				$fecha_num = strtotime($row["fecha"][6].$row["fecha"][7].$row["fecha"][8].$row["fecha"][9]."-".$row["fecha"][3].$row["fecha"][4]."-".$row["fecha"][0].$row["fecha"][1]);
+	// 				$sql = "update egreso set fecha_num = '".$fecha_num."' where id_egreso = '".$row["id_egreso"]."';";
+	// 				$bd->mysql->query($sql);
+	// 			}
+    //             $result->free();
+    //         }
+	// 	}
+	// }
 	
 	global $servidor, $puerto, $usuario, $pass, $basedatos;
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
@@ -365,6 +387,7 @@
 	{
 		if(usuario_admin() or usuario_cajero())
 		{
+			//corregir_fecha_egreso($bd);
 			?>
 			<div class="w3-container">
 				<button id="agregar_egreso" class="w3-button w3-dulcevanidad"><i class="icon-plus4">&nbsp;</i>Agregar Egreso</button>
