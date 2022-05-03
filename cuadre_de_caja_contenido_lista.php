@@ -1748,7 +1748,7 @@
                             }
                             else 
                             {
-                                if ($row2["empleado_telf"] == $empleado_telf and $row2["por_pago_de_deuda"] != 1) {
+                                if ($row2["tipo"] == "pago" and $row2["empleado_telf"] == $empleado_telf and $row2["por_pago_de_deuda"] != 1) {
                                     echo "<td class='table-celda-texto'>".$row2["empleado"]."</td>";
                                     echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
                                     echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["efectivo_monto"])."</td>";
@@ -1840,6 +1840,7 @@
                     $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
                     $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
                     $resultado[$i]["empleado_telf"] = $row["empleado_telf"];
+                    $resultado[$i]["por_pago_de_deuda"] = "0";
                     $i++;
                 }
             }
@@ -1893,7 +1894,7 @@
                                 $total_por_dia_ingreso += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
                             }
                             else {
-                                if ($row2["por_pago_de_deuda"] != 1) {
+                                if ($row2["tipo"] == "pago" and $row2["por_pago_de_deuda"] != 1) {
                                     echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
                                     echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["efectivo_monto"])."</td>";
                                     echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["debito_monto"])."</td>";
@@ -1957,7 +1958,7 @@
                             {
                                 echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
                                 echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
-                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $fecha_desde, $fecha_num_consulta_hasta, $empleado["dueño"]))."</td>";
+                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $fecha_hasta, $fecha_num_consulta_hasta, $empleado["dueño"]))."</td>";
                                 echo "</tr>";
                             }
                         ?>
@@ -1966,7 +1967,7 @@
                 <?php
                 foreach ($array_empleados as $empleado)
                 {
-                    crear_modal($empleado["empleado_telf"], $empleado["nombre"]." ".$empleado["apellido"], $empleado["dueño"], $array_ingresos, $array_egresos, $array_porcentajes, $fecha_desde, $fecha_num_consulta_hasta);
+                    crear_modal($empleado["empleado_telf"], $empleado["nombre"]." ".$empleado["apellido"], $empleado["dueño"], $array_ingresos, $array_egresos, $array_porcentajes, $fecha_hasta, $fecha_num_consulta_hasta);
                 }
             }
             else
