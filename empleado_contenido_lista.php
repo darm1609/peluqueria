@@ -406,7 +406,7 @@
 								$row=$result->fetch_array();
 								$num_col=count($row)/2;
 								echo"<td align='center' nowrap>";
-									if($row[0]!="17734140")
+									if($row[0]!="17734140" and false)
 									{
 										echo"<i class='icon-cross2 icon_table' id='eliminar_<?php echo $i; ?>' name='eliminar_<?php echo $i; ?>' alt='Eliminar' title='Eliminar' ";
 										?>

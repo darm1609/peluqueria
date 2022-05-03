@@ -243,7 +243,8 @@
 	{
 		global $basedatos;
 		$fecha=$_POST["fecha"];
-		$fecha_num=time();
+		//$fecha_num=time();
+		$fecha_num = strtotime($_POST["fecha"][6].$_POST["fecha"][7].$_POST["fecha"][8].$_POST["fecha"][9]."-".$_POST["fecha"][3].$_POST["fecha"][4]."-".$_POST["fecha"][0].$_POST["fecha"][1]);
 		$efectivo = 0;
 		$transferencia = 0;
 		if (!empty($_POST["monto_transferencia"]))

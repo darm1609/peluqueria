@@ -339,6 +339,7 @@
 					if ($tieneDeuda)
 					{
 				?>
+				<div style="overflow-x: scroll; overflow-x: auto;">
 				<div class="w3-row w3-section">
 					<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
 						<thead>
@@ -390,21 +391,21 @@
 												{
 													echo "<input type='hidden' id='motivo_ingreso_v_".$val["id_ingreso"]."' name='motivo_ingreso_v_".$val["id_ingreso"]."' value='".$val["tipo_de_trabajo"]."'>";
 													echo "<input type='hidden' class='id-ingreso-v' id='id_ingreso_v_".$val["id_ingreso"]."' name='id_ingreso_v_".$val["id_ingreso"]."' value='".$val["id_ingreso"]."' data-por-venta='".$val['por_venta']."' data-total='".$val['total']."'>";
-													echo "<input class='w3-input w3-border abono-fecha-".$val["id_ingreso"]."' placeholder='dd-mm-aaaa' type='text' id='abono_fecha_v_".$val["id_ingreso"]."' name='abono_fecha_v_".$val["id_ingreso"]."' value='".$hoy."'><br>";
-													echo "<input class='w3-input w3-border abono-efectivo-".$val["id_ingreso"]."' placeholder='Efectivo' type='number' id='abono_efectivo_v_".$val["id_ingreso"]."' name='abono_efectivo_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1><br>";
-													echo "<input class='w3-input w3-border abono-transferencia-".$val["id_ingreso"]."' placeholder='Transferencia' type='number' id='abono_transferencia_v_".$val["id_ingreso"]."' name='abono_transferencia_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1>";
-													echo "<input class='w3-input w3-border abono-referencia-".$val["id_ingreso"]."' placeholder='Referencia' type='text' id='abono_referencia_v_".$val["id_ingreso"]."' name='abono_referencia_v_".$val["id_ingreso"]."'><br>";
-													echo "<input class='w3-input w3-border abono-datafono-".$val["id_ingreso"]."' placeholder='Datáfono' type='number' id='abono_datafono_v_".$val["id_ingreso"]."' name='abono_datafono_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1>";
+													echo "<input class='w3-input w3-border abono-fecha abono-fecha-".$val["id_ingreso"]."' placeholder='dd-mm-aaaa' type='text' id='abono_fecha_v_".$val["id_ingreso"]."' name='abono_fecha_v_".$val["id_ingreso"]."' value='".$hoy."' style='min-width: 20em;'><br>";
+													echo "<input class='w3-input w3-border abono-efectivo-".$val["id_ingreso"]."' placeholder='Efectivo' type='number' id='abono_efectivo_v_".$val["id_ingreso"]."' name='abono_efectivo_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'><br>";
+													echo "<input class='w3-input w3-border abono-transferencia-".$val["id_ingreso"]."' placeholder='Transferencia' type='number' id='abono_transferencia_v_".$val["id_ingreso"]."' name='abono_transferencia_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
+													echo "<input class='w3-input w3-border abono-referencia-".$val["id_ingreso"]."' placeholder='Referencia' type='text' id='abono_referencia_v_".$val["id_ingreso"]."' name='abono_referencia_v_".$val["id_ingreso"]."' style='min-width: 20em;'><br>";
+													echo "<input class='w3-input w3-border abono-datafono-".$val["id_ingreso"]."' placeholder='Datáfono' type='number' id='abono_datafono_v_".$val["id_ingreso"]."' name='abono_datafono_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
 												}
 												else
 												{
 													echo "<input type='hidden' id='id_motivo_ingreso_".$val["id_ingreso"]."' name='id_motivo_ingreso_".$val["id_ingreso"]."' value='".$val["id_motivo_ingreso"]."'>";
 													echo "<input type='hidden' class='id-ingreso' id='id_ingreso_".$val["id_ingreso"]."' name='id_ingreso_".$val["id_ingreso"]."' value='".$val["id_ingreso"]."' data-por-venta='".$val['por_venta']."' data-total='".$val['total']."'>";
-													echo "<input class='w3-input w3-border abono-fecha-".$val["id_ingreso"]."' placeholder='dd-mm-aaaa' type='text' id='abono_fecha_".$val["id_ingreso"]."' name='abono_fecha_".$val["id_ingreso"]."' value='".$hoy."'><br>";
-													echo "<input class='w3-input w3-border abono-efectivo-".$val["id_ingreso"]."' placeholder='Efectivo' type='number' id='abono_efectivo_".$val["id_ingreso"]."' name='abono_efectivo_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1><br>";
-													echo "<input class='w3-input w3-border abono-transferencia-".$val["id_ingreso"]."' placeholder='Transferencia' type='number' id='abono_transferencia_".$val["id_ingreso"]."' name='abono_transferencia_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1>";
-													echo "<input class='w3-input w3-border abono-referencia-".$val["id_ingreso"]."' placeholder='Referencia' type='text' id='abono_referencia_".$val["id_ingreso"]."' name='abono_referencia_".$val["id_ingreso"]."'><br>";
-													echo "<input class='w3-input w3-border abono-datafono-".$val["id_ingreso"]."' placeholder='Datáfono' type='number' id='abono_datafono_".$val["id_ingreso"]."' name='abono_datafono_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1>";
+													echo "<input class='w3-input w3-border abono-fecha abono-fecha-".$val["id_ingreso"]."' placeholder='dd-mm-aaaa' type='text' id='abono_fecha_".$val["id_ingreso"]."' name='abono_fecha_".$val["id_ingreso"]."' value='".$hoy."' size='100px' style='min-width: 20em;'><br>";
+													echo "<input class='w3-input w3-border abono-efectivo-".$val["id_ingreso"]."' placeholder='Efectivo' type='number' id='abono_efectivo_".$val["id_ingreso"]."' name='abono_efectivo_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'><br>";
+													echo "<input class='w3-input w3-border abono-transferencia-".$val["id_ingreso"]."' placeholder='Transferencia' type='number' id='abono_transferencia_".$val["id_ingreso"]."' name='abono_transferencia_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
+													echo "<input class='w3-input w3-border abono-referencia-".$val["id_ingreso"]."' placeholder='Referencia' type='text' id='abono_referencia_".$val["id_ingreso"]."' name='abono_referencia_".$val["id_ingreso"]."' style='min-width: 20em;'><br>";
+													echo "<input class='w3-input w3-border abono-datafono-".$val["id_ingreso"]."' placeholder='Datáfono' type='number' id='abono_datafono_".$val["id_ingreso"]."' name='abono_datafono_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
 												}
 											}
 											else
@@ -418,6 +419,7 @@
 							?>
 						</tbody>
 					</table>
+				</div>
 				</div>
 				<?php
 					}
@@ -521,7 +523,7 @@
 								$row=$result->fetch_array();
 								$num_col=count($row)/2;
 								echo"<td align='center' nowrap>";
-									if ($admin) {
+									if ($admin and false) { //Se quita la opcion de eliminar
 										echo"<i class='icon-cross2 icon_table' id='eliminar_<?php echo $i; ?>' name='eliminar_<?php echo $i; ?>' alt='Eliminar' title='Eliminar' ";
 										?>
 										onclick="document.getElementById('accion_eliminar').value='<?php echo $row[0]; ?>';return confirmar_eliminar('<?php echo $row[0]; ?>');"
