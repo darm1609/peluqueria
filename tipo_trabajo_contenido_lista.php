@@ -41,7 +41,7 @@
 				<thead>
 				<tr>
 				<?php
-					if ($admin)
+					if ($admin and false)
 						echo "<th width='10px'></th>";
 				?>
 				<th>Tipo</th>
@@ -55,7 +55,7 @@
 					$i++;
 					$id_motivo_ingreso=$row["id_motivo_ingreso"];
 					echo"<tr>";
-					if ($admin)
+					if ($admin and false)
 					{
 						echo"<td>";
 						echo"<i class='icon-cross2 icon_table' id='eliminar_<?php echo $i; ?>' name='eliminar_<?php echo $i; ?>' alt='Eliminar' title='Eliminar' onclick='";

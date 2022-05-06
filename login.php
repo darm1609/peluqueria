@@ -2,6 +2,7 @@
 	<div class="ejemplo" style="display: table-cell; height: 100%; vertical-align: middle;">
 		<div class="centrada" style="width: 50%; margin: 0 auto;">
 			<form id="flogin" name="flogin" method="post">
+				<input type='hidden' id='xpass' name='xpass'>
 				<label>
 					<h4>Login</h4>
 					<input type="text" id="login" name="login" value="">

@@ -1,7 +1,7 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		$(function() {
-			$("#fecha_porcentaje").datepicker({
+			$(".fecha_porcentaje").datepicker({
 				dateFormat:"dd-mm-yy",
 				dayNamesMin:[ "Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab" ],
 				monthNames:[ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" ]
@@ -21,22 +21,40 @@
 		global $basedatos;
 		$fecha_porcentaje = $_POST["fecha_porcentaje"];
 		$fecha_num_porcentaje = strtotime($fecha_porcentaje[6].$fecha_porcentaje[7].$fecha_porcentaje[8].$fecha_porcentaje[9]."-".$fecha_porcentaje[3].$fecha_porcentaje[4]."-".$fecha_porcentaje[0].$fecha_porcentaje[1]);
-		if($bd->insertar_datos(7,$basedatos,"porcentaje_ganancia","empleado_telf","fecha","porcentaje_peluqueria","porcentaje_dueño","porcentaje_empleado","fecha_num","login",$_POST["empleado_telf"],$fecha_porcentaje,$_POST["porcentaje_peluqueria"],$_POST["porcentaje_dueño"],$_POST["porcentaje_empleado"],$fecha_num_porcentaje,$_SESSION["login"]))
+
+		if ($_POST["xporcentaje_peluqueria"] != $_POST["porcentaje_peluqueria"] or $_POST["xporcentaje_dueño"] != $_POST["porcentaje_dueño"] or $_POST["xporcentaje_empleado"] != $_POST["porcentaje_empleado"])
 		{
-			$n=$_POST["porcentajes_motivos"];
-			for($i=1;$i<=$n;$i++)
-			{
-				if(!$bd->insertar_datos(8,$basedatos,"motivo_porcentaje_ganancia","id_motivo_ingreso","empleado_telf","fecha","porcentaje_empleado","porcentaje_dueño","porcentaje_peluqueria","fecha_num","login",$_POST["sel_motivo_".$i],$_POST["empleado_telf"],date("d-m-Y",time()),$_POST["porcentaje_empleado_motivo_".$i],$_POST["porcentaje_dueño_motivo_".$i],$_POST["porcentaje_peluqueria_motivo_".$i],time(),$_SESSION["login"]))
-				{
-					unset($n);
-					return false;
-				}
-			}
-			unset($n);
-			return true;
+			$bd->insertar_datos(7,$basedatos,"porcentaje_ganancia","empleado_telf","fecha","porcentaje_peluqueria","porcentaje_dueño","porcentaje_empleado","fecha_num","login",$_POST["empleado_telf"],$fecha_porcentaje,$_POST["porcentaje_peluqueria"],$_POST["porcentaje_dueño"],$_POST["porcentaje_empleado"],$fecha_num_porcentaje,$_SESSION["login"]);
 		}
-		else
-			return false;
+
+		$n=$_POST["porcentajes_motivos"];
+		for($i=1;$i<=$n;$i++)
+		{
+			if(!$bd->insertar_datos(8,$basedatos,"motivo_porcentaje_ganancia","id_motivo_ingreso","empleado_telf","fecha","porcentaje_empleado","porcentaje_dueño","porcentaje_peluqueria","fecha_num","login",$_POST["sel_motivo_".$i],$_POST["empleado_telf"],$fecha_porcentaje,$_POST["porcentaje_empleado_motivo_".$i],$_POST["porcentaje_dueño_motivo_".$i],$_POST["porcentaje_peluqueria_motivo_".$i],$fecha_num_porcentaje,$_SESSION["login"]))
+			{
+				unset($n);
+				return false;
+			}
+		}
+
+		return true;
+
+		// if($bd->insertar_datos(7,$basedatos,"porcentaje_ganancia","empleado_telf","fecha","porcentaje_peluqueria","porcentaje_dueño","porcentaje_empleado","fecha_num","login",$_POST["empleado_telf"],$fecha_porcentaje,$_POST["porcentaje_peluqueria"],$_POST["porcentaje_dueño"],$_POST["porcentaje_empleado"],$fecha_num_porcentaje,$_SESSION["login"]))
+		// {
+		// 	$n=$_POST["porcentajes_motivos"];
+		// 	for($i=1;$i<=$n;$i++)
+		// 	{
+		// 		if(!$bd->insertar_datos(8,$basedatos,"motivo_porcentaje_ganancia","id_motivo_ingreso","empleado_telf","fecha","porcentaje_empleado","porcentaje_dueño","porcentaje_peluqueria","fecha_num","login",$_POST["sel_motivo_".$i],$_POST["empleado_telf"],date("d-m-Y",time()),$_POST["porcentaje_empleado_motivo_".$i],$_POST["porcentaje_dueño_motivo_".$i],$_POST["porcentaje_peluqueria_motivo_".$i],time(),$_SESSION["login"]))
+		// 		{
+		// 			unset($n);
+		// 			return false;
+		// 		}
+		// 	}
+		// 	unset($n);
+		// 	return true;
+		// }
+		// else
+		// 	return false;
 	}
 
 	function guardar_modificar($bd)
@@ -175,23 +193,26 @@
 					<?php
 						$hoy=$ultima_fecha_porcentaje;
 					?>
-					<input type="text" class="w3-input w3-border" id="fecha_porcentaje" name="fecha_porcentaje" placeholder="dd-mm-aaaa" value="<?php echo $ultima_fecha_porcentaje; ?>">
+					<input type="text" class="w3-input w3-border fecha_porcentaje" id="fecha_porcentaje" name="fecha_porcentaje" placeholder="dd-mm-aaaa" value="<?php echo $ultima_fecha_porcentaje; ?>">
 				</div>
 			</div>
 			<div class="w3-row w3-section">
+				<input type='hidden' id='xporcentaje_empleado' name='xporcentaje_empleado' value='<?php if(isset($porcentaje_empleado)) if(empty($porcentaje_empleado)) echo 0; else echo $porcentaje_empleado; ?>'>
 				<label for="porcentaje_empleado" class="w3-text-blue"><b>%&nbsp;Empleado</b></label>
 				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_empleado" name="porcentaje_empleado" type="number" placeholder="%" tabindex="1" value="<?php if(isset($porcentaje_empleado)) if(empty($porcentaje_empleado)) echo 0; else echo $porcentaje_empleado; ?>"></div>
 			</div>
 			<div class="w3-row w3-section">
+				<input type='hidden' id='xporcentaje_peluqueria' name='xporcentaje_peluqueria' value='<?php if(isset($porcentaje_peluqueria)) if(empty($porcentaje_peluqueria)) echo 0; else echo $porcentaje_peluqueria; ?>'>
 				<label for="porcentaje_peluqueria" class="w3-text-blue"><b>%&nbsp;Empresa</b></label>
 				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_peluqueria" name="porcentaje_peluqueria" type="number" placeholder="%" tabindex="2" value="<?php if(isset($porcentaje_peluqueria)) if(empty($porcentaje_peluqueria)) echo 0; else echo $porcentaje_peluqueria; ?>"></div>
 			</div>
 			<div class="w3-row w3-section">
+				<input type='hidden' id='xporcentaje_dueño' name='xporcentaje_dueño' value='<?php if(isset($porcentaje_dueño)) if(empty($porcentaje_dueño)) echo 0; else echo $porcentaje_dueño; ?>'>
 				<label for="porcentaje_dueño" class="w3-text-blue"><b>%&nbsp;Due&ntilde;o</b></label>
 				<div class="w3-rest"><input class="w3-input w3-border" id="porcentaje_dueño" name="porcentaje_dueño" type="number" placeholder="%" tabindex="3" value="<?php if(isset($porcentaje_dueño)) if(empty($porcentaje_dueño)) echo 0; else echo $porcentaje_dueño; ?>"></div>
 			</div>
 			<?php
-				$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso;";
+				$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso order by motivo asc;";
 				$result = $bd->mysql->query($sql);
 				unset($sql);
 				if($result)
@@ -406,7 +427,7 @@
 								$row=$result->fetch_array();
 								$num_col=count($row)/2;
 								echo"<td align='center' nowrap>";
-									if($row[0]!="17734140")
+									if($row[0]!="17734140" and false)
 									{
 										echo"<i class='icon-cross2 icon_table' id='eliminar_<?php echo $i; ?>' name='eliminar_<?php echo $i; ?>' alt='Eliminar' title='Eliminar' ";
 										?>

@@ -69,14 +69,14 @@
 				alertify.alert("","DEBE COLOCAR EL MONTO DEL INGRESO").set('label', 'Aceptar');
 			}
 		}
-		if (valido)
-		{
-			if ($("#monto_transferencia").val().length && !$("#referencia").val().length)
-			{
-				valido=false;
-				alertify.alert("","DEBE COLOCAR EL N\u00DAMERO DE REFERENCIA DE LA TRANSFERENCIA").set('label', 'Aceptar');
-			}
-		}
+		// if (valido)
+		// {
+		// 	if ($("#monto_transferencia").val().length && !$("#referencia").val().length)
+		// 	{
+		// 		valido=false;
+		// 		alertify.alert("","DEBE COLOCAR EL N\u00DAMERO DE REFERENCIA DE LA TRANSFERENCIA").set('label', 'Aceptar');
+		// 	}
+		// }
 		if (valido)
 		{
 			if ($("#monto_transferencia").val().length)

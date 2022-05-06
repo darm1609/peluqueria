@@ -203,7 +203,7 @@
 			cambio=true;
 		if(document.getElementById('otelf').value!=document.getElementById('mtelf').value)
 			cambio=true;
-		debugger;
+		
 		let oespecial = document.getElementById('oespecial').value;
 		let mespecial;
 		if ($("#mespecial").is(':checked'))
@@ -241,10 +241,12 @@
 						if (isNaN(abono_transferencia))
 							validoAbono = false;
 						else
-							if (!abono_referencia.length)
-								validoTransferenciaConReferencia = false;
-							else
-								cambio = true;
+							cambio = true;
+						// else
+						// 	if (!abono_referencia.length)
+						// 		validoTransferenciaConReferencia = false;
+						// 	else
+						// 		cambio = true;
 					if (abono_datafono.length)
 						if (isNaN(abono_datafono))
 							validoAbono = false;
@@ -279,10 +281,12 @@
 						if (isNaN(abono_transferencia))
 							validoAbono = false;
 						else
-							if (!abono_referencia.length)
-								validoTransferenciaConReferencia = false;
-							else
-								cambio = true;
+							cambio = true;
+						// else
+						// 	if (!abono_referencia.length)
+						// 		validoTransferenciaConReferencia = false;
+						// 	else
+						// 		cambio = true;
 					if (abono_datafono.length)
 						if (isNaN(abono_datafono))
 							validoAbono = false;
@@ -299,7 +303,7 @@
 					}
 				}
 			});
-			if (!validoTransferenciaConReferencia)
+			if (!validoTransferenciaConReferencia && false)
 				alertify.alert("","FALTA UNA REFERENCIA PARA UN ABONO DE TRANSFERENCIA").set('label', 'Aceptar');
 			else
 			{
