@@ -45,7 +45,7 @@
 					$totalARestar += $row["debito_monto"] ? $row["debito_monto"] : 0;
 					$idIngresoPadre = $row["id_ingreso_padre"];
 				}
-				$sql = "update ingreso_deuda set monto_pagado = (monto_pagado - ".$totalARestar.") where id_ingreso = ".$idIngresoPadre.";";
+				$sql = "update ingreso_deuda set monto_pagado = (monto_pagado - ".$totalARestar."), pagada = (case when monto > (monto_pagado - ".$totalARestar.") then 0 else 1 end) where id_ingreso = ".$idIngresoPadre.";";
 				$result = $bd->mysql->query($sql);
 			}
 		}
