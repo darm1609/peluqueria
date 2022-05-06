@@ -304,6 +304,7 @@
 	function submit_porcentaje()
 	{
 		var valido=new Boolean(true);
+		debugger;
 		if(document.getElementById('fecha_porcentaje').value=='')
 		{
 			valido=false;

@@ -175,7 +175,7 @@
         return false;
     }
 
-    function porcentaje_peluqueria($array_porcentajes, $fecha_num, $empleado)
+    function porcentaje_peluqueria($array_porcentajes, $array_porcentajes_motivo, $fecha_num, $empleado, $id_motivo)
     {
         $id_aux = 0;
         $fecha_num_aux = 0;
@@ -192,10 +192,31 @@
                 }
             }
         }
+        foreach ($array_porcentajes_motivo as $row)
+        {
+            if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
+            {
+                $id_aux = 0;
+                $fecha_num_aux = 0;
+                $porcentaje_peluqueria = 0;
+            }
+        }
+        foreach ($array_porcentajes_motivo as $row)
+        {
+            if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
+            {
+                if ($row["fecha_num"] >= $fecha_num_aux and $row["id_motivo_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
+                {
+                    $id_aux = $row["id_motivo_porcentaje_ganancia"];
+                    $fecha_num_aux = $row["fecha_num"];
+                    $porcentaje_peluqueria = $row["porcentaje_peluqueria"];
+                }
+            }
+        }
         return $porcentaje_peluqueria;
     }
 
-    function porcentaje_dueño_por_empleado($array_porcentajes, $fecha_num, $empleado)
+    function porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $fecha_num, $empleado, $id_motivo)
     {
         $id_aux = 0;
         $fecha_num_aux = 0;
@@ -212,10 +233,31 @@
                 }
             }
         }
+        foreach ($array_porcentajes_motivo as $row)
+        {
+            if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
+            {
+                $id_aux = 0;
+                $fecha_num_aux = 0;
+                $porcentaje_dueño = 0;
+            }
+        }
+        foreach ($array_porcentajes_motivo as $row)
+        {
+            if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
+            {
+                if ($row["fecha_num"] >= $fecha_num_aux and $row["id_motivo_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
+                {
+                    $id_aux = $row["id_motivo_porcentaje_ganancia"];
+                    $fecha_num_aux = $row["fecha_num"];
+                    $porcentaje_dueño = $row["porcentaje_dueño"];
+                }
+            }
+        }
         return $porcentaje_dueño;
     }
 
-    function porcentaje_empleado($array_porcentajes, $fecha_num, $empleado)
+    function porcentaje_empleado($array_porcentajes, $array_porcentajes_motivo, $fecha_num, $empleado, $id_motivo)
     {
         $id_aux = 0;
         $fecha_num_aux = 0;
@@ -232,22 +274,43 @@
                 }
             }
         }
+        foreach ($array_porcentajes_motivo as $row)
+        {
+            if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
+            {
+                $id_aux = 0;
+                $fecha_num_aux = 0;
+                $porcentaje_empleado = 0;
+            }
+        }
+        foreach ($array_porcentajes_motivo as $row)
+        {
+            if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
+            {
+                if ($row["fecha_num"] >= $fecha_num_aux and $row["id_motivo_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
+                {
+                    $id_aux = $row["id_motivo_porcentaje_ganancia"];
+                    $fecha_num_aux = $row["fecha_num"];
+                    $porcentaje_empleado = $row["porcentaje_empleado"];
+                }
+            }
+        }
         return $porcentaje_empleado;
     }
 
-    function total_empleado($empleado, $array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta, $dueño)
+    function total_empleado($empleado, $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha, $fecha_num_consulta, $dueño)
     {
         $total = 0;
-        $porcentaje_empleado = porcentaje_empleado($array_porcentajes, $fecha_num_consulta, $empleado);
-        $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $fecha_num_consulta, $empleado);
 
         foreach ($array_ingresos as $row)
         {
             if ($row["tipo_ingreso"] == "trabajo" and $row["fecha_num"] <= $fecha_num_consulta and $row["por_pago_de_deuda"] == 0)
             {
+                $porcentaje_empleado = porcentaje_empleado($array_porcentajes, $array_porcentajes_motivo, $fecha_num_consulta, $empleado, $row["id_motivo_ingreso"]);
+                $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $fecha_num_consulta, $empleado, $row["id_motivo_ingreso"]);
                 if ($dueño)
                 {
-                    $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $fecha_num_consulta, $row["empleado_telf"]);
+                    $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $fecha_num_consulta, $row["empleado_telf"], $row["id_motivo_ingreso"]);
                     $total += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño) / 100;
                     $total += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño) / 100;
                     $total += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100;
@@ -314,7 +377,8 @@
         $sql = "select 
         i.fecha_num, 
         i.id_ingreso, 
-        i.fecha, 
+        i.fecha,
+        i.id_motivo_ingreso, 
         mi.motivo, 
         i.efectivo, 
         i.transferencia, 
@@ -364,7 +428,8 @@
         select 
             v.fecha_num, 
             v.id_venta as id_ingreso, 
-            v.fecha, 
+            v.fecha,
+            '' id_motivo_ingreso, 
             v.motivo, 
             v.efectivo, 
             v.transferencia, 
@@ -413,6 +478,7 @@
             ap.fecha_num,
             ap.id_abono_peluqueria as id_ingreso, 
             ap.fecha,
+            '' id_motivo_ingreso,
             'Abono a pelqueria' as motivo,
             ap.efectivo,
             ap.transferencia,
@@ -600,7 +666,37 @@
             unset($result);
     }
 
-    function mostrar_acumulado_empresa($array_ingresos, $array_egresos, $array_porcentajes, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta)
+    function consultar_porcentaje_empleados_totales_motivo($bd, &$array_porcentajes_motivo)
+    {
+        $sql = "select
+            pg.id_motivo_porcentaje_ganancia,
+            pg.id_motivo_ingreso,
+            e.empleado_telf,
+            concat(e.nombre,' ',e.apellido) nombre_empleado,
+            pg.fecha_num,
+            pg.fecha,
+            pg.porcentaje_empleado,
+            pg.porcentaje_peluqueria,
+            pg.porcentaje_dueño
+        from 
+            motivo_porcentaje_ganancia pg
+            inner join empleado e on pg.empleado_telf = e.empleado_telf
+        order by pg.fecha_num;";
+        $result = $bd->mysql->query($sql);
+        unset($sql);
+        if ($result)
+        {
+            if (!empty($result->num_rows))
+            {
+                $array_porcentajes_motivo = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+            }
+        }
+        else
+            unset($result);
+    }
+
+    function mostrar_acumulado_empresa($array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta)
     {
         $dia_unix_time = 84600; //Segundo en 24 horas
 
@@ -684,7 +780,7 @@
                                     ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
                                     ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
 
-                $porcentaje_peluqueria = porcentaje_peluqueria($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
+                $porcentaje_peluqueria = porcentaje_peluqueria($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
 
                 $total_ganancia_peluqueria_efectivo += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_peluqueria) / 100;
                 $total_ganancia_peluqueria_datafono += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_peluqueria) / 100;
@@ -693,7 +789,7 @@
                                     ((($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_peluqueria) / 100) + 
                                     ((($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_peluqueria) / 100);
 
-                $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
+                $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
 
                 $total_ganancia_dueño_efectivo += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño) / 100;
                 $total_ganancia_dueño_datafono += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100;
@@ -1588,7 +1684,7 @@
         <?php
     }
 
-    function crear_modal($empleado_telf, $empleado_nombre, $dueño, $array_ingresos, $array_egresos, $array_porcentajes, $fecha, $fecha_num_consulta)
+    function crear_modal($empleado_telf, $empleado_nombre, $dueño, $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha, $fecha_num_consulta)
     {
         //Modal de detalles pagos a empleados
         echo "<div id='modal_detalle_empleado_".$empleado_telf."' class='w3-modal'>";
@@ -1644,9 +1740,9 @@
                     $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
                     $resultado[$i]["empleado_telf"] = $row["empleado_telf"];
                     $resultado[$i]["empleado"] = $row["empleado"];
-                    $resultado[$i]["porcentaje_empleado"] = porcentaje_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
-                    $resultado[$i]["porcentaje_peluqueria"] = porcentaje_peluqueria($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
-                    $resultado[$i]["porcentaje_dueño"] = porcentaje_dueño_por_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
+                    $resultado[$i]["porcentaje_empleado"] = porcentaje_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
+                    $resultado[$i]["porcentaje_peluqueria"] = porcentaje_peluqueria($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
+                    $resultado[$i]["porcentaje_dueño"] = porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
                     $resultado[$i]["por_pago_de_deuda"] = $row["por_pago_de_deuda"];
                     $resultado[$i]["cliente_especial"] = $row["cliente_especial"];
                     $i++;
@@ -1819,9 +1915,9 @@
                     $resultado[$i]["transferencia_monto"] = !empty($row["transferencia_monto"]) ? $row["transferencia_monto"] : 0;
                     $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
                     $resultado[$i]["empleado_telf"] = $row["empleado_telf"];
-                    $resultado[$i]["porcentaje_empleado"] = porcentaje_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
-                    $resultado[$i]["porcentaje_peluqueria"] = porcentaje_peluqueria($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
-                    $resultado[$i]["porcentaje_dueño"] = porcentaje_dueño_por_empleado($array_porcentajes, $row["fecha_num"], $row["empleado_telf"]);
+                    $resultado[$i]["porcentaje_empleado"] = porcentaje_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
+                    $resultado[$i]["porcentaje_peluqueria"] = porcentaje_peluqueria($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
+                    $resultado[$i]["porcentaje_dueño"] = porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
                     $resultado[$i]["por_pago_de_deuda"] = $row["por_pago_de_deuda"];
                     $i++;
                 }
@@ -1933,7 +2029,7 @@
         //Fin de modal de detalles pagos a empleados
     }
 
-    function mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $array_empleados, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta)
+    function mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $array_empleados, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta)
     {
         ?>
         <form class="w3-container w3-card-4 w3-light-grey w3-margin table-overflow" method="post">
@@ -1958,7 +2054,7 @@
                             {
                                 echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
                                 echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
-                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $fecha_hasta, $fecha_num_consulta_hasta, $empleado["dueño"]))."</td>";
+                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta, $empleado["dueño"]))."</td>";
                                 echo "</tr>";
                             }
                         ?>
@@ -1967,7 +2063,7 @@
                 <?php
                 foreach ($array_empleados as $empleado)
                 {
-                    crear_modal($empleado["empleado_telf"], $empleado["nombre"]." ".$empleado["apellido"], $empleado["dueño"], $array_ingresos, $array_egresos, $array_porcentajes, $fecha_hasta, $fecha_num_consulta_hasta);
+                    crear_modal($empleado["empleado_telf"], $empleado["nombre"]." ".$empleado["apellido"], $empleado["dueño"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta);
                 }
             }
             else
@@ -1985,14 +2081,7 @@
         <?php
     }
 
-    function acumulados_no_acumulados()
-    {
-        ?>
-
-        <?php
-    }
-
-    function mostrar_busqueda($bd, &$array_ingresos, &$array_egresos, &$array_porcentajes, &$array_empleados)
+    function mostrar_busqueda($bd, &$array_ingresos, &$array_egresos, &$array_porcentajes, &$array_porcentajes_motivo, &$array_empleados)
     {
         $admin = usuario_admin();
         $cajero = usuario_cajero();
@@ -2006,14 +2095,14 @@
 
         consultar_porcentaje_empleados_totales($bd, $array_porcentajes);
 
+        consultar_porcentaje_empleados_totales_motivo($bd, $array_porcentajes_motivo);
+
         $fecha_num_consulta_desde = strtotime($_POST["bfecha_desde"][6].$_POST["bfecha_desde"][7].$_POST["bfecha_desde"][8].$_POST["bfecha_desde"][9]."-".$_POST["bfecha_desde"][3].$_POST["bfecha_desde"][4]."-".$_POST["bfecha_desde"][0].$_POST["bfecha_desde"][1]);
         $fecha_num_consulta_hasta = strtotime($_POST["bfecha_hasta"][6].$_POST["bfecha_hasta"][7].$_POST["bfecha_hasta"][8].$_POST["bfecha_hasta"][9]."-".$_POST["bfecha_hasta"][3].$_POST["bfecha_hasta"][4]."-".$_POST["bfecha_hasta"][0].$_POST["bfecha_hasta"][1]);
         $fecha_desde = $_POST["bfecha_desde"];
         $fecha_hasta = $_POST["bfecha_hasta"];
 
-        acumulados_no_acumulados();
-
-        mostrar_acumulado_empresa($array_ingresos, $array_egresos, $array_porcentajes, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
+        mostrar_acumulado_empresa($array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
 
         mostrar_ingresos_netos_del_dia($array_ingresos, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
 
@@ -2023,7 +2112,7 @@
 
         mostrar_egresos_del_dia($array_egresos, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
 
-        mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $array_empleados, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
+        mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $array_empleados, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta);
 
     }
 
@@ -2034,7 +2123,8 @@
         $array_ingresos = array();
         $array_egresos = array();
         $array_porcentajes = array();
+        $array_porcentajes_motivo = array();
         $array_empleados = array();
-        mostrar_busqueda($bd, $array_ingresos, $array_egresos, $array_porcentajes, $array_empleados);
+        mostrar_busqueda($bd, $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $array_empleados);
     }
 ?>
