@@ -180,27 +180,6 @@
         $id_aux = 0;
         $fecha_num_aux = 0;
         $porcentaje_peluqueria = 0;
-        foreach ($array_porcentajes as $row)
-        {
-            if ($row["empleado_telf"] == $empleado) 
-            {
-                if ($row["fecha_num"] >= $fecha_num_aux and $row["id_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
-                {
-                    $id_aux = $row["id_porcentaje_ganancia"];
-                    $fecha_num_aux = $row["fecha_num"];
-                    $porcentaje_peluqueria = $row["porcentaje_peluqueria"];
-                }
-            }
-        }
-        foreach ($array_porcentajes_motivo as $row)
-        {
-            if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
-            {
-                $id_aux = 0;
-                $fecha_num_aux = 0;
-                $porcentaje_peluqueria = 0;
-            }
-        }
         foreach ($array_porcentajes_motivo as $row)
         {
             if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
@@ -210,6 +189,24 @@
                     $id_aux = $row["id_motivo_porcentaje_ganancia"];
                     $fecha_num_aux = $row["fecha_num"];
                     $porcentaje_peluqueria = $row["porcentaje_peluqueria"];
+                }
+            }
+        }
+        if ($porcentaje_peluqueria == 0)
+        {
+            $id_aux = 0;
+            $fecha_num_aux = 0;
+            $porcentaje_peluqueria = 0;
+            foreach ($array_porcentajes as $row)
+            {
+                if ($row["empleado_telf"] == $empleado) 
+                {
+                    if ($row["fecha_num"] >= $fecha_num_aux and $row["id_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
+                    {
+                        $id_aux = $row["id_porcentaje_ganancia"];
+                        $fecha_num_aux = $row["fecha_num"];
+                        $porcentaje_peluqueria = $row["porcentaje_peluqueria"];
+                    }
                 }
             }
         }
@@ -221,27 +218,6 @@
         $id_aux = 0;
         $fecha_num_aux = 0;
         $porcentaje_dueño = 0;
-        foreach ($array_porcentajes as $row)
-        {
-            if ($row["empleado_telf"] == $empleado) 
-            {
-                if ($row["fecha_num"] >= $fecha_num_aux and $row["id_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
-                {
-                    $id_aux = $row["id_porcentaje_ganancia"];
-                    $fecha_num_aux = $row["fecha_num"];
-                    $porcentaje_dueño = $row["porcentaje_dueño"];
-                }
-            }
-        }
-        foreach ($array_porcentajes_motivo as $row)
-        {
-            if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
-            {
-                $id_aux = 0;
-                $fecha_num_aux = 0;
-                $porcentaje_dueño = 0;
-            }
-        }
         foreach ($array_porcentajes_motivo as $row)
         {
             if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
@@ -251,6 +227,24 @@
                     $id_aux = $row["id_motivo_porcentaje_ganancia"];
                     $fecha_num_aux = $row["fecha_num"];
                     $porcentaje_dueño = $row["porcentaje_dueño"];
+                }
+            }
+        }
+        if ($porcentaje_dueño == 0)
+        {
+            $id_aux = 0;
+            $fecha_num_aux = 0;
+            $porcentaje_dueño = 0;
+            foreach ($array_porcentajes as $row)
+            {
+                if ($row["empleado_telf"] == $empleado) 
+                {
+                    if ($row["fecha_num"] >= $fecha_num_aux and $row["id_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
+                    {
+                        $id_aux = $row["id_porcentaje_ganancia"];
+                        $fecha_num_aux = $row["fecha_num"];
+                        $porcentaje_dueño = $row["porcentaje_dueño"];
+                    }
                 }
             }
         }
@@ -262,27 +256,6 @@
         $id_aux = 0;
         $fecha_num_aux = 0;
         $porcentaje_empleado = 0;
-        foreach ($array_porcentajes as $row)
-        {
-            if ($row["empleado_telf"] == $empleado) 
-            {
-                if ($row["fecha_num"] >= $fecha_num_aux and $row["id_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
-                {
-                    $id_aux = $row["id_porcentaje_ganancia"];
-                    $fecha_num_aux = $row["fecha_num"];
-                    $porcentaje_empleado = $row["porcentaje_empleado"];
-                }
-            }
-        }
-        foreach ($array_porcentajes_motivo as $row)
-        {
-            if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
-            {
-                $id_aux = 0;
-                $fecha_num_aux = 0;
-                $porcentaje_empleado = 0;
-            }
-        }
         foreach ($array_porcentajes_motivo as $row)
         {
             if ($row["empleado_telf"] == $empleado and $row["id_motivo_ingreso"] == $id_motivo) 
@@ -295,22 +268,39 @@
                 }
             }
         }
+        if ($porcentaje_empleado == 0)
+        {
+            $id_aux = 0;
+            $fecha_num_aux = 0;
+            $porcentaje_empleado = 0;
+            foreach ($array_porcentajes as $row)
+            {
+                if ($row["empleado_telf"] == $empleado) 
+                {
+                    if ($row["fecha_num"] >= $fecha_num_aux and $row["id_porcentaje_ganancia"] >= $id_aux and $row["fecha_num"] <= $fecha_num)
+                    {
+                        $id_aux = $row["id_porcentaje_ganancia"];
+                        $fecha_num_aux = $row["fecha_num"];
+                        $porcentaje_empleado = $row["porcentaje_empleado"];
+                    }
+                }
+            }
+        }
         return $porcentaje_empleado;
     }
 
     function total_empleado($empleado, $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha, $fecha_num_consulta, $dueño)
     {
         $total = 0;
-
         foreach ($array_ingresos as $row)
         {
             if ($row["tipo_ingreso"] == "trabajo" and $row["fecha_num"] <= $fecha_num_consulta and $row["por_pago_de_deuda"] == 0)
             {
-                $porcentaje_empleado = porcentaje_empleado($array_porcentajes, $array_porcentajes_motivo, $fecha_num_consulta, $empleado, $row["id_motivo_ingreso"]);
-                $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $fecha_num_consulta, $empleado, $row["id_motivo_ingreso"]);
+                $porcentaje_empleado = porcentaje_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $empleado, $row["id_motivo_ingreso"]);
+                $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $empleado, $row["id_motivo_ingreso"]);
                 if ($dueño)
                 {
-                    $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $fecha_num_consulta, $row["empleado_telf"], $row["id_motivo_ingreso"]);
+                    $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
                     $total += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño) / 100;
                     $total += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño) / 100;
                     $total += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100;
