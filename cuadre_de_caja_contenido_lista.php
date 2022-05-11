@@ -335,6 +335,53 @@
         return $total;
     }
 
+    function total_dueño($empleado, $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha, $fecha_num_consulta)
+    {
+        $total = 0;
+        foreach ($array_ingresos as $row)
+        {
+            if ($row["tipo_ingreso"] == "trabajo" and $row["fecha_num"] <= $fecha_num_consulta and $row["por_pago_de_deuda"] == 0)
+            {
+                if ($empleado != $row["empleado_telf"])
+                {
+                    $porcentaje_dueño_por_empleado = porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
+                    $total += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño_por_empleado) / 100;
+                    $total += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño_por_empleado) / 100;
+                    $total += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño_por_empleado) / 100;
+                    if ($row["cliente_especial"] != "1" and $empleado != $row["empleado_telf"]) 
+                    {
+                        $total += (($row["deuda_monto"] ? $row["deuda_monto"] : 0) * $porcentaje_dueño_por_empleado) / 100;
+                    }
+                }
+                else
+                {
+                    $porcentaje_dueño = porcentaje_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
+                    $total += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño) / 100;
+                    $total += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño) / 100;
+                    $total += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100;
+                    if ($row["cliente_especial"] != "1" and $empleado != $row["empleado_telf"]) 
+                    {
+                        $total += (($row["deuda_monto"] ? $row["deuda_monto"] : 0) * $porcentaje_dueño) / 100;
+                    }
+                }
+            }
+        }
+
+        foreach ($array_egresos as $row)
+        {
+            if ($row["tipo_egreso"] == "pago_empleado" and $row["fecha_num"] <= $fecha_num_consulta)
+            {
+                if ($empleado == $row["empleado_telf"])
+                {
+                    $total -= ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0);
+                    $total -= ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+                }
+            }
+        }
+
+        return $total;
+    }
+
     function consultar_empleado($bd, &$array_empleados)
     {
         $sql = "select 
@@ -793,7 +840,7 @@
                                     ((($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100) + 
                                     ((($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño) / 100);
 
-                if ($row["dueño"] == 1) {
+                if ($row["dueño"] == 1 and $row["empleado_telf"] == '3226773809') {
                     $porcentaje_empleado_dueño = porcentaje_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
 
                     $total_ganancia_dueño_por_trabajo_efectivo += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_empleado_dueño) / 100;
@@ -1828,7 +1875,7 @@
                         if ($row2["fecha"] == $row["fecha"])
                         {
                             echo "<tr>";
-                            if ($row2["tipo"] == "ingreso" and $row2["por_pago_de_deuda"] != 1 and $row2["cliente_especial"] != 1 and $empleado_telf != $row2["empleado_telf"]) 
+                            if ($row2["tipo"] == "ingreso" and $row2["por_pago_de_deuda"] != 1 and $row2["cliente_especial"] != 1 /*and $empleado_telf != $row2["empleado_telf"]*/) 
                             {
                                 echo "<td class='table-celda-texto'>".$row2["empleado"]."</td>";
                                 echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
@@ -1836,7 +1883,7 @@
                                 echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["debito_monto"])."</td>";
                                 echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["transferencia_monto"])."</td>";
                                 echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["deuda_monto"])."</td>";
-                                
+
                                 if ($row2["empleado_telf"] != $empleado_telf) 
                                 {
                                     $total_por_linea_con_porcentaje += ($row2["efectivo_monto"] * $row2["porcentaje_dueño"] / 100);
@@ -1876,7 +1923,7 @@
                             }
                             else 
                             {
-                                if ($row2["tipo"] == "pago" and $row2["empleado_telf"] == $empleado_telf and $row2["por_pago_de_deuda"] != 1) {
+                                if ($row2["tipo"] == "pago" and $row2["empleado_telf"] == $empleado_telf and (!isset($row2["por_pago_de_deuda"]) or $row2["por_pago_de_deuda"] != 1)) {
                                     echo "<td class='table-celda-texto'>".$row2["empleado"]."</td>";
                                     echo "<td class='table-celda-texto'>".$row2["motivo"]."</td>";
                                     echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', $row2["efectivo_monto"])."</td>";
@@ -2084,10 +2131,20 @@
                         <?php
                             foreach ($array_empleados as $empleado)
                             {
-                                echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
-                                echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
-                                echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta, $empleado["dueño"]))."</td>";
-                                echo "</tr>";
+                                if ($empleado["dueño"] == 1)
+                                {
+                                    echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
+                                    echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
+                                    echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_dueño($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
+                                    echo "</tr>";
+                                }
+                                else
+                                {
+                                    echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
+                                    echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
+                                    echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta, $empleado["dueño"]))."</td>";
+                                    echo "</tr>";
+                                }
                             }
                         ?>
                     </tbody>
