@@ -729,6 +729,11 @@
         $total_ganancia_dueño_transferencia = 0;
         $total_ganancia_dueño = 0;
 
+        $total_ganancia_dueño_por_trabajo_efectivo = 0;
+        $total_ganancia_dueño_por_trabajo_datafono = 0;
+        $total_ganancia_dueño_por_trabajo_transferencia = 0;
+        $total_ganancia_dueño_por_trabajo = 0;
+
         foreach ($array_ingresos as $row)
         {
             if ($row["fecha_num"] < $fecha_num_consulta_desde)
@@ -783,10 +788,22 @@
 
                 $total_ganancia_dueño_efectivo += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño) / 100;
                 $total_ganancia_dueño_datafono += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100;
-                $total_ganancia_dueño_transferencia += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100;
+                $total_ganancia_dueño_transferencia += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño) / 100;
                 $total_ganancia_dueño += ((($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño) / 100) + 
                                     ((($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100) + 
                                     ((($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño) / 100);
+
+                if ($row["dueño"] == 1) {
+                    $porcentaje_empleado_dueño = porcentaje_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
+
+                    $total_ganancia_dueño_por_trabajo_efectivo += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_empleado_dueño) / 100;
+                    $total_ganancia_dueño_por_trabajo_datafono += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_empleado_dueño) / 100;
+                    $total_ganancia_dueño_por_trabajo_transferencia += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_empleado_dueño) / 100;
+                    $total_ganancia_dueño_por_trabajo += ((($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_empleado_dueño) / 100) + 
+                                        ((($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_empleado_dueño) / 100) + 
+                                        ((($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_empleado_dueño) / 100);
+                }
+                
             }
 
             if ($row["fecha_num"] >= $fecha_num_consulta_desde and $row["fecha_num"] <= $fecha_num_consulta_hasta and $row["tipo_ingreso"] == "abono_peluqueria")
@@ -1232,24 +1249,49 @@
                 <div class="w3-quarter w3-container">
                     <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
                         <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
+                            Ganancia del dueño por empleados
+                        </div>
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>Total efectivo:</td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_dueño_efectivo); ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total dat&aacute;fono:</td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_dueño_datafono); ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total transferencia:</td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_dueño_transferencia); ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_dueño); ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="w3-quarter w3-container">
+                    <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
                             Ganancia del dueño por trabajos realizados
                         </div>
                         <table border="0" width="100%">
                             <tr>
                                 <td>Total efectivo:</td>
-                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_peluqueria_efectivo); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_dueño_por_trabajo_efectivo); ?></td>
                             </tr>
                             <tr>
                                 <td>Total dat&aacute;fono:</td>
-                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_peluqueria_datafono); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_dueño_por_trabajo_datafono); ?></td>
                             </tr>
                             <tr>
                                 <td>Total transferencia:</td>
-                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_peluqueria_transferencia); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_dueño_por_trabajo_transferencia); ?></td>
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_peluqueria); ?></td>
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_dueño_por_trabajo); ?></td>
                             </tr>
                         </table>
                     </div>
