@@ -48,13 +48,5 @@
 			unset($error_2);
 		}
 	?>
-	
-	<footer class='w3-display-bottommiddle' style='text-align:center;'>
-  		<p>
-			<img src="imagenes/vinkasoftware.png" width="50px" class="logo-inicial">
-			<br>
-			Powered by VinkaSoftware
-		</p>
-	</footer> 
 </body>
 </html>
