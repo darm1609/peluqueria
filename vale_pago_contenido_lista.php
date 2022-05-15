@@ -67,6 +67,7 @@
 						<input type="button" class="w3-button w3-block w3-dulcevanidad" id="mostrarxpag" name="mostrarxpag" value="Mostrar" onclick="document.getElementById('accion_eliminar').value='';return enviardatos_mostrar();">
 					</div>
 				</div>
+				<div style="overflow-x: scroll; overflow-x: auto;">
 				<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
 					<thead>
 						<tr class="w3-dulcevanidad">
@@ -135,6 +136,7 @@
 						?>
 					</tbody>
 				</table>
+				</div>
 				<?php
 					if(isset($_POST["sel_opcion"])) echo"<input type='hidden' id='sel_opcion' name='sel_opcion' value='".$_POST["sel_opcion"]."'>";
 					if(isset($_POST["chbempleado_telf"])) echo"<input type='hidden' id='chbempleado_telf' name='chbempleado_telf' value='".$_POST["chbempleado_telf"]."'>";
