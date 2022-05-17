@@ -106,18 +106,24 @@
 									{
 										$especial=false;
 										foreach($colespeciales as $indice=>$valor) 
-										{
+										{											
 											if($indice==$j)
 											{
 												$especial=true;
 												if(is_callable($valor))
+												{
 													echo $valor($row[$j],$bd);
+												}
 												else
+												{
 													echo $row[$j];
+												}
 											}
 										}
 										if(!$especial)
+										{
 											echo $row[$j];
+										}
 									}
 									else
 										echo"&nbsp;";
@@ -205,11 +211,16 @@
 			//$colespeciales=array(1=>"fecha_dd_mm_yy");
 			$colespeciales = array();
 			$colocultar = array();
+			$colformatomoney = array();
 			if(isset($_POST["pag"]) and !empty($_POST["pag"]))
 				$pag=$_POST["pag"];
 			if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
 				$cantxpag=$_POST["cantxpag"];
 			$colocultar[0] = "id_egreso";
+			$colespeciales[2] = "Efectivo";
+			$colespeciales[3] = "Datáfono";
+			$colespeciales[4] = "Transferencia";
+			$colespeciales[6] = "Total";
 			if(isset($pag) and isset($cantxpag))
 				mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
 			else

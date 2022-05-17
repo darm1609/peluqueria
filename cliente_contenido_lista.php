@@ -43,10 +43,10 @@
 							$id_ingreso = $value;
 							if (isset($_POST["abono_efectivo_".$id_ingreso]))
 							{
-								$abono_efectivo = $_POST["abono_efectivo_".$id_ingreso];
-								$abono_transferencia = $_POST["abono_transferencia_".$id_ingreso];
+								$abono_efectivo = str_replace(",","",$_POST["abono_efectivo_".$id_ingreso]);
+								$abono_transferencia = str_replace(",","",$_POST["abono_transferencia_".$id_ingreso]);
 								$abono_referencia = $_POST["abono_referencia_".$id_ingreso];
-								$abono_datafono = $_POST["abono_datafono_".$id_ingreso];
+								$abono_datafono = str_replace(",","",$_POST["abono_datafono_".$id_ingreso]);
 								$id_motivo_ingreso = $_POST["id_motivo_ingreso_".$id_ingreso];
 								$fecha = $_POST["abono_fecha_".$id_ingreso];
 								$fecha_num = strtotime($fecha[6].$fecha[7].$fecha[8].$fecha[9]."-".$fecha[3].$fecha[4]."-".$fecha[0].$fecha[1]);
@@ -113,10 +113,10 @@
 							$id_ingreso = $value;
 							if (isset($_POST["abono_efectivo_v_".$id_ingreso]))
 							{
-								$abono_efectivo = $_POST["abono_efectivo_v_".$id_ingreso];
-								$abono_transferencia = $_POST["abono_transferencia_v_".$id_ingreso];
+								$abono_efectivo = str_replace(",","",$_POST["abono_efectivo_v_".$id_ingreso]);
+								$abono_transferencia = str_replace(",","",$_POST["abono_transferencia_v_".$id_ingreso]);
 								$abono_referencia = $_POST["abono_referencia_v_".$id_ingreso];
-								$abono_datafono = $_POST["abono_datafono_v_".$id_ingreso];
+								$abono_datafono = str_replace(",","",$_POST["abono_datafono_v_".$id_ingreso]);
 								$motivo_ingreso = $_POST["motivo_ingreso_v_".$id_ingreso];
 								$fecha = $_POST["abono_fecha_v_".$id_ingreso];
 								$fecha_num = time();
@@ -329,7 +329,7 @@
 							else
 								unset($result22);
 							if ($tieneDeuda)
-								echo "Deuda&nbsp;Total: ".$totalDeuda;
+								echo "Deuda&nbsp;Total: ".money_format('%.2n', $totalDeuda);
 							else
 								echo "El cliente no posee deudas";
 						?>
@@ -365,7 +365,7 @@
 									foreach ($row3 as $val)
 									{
 										echo"<tr>";
-										echo"<td align='center'>";
+										echo"<td align='center' nowrap>";
 										echo $val['fecha'];
 										echo"</td>";
 										echo"<td align='center'>";
@@ -374,14 +374,14 @@
 										echo"<td align='center'>";
 										echo $val['realizado_por'];
 										echo"</td>";
-										echo"<td align='center'>";
-										echo $val['debe'];
+										echo"<td align='center' nowrap>";
+										echo money_format('%.2n', $val['debe']);
 										echo"</td>";
-										echo"<td align='center'>";
-										echo $val['pagado'];
+										echo"<td align='center' nowrap>";
+										echo money_format('%.2n', $val['pagado']);
 										echo"</td>";
-										echo"<td align='center'>";
-										echo $val['total'];
+										echo"<td align='center' nowrap>";
+										echo money_format('%.2n', $val['total']);
 										echo"</td>";
 										echo"<td align='center'>";
 											if ($val['pagada'] == 0) 
@@ -392,20 +392,20 @@
 													echo "<input type='hidden' id='motivo_ingreso_v_".$val["id_ingreso"]."' name='motivo_ingreso_v_".$val["id_ingreso"]."' value='".$val["tipo_de_trabajo"]."'>";
 													echo "<input type='hidden' class='id-ingreso-v' id='id_ingreso_v_".$val["id_ingreso"]."' name='id_ingreso_v_".$val["id_ingreso"]."' value='".$val["id_ingreso"]."' data-por-venta='".$val['por_venta']."' data-total='".$val['total']."'>";
 													echo "<input class='w3-input w3-border abono-fecha abono-fecha-".$val["id_ingreso"]."' placeholder='dd-mm-aaaa' type='text' id='abono_fecha_v_".$val["id_ingreso"]."' name='abono_fecha_v_".$val["id_ingreso"]."' value='".$hoy."' style='min-width: 20em;'><br>";
-													echo "<input class='w3-input w3-border abono-efectivo-".$val["id_ingreso"]."' placeholder='Efectivo' type='number' id='abono_efectivo_v_".$val["id_ingreso"]."' name='abono_efectivo_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'><br>";
-													echo "<input class='w3-input w3-border abono-transferencia-".$val["id_ingreso"]."' placeholder='Transferencia' type='number' id='abono_transferencia_v_".$val["id_ingreso"]."' name='abono_transferencia_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
+													echo "<input class='w3-input w3-border abono-efectivo-".$val["id_ingreso"]."' placeholder='Efectivo' type='text' inputmode='decimal' data-type='currency' id='abono_efectivo_v_".$val["id_ingreso"]."' name='abono_efectivo_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'><br>";
+													echo "<input class='w3-input w3-border abono-transferencia-".$val["id_ingreso"]."' placeholder='Transferencia' type='text' inputmode='decimal' data-type='currency' id='abono_transferencia_v_".$val["id_ingreso"]."' name='abono_transferencia_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
 													echo "<input class='w3-input w3-border abono-referencia-".$val["id_ingreso"]."' placeholder='Referencia' type='text' id='abono_referencia_v_".$val["id_ingreso"]."' name='abono_referencia_v_".$val["id_ingreso"]."' style='min-width: 20em;'><br>";
-													echo "<input class='w3-input w3-border abono-datafono-".$val["id_ingreso"]."' placeholder='Datáfono' type='number' id='abono_datafono_v_".$val["id_ingreso"]."' name='abono_datafono_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
+													echo "<input class='w3-input w3-border abono-datafono-".$val["id_ingreso"]."' placeholder='Datáfono' type='text' inputmode='decimal' data-type='currency' id='abono_datafono_v_".$val["id_ingreso"]."' name='abono_datafono_v_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
 												}
 												else
 												{
 													echo "<input type='hidden' id='id_motivo_ingreso_".$val["id_ingreso"]."' name='id_motivo_ingreso_".$val["id_ingreso"]."' value='".$val["id_motivo_ingreso"]."'>";
 													echo "<input type='hidden' class='id-ingreso' id='id_ingreso_".$val["id_ingreso"]."' name='id_ingreso_".$val["id_ingreso"]."' value='".$val["id_ingreso"]."' data-por-venta='".$val['por_venta']."' data-total='".$val['total']."'>";
 													echo "<input class='w3-input w3-border abono-fecha abono-fecha-".$val["id_ingreso"]."' placeholder='dd-mm-aaaa' type='text' id='abono_fecha_".$val["id_ingreso"]."' name='abono_fecha_".$val["id_ingreso"]."' value='".$hoy."' size='100px' style='min-width: 20em;'><br>";
-													echo "<input class='w3-input w3-border abono-efectivo-".$val["id_ingreso"]."' placeholder='Efectivo' type='number' id='abono_efectivo_".$val["id_ingreso"]."' name='abono_efectivo_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'><br>";
-													echo "<input class='w3-input w3-border abono-transferencia-".$val["id_ingreso"]."' placeholder='Transferencia' type='number' id='abono_transferencia_".$val["id_ingreso"]."' name='abono_transferencia_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
+													echo "<input class='w3-input w3-border abono-efectivo-".$val["id_ingreso"]."' placeholder='Efectivo' type='text' inputmode='decimal' data-type='currency' id='abono_efectivo_".$val["id_ingreso"]."' name='abono_efectivo_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'><br>";
+													echo "<input class='w3-input w3-border abono-transferencia-".$val["id_ingreso"]."' placeholder='Transferencia' type=' text'inputmode='decimal' data-type='currency' id='abono_transferencia_".$val["id_ingreso"]."' name='abono_transferencia_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
 													echo "<input class='w3-input w3-border abono-referencia-".$val["id_ingreso"]."' placeholder='Referencia' type='text' id='abono_referencia_".$val["id_ingreso"]."' name='abono_referencia_".$val["id_ingreso"]."' style='min-width: 20em;'><br>";
-													echo "<input class='w3-input w3-border abono-datafono-".$val["id_ingreso"]."' placeholder='Datáfono' type='number' id='abono_datafono_".$val["id_ingreso"]."' name='abono_datafono_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
+													echo "<input class='w3-input w3-border abono-datafono-".$val["id_ingreso"]."' placeholder='Datáfono' type='text' inputmode='decimal' data-type='currency' id='abono_datafono_".$val["id_ingreso"]."' name='abono_datafono_".$val["id_ingreso"]."' data-id-ingreso='".$val["id_ingreso"]."' min=1 style='min-width: 20em;'>";
 												}
 											}
 											else

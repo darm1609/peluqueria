@@ -49,9 +49,12 @@
 		$("#monto_efectivo").val($("#monto_efectivo").val().trim());
 		$("#monto_datafono").val($("#monto_datafono").val().trim());
 		$("#referencia").val($("#referencia").val().trim());
+		let monto_transferencia = $("#monto_transferencia").val().replaceAll(',','');
+		let monto_efectivo = $("#monto_efectivo").val().replaceAll(',','');
+		let monto_datafono = $("#monto_datafono").val().replaceAll(',','');
 		if(valido)
 		{
-			if (!$("#monto_transferencia").val().length && !$("#monto_efectivo").val().length && !$("#monto_debito").val().length)
+			if (!monto_transferencia.length && !monto_efectivo.length && !monto_datafono.length)
 			{
 				valido=false;
 				alertify.alert("","DEBE COLOCAR UN MONTO").set('label', 'Aceptar');
@@ -67,16 +70,16 @@
 		// }
 		if (valido)
 		{
-			if ($("#monto_transferencia").val().length)
+			if (monto_transferencia.length)
 			{
-				if (isNaN($("#monto_transferencia").val()))
+				if (isNaN(monto_transferencia))
 				{
 					valido=false;
 					alertify.alert("","MONTO DE TRANSFERENCIA NO VALIDO").set('label', 'Aceptar');
 				}
 				else
 				{
-					if (Number($("#monto_transferencia").val()) < 1)
+					if (Number(monto_transferencia) < 1)
 					{
 						valido=false;
 						alertify.alert("","MONTO DE TRANSFERENCIA NO VALIDO").set('label', 'Aceptar');
@@ -86,16 +89,16 @@
 		}
 		if (valido)
 		{
-			if ($("#monto_datafono").val().length)
+			if (monto_datafono.length)
 			{
-				if (isNaN($("#monto_datafono").val()))
+				if (isNaN(monto_datafono))
 				{
 					valido=false;
 					alertify.alert("","MONTO DE DEBITO/DAT\u00C1FONO NO VALIDO").set('label', 'Aceptar');
 				}
 				else
 				{
-					if (Number($("#monto_datafono").val()) < 1)
+					if (Number(monto_datafono) < 1)
 					{
 						valido=false;
 						alertify.alert("","MONTO DE DEBITO/DAT\u00C1FONO NO VALIDO").set('label', 'Aceptar');
@@ -105,16 +108,16 @@
 		}
 		if (valido)
 		{
-			if ($("#monto_efectivo").val().length)
+			if (monto_efectivo.length)
 			{
-				if (isNaN($("#monto_efectivo").val()))
+				if (isNaN(monto_efectivo))
 				{
 					valido=false;
 					alertify.alert("","MONTO DE EFECTIVO NO VALIDO").set('label', 'Aceptar');
 				}
 				else
 				{
-					if (Number($("#monto_efectivo").val()) < 1)
+					if (Number(monto_efectivo) < 1)
 					{
 						valido=false;
 						alertify.alert("","MONTO DE EFECTIVO NO VALIDO").set('label', 'Aceptar');
@@ -273,27 +276,30 @@
 			$efectivo = 1;
 		if (!empty($_POST["monto_datafono"]))
 			$datafono = 1;
+		$monto_transferencia = str_replace(",","",$_POST["monto_transferencia"]);
+		$monto_efectivo = str_replace(",","",$_POST["monto_efectivo"]);
+		$monto_datafono = str_replace(",","",$_POST["monto_datafono"]);
 		if($bd->insertar_datos(7,$basedatos,"egreso","fecha","motivo","fecha_num","login","efectivo","transferencia","debito",$fecha,$_POST["motivo"],$fecha_num,$_SESSION["login"],$efectivo,$transferencia,$datafono))
 		{
 			$insert_id = $bd->ultimo_result;
 			$valido = false;
 			if ($transferencia == 1)
 			{
-				if ($bd->insertar_datos(3,$basedatos,"egreso_transferencia","id_egreso","monto","referencia",$insert_id,$_POST["monto_transferencia"],$_POST["referencia"]))
+				if ($bd->insertar_datos(3,$basedatos,"egreso_transferencia","id_egreso","monto","referencia",$insert_id,$monto_transferencia,$_POST["referencia"]))
 					$valido = true;
 				else
 					$valido = false;
 			}
 			if ($efectivo == 1)
 			{
-				if ($bd->insertar_datos(2,$basedatos,"egreso_efectivo","id_egreso","monto",$insert_id,$_POST["monto_efectivo"]))
+				if ($bd->insertar_datos(2,$basedatos,"egreso_efectivo","id_egreso","monto",$insert_id,$monto_efectivo))
 					$valido = true;
 				else
 					$valido = false;
 			}
 			if ($datafono == 1)
 			{
-				if ($bd->insertar_datos(2,$basedatos,"egreso_debito","id_egreso","monto",$insert_id,$_POST["monto_datafono"]))
+				if ($bd->insertar_datos(2,$basedatos,"egreso_debito","id_egreso","monto",$insert_id,$monto_datafono))
 					$valido = true;
 				else
 					$valido = false;
@@ -335,7 +341,7 @@
 			<label for="monto_transferencia"><b>Transferencia</b></label>
 			<div class="w3-row">
 				<div class="w3-col s6">
-					<input type="number" class="w3-input w3-border" id="monto_transferencia" name="monto_transferencia" placeholder="Monto" min=1>
+					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_transferencia" name="monto_transferencia" placeholder="Monto" min=1>
 				</div>
 				<div class="w3-col s6">
 					<input type="text" class="w3-input w3-border" id="referencia" name="referencia" placeholder="Referencia">
@@ -344,13 +350,13 @@
 			<label for="monto_datafono"><b>Debito/Dat&aacute;fono</b></label>
 			<div class="w3-row">
 				<div class="w3-rest">
-					<input type="number" class="w3-input w3-border" id="monto_datafono" name="monto_datafono" placeholder="Monto" min=1>
+					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_datafono" name="monto_datafono" placeholder="Monto" min=1>
 				</div>
 			</div>
 			<label for="monto_efectivo"><b>Efectivo</b></label>
 			<div class="w3-row">
 				<div class="w3-rest">
-					<input type="number" class="w3-input w3-border" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
+					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
 				</div>
 			</div>
 			<div class="w3-row w3-section">

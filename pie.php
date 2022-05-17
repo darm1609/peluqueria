@@ -1,4 +1,5 @@
 </div>
+	<script type="text/javascript" src="js/formato.js"></script>
 	<script>
 		// Get the Sidebar
 		var mySidebar = document.getElementById("mySidebar");

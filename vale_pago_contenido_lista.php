@@ -191,6 +191,9 @@
 			if(isset($_POST["cantxpag2"]) and !empty($_POST["cantxpag2"]))
 				$cantxpag=$_POST["cantxpag2"];
 			$colocultar[0] = "id_vale_pago";
+			$colespeciales[3] = "Efectivo";
+			$colespeciales[4] = "Transferencia";
+			$colespeciales[6] = "Total";
 			if(isset($pag) and isset($cantxpag))
 				mostrar_busqueda2($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
 			else

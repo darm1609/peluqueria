@@ -206,30 +206,41 @@
 		
 		let oespecial = document.getElementById('oespecial').value;
 		let mespecial;
+
 		if ($("#mespecial").is(':checked'))
 			mespecial = "1";
 		else
 			mespecial = "0";
+
 		if (oespecial != mespecial)
 			cambio = true;
+
 		let validoAbono = true;
 		let validoFecha = true;
 		let validoTransferenciaConReferencia = true;
+
 		$(".abono-fecha").each(function(e){
 			let el = $(this);
 			if(!validaFechaDDMMAAAA(el.val()))
 				validoFecha=false;
 		});
+
 		if (!validoFecha)
 			alertify.alert("","LA FECHA NO ES VALIDA").set('label', 'Aceptar');
 		else {
 			$(".id-ingreso").each(function(e){
+
 				let id_ingreso = $(this).val();
 				let total = Number($(this).data("total"));
 				let abono_efectivo = $("#abono_efectivo_" + id_ingreso).val($("#abono_efectivo_" + id_ingreso).val().trim()).val();
 				let abono_transferencia = $("#abono_transferencia_" + id_ingreso).val($("#abono_transferencia_" + id_ingreso).val().trim()).val();
 				let abono_referencia = $("#abono_referencia_" + id_ingreso).val($("#abono_referencia_" + id_ingreso).val().trim()).val();
 				let abono_datafono = $("#abono_datafono_" + id_ingreso).val($("#abono_datafono_" + id_ingreso).val().trim()).val();
+
+				abono_efectivo = $("#abono_efectivo_" + id_ingreso).val().replaceAll(',','');
+				abono_transferencia = $("#abono_transferencia_" + id_ingreso).val().replaceAll(',','');
+				abono_datafono = $("#abono_datafono_" + id_ingreso).val().replaceAll(',','');
+
 				if (validoAbono && validoTransferenciaConReferencia)
 				{
 					if (abono_efectivo.length)
@@ -270,6 +281,11 @@
 				let abono_transferencia = $("#abono_transferencia_v_" + id_ingreso).val($("#abono_transferencia_v_" + id_ingreso).val().trim()).val();
 				let abono_referencia = $("#abono_referencia_v_" + id_ingreso).val($("#abono_referencia_v_" + id_ingreso).val().trim()).val();
 				let abono_datafono = $("#abono_datafono_v_" + id_ingreso).val($("#abono_datafono_v_" + id_ingreso).val().trim()).val();
+				
+				abono_efectivo = $("#abono_efectivo_v_" + id_ingreso).val().replaceAll(',','');
+				abono_transferencia = $("#abono_transferencia_v_" + id_ingreso).val().replaceAll(',','');
+				abono_datafono = $("#abono_datafono_v_" + id_ingreso).val().replaceAll(',','');
+				
 				if (validoAbono && validoTransferenciaConReferencia)
 				{
 					if (abono_efectivo.length)
