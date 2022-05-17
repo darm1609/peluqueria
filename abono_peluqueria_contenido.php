@@ -40,9 +40,13 @@
 		$("#monto_transferencia").val($("#monto_transferencia").val().trim());
 		$("#monto_efectivo").val($("#monto_efectivo").val().trim());
 		$("#referencia").val($("#referencia").val().trim());
+
+		let monto_transferencia = $("#monto_transferencia").val().replaceAll(',','');
+		let monto_efectivo = $("#monto_efectivo").val().replaceAll(',','');
+
 		if(valido)
 		{
-			if (!$("#monto_transferencia").val().length && !$("#monto_efectivo").val().length)
+			if (!monto_transferencia.length && !monto_efectivo.length)
 			{
 				valido=false;
 				alertify.alert("","DEBE COLOCAR UN MONTO").set('label', 'Aceptar');
@@ -58,16 +62,16 @@
 		// }
 		if (valido)
 		{
-			if ($("#monto_transferencia").val().length)
+			if (monto_transferencia.length)
 			{
-				if (isNaN($("#monto_transferencia").val()))
+				if (isNaN(monto_transferencia))
 				{
 					valido=false;
 					alertify.alert("","MONTO DE TRANSFERENCIA NO VALIDO").set('label', 'Aceptar');
 				}
 				else
 				{
-					if (Number($("#monto_transferencia").val()) < 1)
+					if (Number(monto_transferencia) < 1)
 					{
 						valido=false;
 						alertify.alert("","MONTO DE TRANSFERENCIA NO VALIDO").set('label', 'Aceptar');
@@ -77,16 +81,16 @@
 		}
 		if (valido)
 		{
-			if ($("#monto_efectivo").val().length)
+			if (monto_efectivo.length)
 			{
-				if (isNaN($("#monto_efectivo").val()))
+				if (isNaN(monto_efectivo))
 				{
 					valido=false;
 					alertify.alert("","MONTO DE EFECTIVO NO VALIDO").set('label', 'Aceptar');
 				}
 				else
 				{
-					if (Number($("#monto_efectivo").val()) < 1)
+					if (Number(monto_efectivo) < 1)
 					{
 						valido=false;
 						alertify.alert("","MONTO DE EFECTIVO NO VALIDO").set('label', 'Aceptar');
@@ -242,20 +246,22 @@
 			$transferencia = 1;
 		if (!empty($_POST["monto_efectivo"]))
 			$efectivo = 1;
+		$monto_transferencia = str_replace(",","",$_POST["monto_transferencia"]);
+		$monto_efectivo = str_replace(",","",$_POST["monto_efectivo"]);
 		if($bd->insertar_datos(6,$basedatos,"abono_peluqueria","fecha","fecha_num","login","efectivo","transferencia","observacion",$fecha,$fecha_num,$_SESSION["login"],$efectivo,$transferencia,$_POST["observacion"]))
 		{
 			$insert_id = $bd->ultimo_result;
 			$valido = false;
 			if ($transferencia == 1)
 			{
-				if ($bd->insertar_datos(3,$basedatos,"abono_peluqueria_transferencia","id_abono_peluqueria","monto","referencia",$insert_id,$_POST["monto_transferencia"],$_POST["referencia"]))
+				if ($bd->insertar_datos(3,$basedatos,"abono_peluqueria_transferencia","id_abono_peluqueria","monto","referencia",$insert_id,$monto_transferencia,$_POST["referencia"]))
 					$valido = true;
 				else
 					$valido = false;
 			}
 			if ($efectivo == 1)
 			{
-				if ($bd->insertar_datos(2,$basedatos,"abono_peluqueria_efectivo","id_abono_peluqueria","monto",$insert_id,$_POST["monto_efectivo"]))
+				if ($bd->insertar_datos(2,$basedatos,"abono_peluqueria_efectivo","id_abono_peluqueria","monto",$insert_id,$monto_efectivo))
 					$valido = true;
 				else
 					$valido = false;
@@ -290,7 +296,7 @@
 			<label for="monto_transferencia"><b>Transferencia</b></label>
 			<div class="w3-row">
 				<div class="w3-col s6">
-					<input type="number" class="w3-input w3-border" id="monto_transferencia" name="monto_transferencia" placeholder="Monto" min=1>
+					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_transferencia" name="monto_transferencia" placeholder="Monto" min=1>
 				</div>
 				<div class="w3-col s6">
 					<input type="text" class="w3-input w3-border" id="referencia" name="referencia" placeholder="Referencia">
@@ -299,7 +305,7 @@
 			<label for="monto_efectivo"><b>Efectivo</b></label>
 			<div class="w3-row">
 				<div class="w3-rest">
-					<input type="number" class="w3-input w3-border" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
+					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
 				</div>
 			</div>
 			<label for="observacion"><b>Comentario</b></label>
