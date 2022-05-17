@@ -217,20 +217,22 @@
 			$transferencia = 1;
 		if (!empty($_POST["monto_efectivo"]))
 			$efectivo = 1;
+		$monto_transferencia = str_replace(",","",$_POST["monto_transferencia"]);
+		$monto_efectivo = str_replace(",","",$_POST["monto_efectivo"]);
 		if($bd->insertar_datos(8,$basedatos,"vale_pago","empleado_telf","fecha","comentario","vale_pago","fecha_num","login","efectivo","transferencia",$_POST["empleado_telf"],$fecha,$_POST["comentario"],$_POST["vale_pago"],$fecha_num,$_SESSION["login"],$efectivo,$transferencia))
 		{
 			$insert_id = $bd->ultimo_result;
 			$valido = false;
 			if ($transferencia == 1)
 			{
-				if ($bd->insertar_datos(3,$basedatos,"vale_pago_transferencia","id_vale_pago","monto","referencia",$insert_id,$_POST["monto_transferencia"],$_POST["referencia"]))
+				if ($bd->insertar_datos(3,$basedatos,"vale_pago_transferencia","id_vale_pago","monto","referencia",$insert_id,$monto_transferencia,$_POST["referencia"]))
 					$valido = true;
 				else
 					$valido = false;
 			}
 			if ($efectivo == 1)
 			{
-				if ($bd->insertar_datos(2,$basedatos,"vale_pago_efectivo","id_vale_pago","monto",$insert_id,$_POST["monto_efectivo"]))
+				if ($bd->insertar_datos(2,$basedatos,"vale_pago_efectivo","id_vale_pago","monto",$insert_id,$monto_efectivo))
 					$valido = true;
 				else
 					$valido = false;
@@ -282,7 +284,7 @@
 			<label for="monto_transferencia"><b>Transferencia</b></label>
 			<div class="w3-row">
 				<div class="w3-col s6">
-					<input type="number" class="w3-input w3-border" id="monto_transferencia" name="monto_transferencia" placeholder="Monto" min=1>
+					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_transferencia" name="monto_transferencia" placeholder="Monto" min=1>
 				</div>
 				<div class="w3-col s6">
 					<input type="text" class="w3-input w3-border" id="referencia" name="referencia" placeholder="Referencia">
@@ -291,7 +293,7 @@
 			<label for="monto_efectivo"><b>Efectivo</b></label>
 			<div class="w3-row">
 				<div class="w3-rest">
-					<input type="number" class="w3-input w3-border" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
+					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
 				</div>
 			</div>
 			<div class="w3-row w3-section">

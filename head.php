@@ -12,6 +12,7 @@
 	<script type="text/javascript" src="js/validaciones.js"></script>
 	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="CryptoJS v3.1.2/rollups/sha3.js"></script>
+	<script type="text/javascript" src="js/formato.js"></script>
 	<!--Ejemplo SHA3-->
 	<script type="text/javascript">
 		//var hash = CryptoJS.SHA3("vinka2000");

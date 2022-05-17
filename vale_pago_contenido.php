@@ -147,12 +147,17 @@
 				alertify.alert("","LA FECHA NO ES VALIDA").set('label', 'Aceptar');
 			}
 		}
+		
 		$("#monto_transferencia").val($("#monto_transferencia").val().trim());
 		$("#monto_efectivo").val($("#monto_efectivo").val().trim());
 		$("#referencia").val($("#referencia").val().trim());
+		
+		let monto_transferencia = $("#monto_transferencia").val().replaceAll(',','');
+		let monto_efectivo = $("#monto_efectivo").val().replaceAll(',','');
+
 		if (valido)
 		{
-			if (!$("#monto_transferencia").val().length && !$("#monto_efectivo").val().length)
+			if (!monto_transferencia.length && !monto_efectivo.length)
 			{
 				valido=false;
 				alertify.alert("","DEBE COLOCAR UN MONTO").set('label', 'Aceptar');
@@ -168,9 +173,9 @@
 		// }
 		if (valido)
 		{
-			if ($("#monto_transferencia").val().length)
+			if (monto_transferencia.length)
 			{
-				if (isNaN($("#monto_transferencia").val()))
+				if (isNaN(monto_transferencia))
 				{
 					valido=false;
 					alertify.alert("","MONTO DE TRANSFERENCIA NO VALIDO").set('label', 'Aceptar');
@@ -187,9 +192,9 @@
 		}
 		if (valido)
 		{
-			if ($("#monto_efectivo").val().length)
+			if (monto_efectivo.length)
 			{
-				if (isNaN($("#monto_efectivo").val()))
+				if (isNaN(monto_efectivo))
 				{
 					valido=false;
 					alertify.alert("","MONTO DE EFECTIVO NO VALIDO").set('label', 'Aceptar');
