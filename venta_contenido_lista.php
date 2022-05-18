@@ -225,6 +225,12 @@
 			if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
 				$cantxpag=$_POST["cantxpag"];
 			$colocultar[0] = "id_venta";
+			$colespeciales[3] = "Efectivo";
+			$colespeciales[4] = "Transferencia";
+			$colespeciales[6] = "Datáfono";
+			$colespeciales[7] = "Deuda";
+			$colespeciales[8] = "Pagado";
+			$colespeciales[9] = "Total";
 			if(isset($pag) and isset($cantxpag))
 				mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
 			else

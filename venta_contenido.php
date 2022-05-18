@@ -61,9 +61,15 @@
 			$("#monto_deuda").val("");
 		$("#monto_deuda").val($("#monto_deuda").val().trim());
 		$("#referencia").val($("#referencia").val().trim());
+
+		let monto_transferencia = $("#monto_transferencia").val().replaceAll(',','');
+		let monto_datafono = $("#monto_datafono").val().replaceAll(',','');
+		let monto_efectivo = $("#monto_efectivo").val().replaceAll(',','');
+		let monto_deuda = $("#monto_deuda").val().replaceAll(',','');
+
 		if (valido)
 		{
-			if (!$("#monto_transferencia").val().length && !$("#monto_datafono").val().length && !$("#monto_efectivo").val().length && !$("#monto_deuda").val().length)
+			if (!monto_transferencia.length && !monto_datafono.length && !monto_efectivo.length && !monto_deuda.length)
 			{
 				valido=false;
 				alertify.alert("","DEBE COLOCAR EL MONTO DEL INGRESO").set('label', 'Aceptar');
@@ -79,9 +85,9 @@
 		// }
 		if (valido)
 		{
-			if ($("#monto_transferencia").val().length)
+			if (monto_transferencia.length)
 			{
-				if (isNaN($("#monto_transferencia").val()))
+				if (isNaN(monto_transferencia))
 				{
 					valido=false;
 					alertify.alert("","MONTO DE TRANSFERENCIA NO VALIDO").set('label', 'Aceptar');
@@ -98,9 +104,9 @@
 		}
 		if (valido)
 		{
-			if ($("#monto_datafono").val().length)
+			if (monto_datafono.length)
 			{
-				if (isNaN($("#monto_datafono").val()))
+				if (isNaN(monto_datafono))
 				{
 					valido=false;
 					alertify.alert("","MONTO DE DEBITO/DAT\u00C1FONO NO VALIDO").set('label', 'Aceptar');
@@ -119,14 +125,14 @@
 		{
 			if ($("#monto_efectivo").val().length)
 			{
-				if (isNaN($("#monto_efectivo").val()))
+				if (isNaN(monto_efectivo))
 				{
 					valido=false;
 					alertify.alert("","MONTO DE EFECTIVO NO VALIDO").set('label', 'Aceptar');
 				}
 				else
 				{
-					if (Number($("#monto_efectivo").val()) < 1)
+					if (Number(monto_efectivo) < 1)
 					{
 						valido=false;
 						alertify.alert("","MONTO DE EFECTIVO NO VALIDO").set('label', 'Aceptar');
@@ -136,16 +142,16 @@
 		}
 		if (valido)
 		{
-			if ($("#monto_deuda").val().length)
+			if (monto_deuda.length)
 			{
-				if (isNaN($("#monto_deuda").val()))
+				if (isNaN(monto_deuda))
 				{
 					valido=false;
 					alertify.alert("","MONTO DE DEUDA NO VALIDO").set('label', 'Aceptar');
 				}
 				else
 				{
-					if (Number($("#monto_deuda").val()) < 1)
+					if (Number(monto_deuda) < 1)
 					{
 						valido=false;
 						alertify.alert("","MONTO DE DEUDA NO VALIDO").set('label', 'Aceptar');
@@ -307,34 +313,38 @@
 			$efectivo = 1;
 		if (!empty($_POST["monto_deuda"]))
 			$deuda = 1;
+		$monto_transferencia = str_replace(",","",$_POST["monto_transferencia"]);
+		$monto_datafono = str_replace(",","",$_POST["monto_datafono"]);
+		$monto_efectivo = str_replace(",","",$_POST["monto_efectivo"]);
+		$monto_deuda = str_replace(",","",$_POST["monto_deuda"]);
 		if($bd->insertar_datos(9,$basedatos,"venta","fecha","motivo","cliente_telf","efectivo","debito","transferencia","deuda","fecha_num","login",$fecha,trim($_POST["motivo"]),$_POST["cliente_telf"],$efectivo,$debito,$transferencia,$deuda,$fecha_num,$_SESSION["login"]))
 		{
 			$insert_id = $bd->ultimo_result;
 			$valido = false;
 			if ($transferencia == 1)
 			{
-				if ($bd->insertar_datos(3,$basedatos,"venta_transferencia","id_venta","monto","referencia",$insert_id,$_POST["monto_transferencia"],$_POST["referencia"]))
+				if ($bd->insertar_datos(3,$basedatos,"venta_transferencia","id_venta","monto","referencia",$insert_id,$monto_transferencia,$_POST["referencia"]))
 					$valido = true;
 				else
 					$valido = false;
 			}
 			if ($debito == 1)
 			{
-				if ($bd->insertar_datos(2,$basedatos,"venta_debito","id_venta","monto",$insert_id,$_POST["monto_datafono"]))
+				if ($bd->insertar_datos(2,$basedatos,"venta_debito","id_venta","monto",$insert_id,$monto_datafono))
 					$valido = true;
 				else
 					$valido = false;
 			}
 			if ($efectivo == 1)
 			{
-				if ($bd->insertar_datos(2,$basedatos,"venta_efectivo","id_venta","monto",$insert_id,$_POST["monto_efectivo"]))
+				if ($bd->insertar_datos(2,$basedatos,"venta_efectivo","id_venta","monto",$insert_id,$monto_efectivo))
 					$valido = true;
 				else
 					$valido = false;
 			}
 			if ($deuda == 1)
 			{
-				if ($bd->insertar_datos(4,$basedatos,"venta_deuda","id_venta","monto","monto_pagado","pagada",$insert_id,$_POST["monto_deuda"],0,0))
+				if ($bd->insertar_datos(4,$basedatos,"venta_deuda","id_venta","monto","monto_pagado","pagada",$insert_id,$monto_deuda,0,0))
 					$valido = true;
 				else
 					$valido = false;
@@ -404,7 +414,7 @@
 			<label for="monto_transferencia"><b>Transferencia</b></label>
 			<div class="w3-row">
 				<div class="w3-col s6">
-					<input type="number" class="w3-input w3-border" id="monto_transferencia" name="monto_transferencia" placeholder="Monto" min=1>
+					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_transferencia" name="monto_transferencia" placeholder="Monto" min=1>
 				</div>
 				<div class="w3-col s6">
 					<input type="text" class="w3-input w3-border" id="referencia" name="referencia" placeholder="Referencia">
@@ -413,20 +423,20 @@
 			<label for="monto_datafono"><b>Debito/Dat&aacute;fono</b></label>
 			<div class="w3-row">
 				<div class="w3-rest">
-					<input type="number" class="w3-input w3-border" id="monto_datafono" name="monto_datafono" placeholder="Monto" min=1>
+					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_datafono" name="monto_datafono" placeholder="Monto" min=1>
 				</div>
 			</div>
 			<label for="monto_efectivo"><b>Efectivo</b></label>
 			<div class="w3-row">
 				<div class="w3-rest">
-					<input type="number" class="w3-input w3-border" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
+					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
 				</div>
 			</div>
 			<div id="monto_deuda_div" style="display:none;">
 				<label for="monto_deuda"><b>Deuda</b></label>
 				<div class="w3-row">
 					<div class="w3-rest">
-						<input type="number" class="w3-input w3-border" id="monto_deuda" name="monto_deuda" placeholder="Monto" min=1>
+						<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_deuda" name="monto_deuda" placeholder="Monto" min=1>
 					</div>
 				</div>
 			</div>

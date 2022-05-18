@@ -3,6 +3,7 @@
 	require("head.php");
 	require("config.php");
 	require("librerias/basedatos.php");
+	require("funciones_generales.php");
 
 	function eliminar_ingreso($bd)
 	{
@@ -205,7 +206,6 @@
 								echo"</td>";
 								for($j=1;$j<$num_col;$j++)
 								{
-									echo"<td align='center'>";
 									if(!empty($row[$j]) or $row[$j] == 0)
 									{
 										$especial=false;
@@ -215,17 +215,33 @@
 											{
 												$especial=true;
 												if(is_callable($valor))
+												{
+													echo"<td align='center' nowrap>";
 													echo $valor($row[$j],$bd);
+													echo"</td>";
+												}
 												else
+												{
+													echo"<td align='center'>";
 													echo $row[$j];
+													echo"</td>";
+												}
 											}
 										}
 										if(!$especial)
+										{
+											echo"<td align='center'>";
 											echo $row[$j];
+											echo"</td>";
+										}
 									}
 									else
+									{
+										echo"<td align='center'>";
 										echo"&nbsp;";
-									echo"</td>";
+										echo"</td>";
+									}
+										
 								}
 								echo"</tr>";
 							}
@@ -278,6 +294,12 @@
 				if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
 					$cantxpag=$_POST["cantxpag"];
 				$colocultar[0]="id_ingreso";
+				$colespeciales[3] = "Efectivo";
+				$colespeciales[4] = "Transferencia";
+				$colespeciales[6] = "Datáfono";
+				$colespeciales[7] = "Deuda";
+				$colespeciales[8] = "Pagado";
+				$colespeciales[9] = "Total";
 				if(isset($pag) and isset($cantxpag))
 					mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
 				else

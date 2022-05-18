@@ -109,6 +109,16 @@
 		return money_format('%.2n', $val);
 	}
 
+	function Deuda($val, $bd)
+	{
+		return money_format('%.2n', $val);
+	}
+
+	function Pagado($val, $bd)
+	{
+		return money_format('%.2n', $val);
+	}
+
 	function usuario_admin()
 	{
 		global $servidor, $puerto, $usuario, $pass, $basedatos;
