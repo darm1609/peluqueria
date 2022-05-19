@@ -39,6 +39,7 @@
       <span>Bienvenid@, <strong><?php mostrar_nombre_usuario(); ?></strong></span><br>
       <a href="#" class="w3-bar-item w3-button"><i class="icon-user"></i></a>
       <a href="editar_usuario.php" class="w3-bar-item w3-button"><i class="icon-cog"></i></a>
+      <a href="calendario_citas.php" class="w3-bar-item w3-button"><i class=" icon-calendar2"></i></a>
     </div>
   </div>
   <hr>

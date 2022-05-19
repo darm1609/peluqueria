@@ -100,6 +100,11 @@
 					{
 						require("superior.php");
 						require_once("menu_lateral.php");
+						?>
+						<script>
+							window.location.replace('calendario_citas.php');
+						</script>
+						<?php
 					}
 					else
 					{
@@ -130,9 +135,9 @@
 	require("pie.php");
 ?>
 <footer class='w3-display-bottommiddle' style='text-align:center;'>
-  		<p>
-			<img src="imagenes/vinkasoftware.png" width="50px" class="logo-inicial">
-			<br>
-			Powered by VinkaSoftware
-		</p>
-	</footer> 
+	<p>
+		<img src="imagenes/vinkasoftware.png" width="50px" class="logo-inicial">
+		<br>
+		Powered by VinkaSoftware
+	</p>
+</footer> 
