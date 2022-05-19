@@ -119,6 +119,11 @@
 		return money_format('%.2n', $val);
 	}
 
+	function Fecha($val, $bd)
+	{
+		return $val;
+	}
+
 	function usuario_admin()
 	{
 		global $servidor, $puerto, $usuario, $pass, $basedatos;

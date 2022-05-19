@@ -109,7 +109,6 @@
 								echo"</td>";
 								for($j=1;$j<$num_col;$j++)
 								{
-									echo"<td align='center'>";
 									if(!empty($row[$j]))
 									{
 										$especial=false;
@@ -119,17 +118,32 @@
 											{
 												$especial=true;
 												if(is_callable($valor))
+												{
+													echo"<td align='center' nowrap>";
 													echo $valor($row[$j],$bd);
+													echo"</td>";
+												}
 												else
+												{
+													echo"<td align='center'>";
 													echo $row[$j];
+													echo"</td>";
+												}
 											}
 										}
 										if(!$especial)
+										{
+											echo"<td align='center'>";
 											echo $row[$j];
+											echo"</td>";
+										}
 									}
 									else
+									{
+										echo"<td align='center'>";
 										echo"&nbsp;";
-									echo"</td>";
+										echo"</td>";
+									}
 								}
 								echo"</tr>";
 							}

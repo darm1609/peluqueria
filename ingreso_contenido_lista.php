@@ -294,6 +294,7 @@
 				if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
 					$cantxpag=$_POST["cantxpag"];
 				$colocultar[0]="id_ingreso";
+				$colespeciales[1] = "Fecha";
 				$colespeciales[3] = "Efectivo";
 				$colespeciales[4] = "Transferencia";
 				$colespeciales[6] = "Datáfono";

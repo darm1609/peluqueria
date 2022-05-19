@@ -98,7 +98,6 @@
 								echo"</td>";
 								for($j=1;$j<$num_col;$j++)
 								{
-									echo"<td align='center'>";
 									if(!empty($row[$j]))
 									{
 										$especial=false;
@@ -108,17 +107,32 @@
 											{
 												$especial=true;
 												if(is_callable($valor))
+												{
+													echo"<td align='center' nowrap>";
 													echo $valor($row[$j],$bd);
+													echo"</td>";
+												}
 												else
+												{
+													echo"<td align='center'>";
 													echo $row[$j];
+													echo"</td>";
+												}
 											}
 										}
 										if(!$especial)
+										{
+											echo"<td align='center'>";
 											echo $row[$j];
+											echo"</td>";
+										}
 									}
 									else
+									{
+										echo"<td align='center'>";
 										echo"&nbsp;";
-									echo"</td>";
+										echo"</td>";
+									}
 								}
 								echo"</tr>";
 							}
@@ -207,6 +221,10 @@
 			if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
 				$cantxpag=$_POST["cantxpag"];
 			$colocultar[0] = "id_abono_peluqueria";
+			$colespeciales[1] = "Fecha";
+			$colespeciales[2] = "Efectivo";
+			$colespeciales[3] = "Transferencia";
+			$colespeciales[5] = "Total";
 			if(isset($pag) and isset($cantxpag))
 				mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
 			else
