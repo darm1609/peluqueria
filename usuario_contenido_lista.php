@@ -51,13 +51,13 @@
 					echo"<td>".$row["nombre"]."</td>";
 					echo"<td>".$row["apellido"]."</td>";
 					echo"<td>";
-					if($row["administrador"]=="t")
+					if($row["administrador"]=="1")
 						echo"Si";
 					else
 						echo"No";
 					echo"</td>";
 					echo"<td>";
-					if($row["consulta"]=="t")
+					if($row["consulta"]=="1")
 						echo"Si";
 					else
 						echo"No";

@@ -101,7 +101,7 @@
 	function guardar($bd)
 	{
 		global $basedatos;
-		if($bd->insertar_datos(6,$basedatos,"usuario","login","pass","administrador","consulta","nombre","apellido",$_POST["loginu"],$_POST["pass1"],$_POST["administrador"],$_POST["consulta"],$_POST["nombre"],$_POST["apellido"]))
+		if($bd->insertar_datos(8,$basedatos,"usuario","login","pass","administrador","consulta","empleado","nombre","apellido","empleado_telf",$_POST["loginu"],$_POST["pass1"],$_POST["administrador"],$_POST["consulta"],$_POST["empleado"],$_POST["nombre"],$_POST["apellido"],$_POST["empleado_telf"]))
 			return true;
 		else
 			return false;
@@ -115,7 +115,7 @@
 			return false;
 	}
 
-	function formulario_agregar_usuario()
+	function formulario_agregar_usuario($bd)
 	{
 		?>
 		<form class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin" id="fagregar" name="fagregar" method="post">
@@ -136,6 +136,30 @@
 				<div class="w3-col" style="width:50px"><label for="pass2"><i class="icon-lock" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
 					<input class="w3-input w3-border" id="pass2" name="pass2" type="password" placeholder="Repite la Contrase&ntilde;a">
+				</div>
+			</div>
+			<div class="w3-row w3-section">
+				<div class="w3-col" style="width:50px"><label for="empleado_telf"><i class="icon-id-badge" style="font-size:37px;"></i></label></div>
+				<div class="w3-rest">
+                    <select class="w3-select" id="empleado_telf" name="empleado_telf">
+						<option value="">Empleado</option>
+						<?php
+							$sql="SELECT empleado_telf, nombre, apellido FROM empleado;";
+							$result = $bd->mysql->query($sql);
+							unset($sql);
+							if($result)
+							{
+								while($row = $result->fetch_array())
+								{
+									echo"<option value='".$row["empleado_telf"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
+								}
+								unset($row);
+								$result->free();
+							}
+							else
+								unset($result);
+						?>
+					</select>
 				</div>
 			</div>
 			<div class="w3-row w3-section">
@@ -168,6 +192,16 @@
 				<label>
 				<input class="w3-radio" type="radio" id="consulta" name="consulta" value="0" checked>
 				No&nbsp;Consulta
+				</label>
+			</div>
+			<div class="w3-row w3-section">
+				<label>
+				<input class="w3-radio" type="radio" id="empleado" name="empleado" value="1">
+				Empleado
+				</label>
+				<label>
+				<input class="w3-radio" type="radio" id="empleado" name="empleado" value="0" checked>
+				No&nbsp;Empleado
 				</label>
 			</div>
 			<div class="w3-row w3-section">
@@ -221,7 +255,7 @@
 			</div>
 			<?php
 			echo"<div id='divfagregar' class='w3-container' style='display:none;'>";
-			formulario_agregar_usuario();
+			formulario_agregar_usuario($bd);
 			echo"</div>";
 		}
 		else
