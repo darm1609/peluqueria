@@ -6,7 +6,7 @@
 
 	function formulario_lista($bd)
 	{
-		$sql="SELECT login, nombre, apellido, administrador, consulta FROM usuario;";
+		$sql="SELECT login, nombre, apellido, administrador, consulta, empleado FROM usuario;";
 		$result=$bd->mysql->query($sql);
 		unset($sql);
 		if($result)
@@ -25,6 +25,7 @@
 				<th>Apellido</th>
 				<th>Administrador</th>
 				<th>Consulta</th>
+				<th>Empleado</th>
 				</tr>
 				</thead>
 				<tbody>
@@ -58,6 +59,12 @@
 					echo"</td>";
 					echo"<td>";
 					if($row["consulta"]=="1")
+						echo"Si";
+					else
+						echo"No";
+					echo"</td>";
+					echo"<td>";
+					if($row["empleado"]=="1")
 						echo"Si";
 					else
 						echo"No";
