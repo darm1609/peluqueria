@@ -195,6 +195,8 @@
 			cambio=true;
 		if(document.getElementById('ocorreo').value!=document.getElementById('mcorreo').value)
 			cambio=true;
+		if(document.getElementById('ocolor').value!=document.getElementById('mcolor').value)
+			cambio=true;
 		if(cambio)
 		{
 			var valido = true;
@@ -207,7 +209,7 @@
 				}
 				else
 				{
-					if (!/^([0-9])*$/.test(document.getElementById('mtelf').value))
+					if (!/^([0-9])*$/.test(document.getElementById('mempleado_telf').value))
 					{
 						valido=false;
 						alertify.alert("","EL TELÉFONO NO ES VALIDO").set('label', 'Aceptar');
@@ -468,7 +470,7 @@
 	function guardar($bd)
 	{
 		global $basedatos;
-		if($bd->insertar_datos(7,$basedatos,"empleado","empleado_telf","nombre","apellido","genero","correo","login","dueño",$_POST["empleado_telf"],$_POST["nombre"],$_POST["apellido"],$_POST["genero"],$_POST["correo"],$_SESSION["login"],"0"))
+		if($bd->insertar_datos(8,$basedatos,"empleado","empleado_telf","nombre","apellido","genero","correo","login","dueño","color",$_POST["empleado_telf"],$_POST["nombre"],$_POST["apellido"],$_POST["genero"],$_POST["correo"],$_SESSION["login"],"0",$_POST["color"]))
 			return true;
 		else
 			return false;
@@ -519,6 +521,12 @@
 				<div class="w3-col" style="width:50px"><label for="correo"><i class="icon-mail2" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
 					<input class="w3-input w3-border" id="correo" name="correo" type="text" placeholder="Correo Electr&oacute;nico" maxlength="255" tabindex="7">
+				</div>
+			</div>
+			<div class="w3-row w3-section">
+				<div class="w3-col" style="width:50px"><label for="color"><i class="icon-color-mode" style="font-size:37px;"></i></label></div>
+				<div class="w3-rest">
+					<input type="color" id="color" name="color" value="#f99fbf">
 				</div>
 			</div>
 			<div class="w3-row w3-section">

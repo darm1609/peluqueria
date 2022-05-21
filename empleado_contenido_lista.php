@@ -68,7 +68,7 @@
 				{
 					if($bd->actualizar_datos(1,1,$basedatos,"vale_pago","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
 					{
-						if($bd->actualizar_datos(1,5,$basedatos,"empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"genero",$_POST["ogenero"],$_POST["mgenero"],"correo",$_POST["ocorreo"],$_POST["mcorreo"]))
+						if($bd->actualizar_datos(1,6,$basedatos,"empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"genero",$_POST["ogenero"],$_POST["mgenero"],"correo",$_POST["ocorreo"],$_POST["mcorreo"],"color",$_POST["ocolor"],$_POST["mcolor"]))
 							return true;
 						else
 							return false;
@@ -269,7 +269,7 @@
 
 	function formulario_modificar($bd)
 	{
-		$sql="SELECT empleado_telf, nombre, apellido, genero, correo FROM empleado WHERE empleado_telf='".$_POST["accion_modificar"]."';";
+		$sql="SELECT empleado_telf, nombre, apellido, genero, correo, color FROM empleado WHERE empleado_telf='".$_POST["accion_modificar"]."';";
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if($result)
@@ -280,23 +280,29 @@
 				<input type="hidden" id="guardar_modificar" name="guardar_modificar" value="">
 				<h2 class="w3-center">Empleado</h2>
 				<div class="w3-row w3-section">
-					<div class="w3-col" style="width:50px"><label for="mtelf"><i class=" icon-phone" style="font-size:37px;"></i></label></div>
+					<div class="w3-col" style="width:50px"><label for="mempleado_telf"><i class=" icon-phone" style="font-size:37px;"></i></label></div>
 					<div class="w3-rest">
-						<input type="hidden" id="oempleado_telf" name="oempleado_telf" value="<?php $row[0]['empleado_telf']; ?>">
+						<?php
+							echo "<input type='hidden' id='oempleado_telf' name='oempleado_telf' value='".$row[0]["empleado_telf"]."'>";
+						?>
 						<input class="w3-input w3-border" id="mempleado_telf" name="mempleado_telf" type="text" placeholder="Tel&eacute;fono" maxlength="20" onkeypress="return NumCheck3(event, this)" tabindex="1" value="<?php echo $row[0]['empleado_telf']; ?>">
 					</div>
 				</div>
 				<div class="w3-row w3-section">
 					<div class="w3-col" style="width:50px"><label for="mnombre"><i class="icon-pencil" style="font-size:37px;"></i></label></div>
 					<div class="w3-rest">
-						<input type="hidden" id="onombre" name="onombre" value="<?php echo $row[0]['nombre']; ?>">
+						<?php
+							echo "<input type='hidden' id='onombre' name='onombre' value='".$row[0]["nombre"]."'>";
+						?>
 						<input class="w3-input w3-border" id="mnombre" name="mnombre" type="text" placeholder="Nombre" maxlength="30" tabindex="2" value="<?php echo $row[0]['nombre']; ?>">
 					</div>
 				</div>
 				<div class="w3-row w3-section">
 					<div class="w3-col" style="width:50px"><label for="mapellido"><i class="icon-pencil" style="font-size:37px;"></i></label></div>
 					<div class="w3-rest">
-						<input type="hidden" id="oapellido" name="oapellido" value="<?php echo $row[0]['apellido']; ?>">
+						<?php
+							echo "<input type='hidden' id='oapellido' name='oapellido' value='".$row[0]["apellido"]."'>";
+						?>
 						<input class="w3-input w3-border" id="mapellido" name="mapellido" type="text" placeholder="Apellido" maxlength="30" tabindex="3" value="<?php echo $row[0]['apellido']; ?>">
 					</div>
 				</div>
@@ -324,8 +330,22 @@
 				<div class="w3-row w3-section">
 					<div class="w3-col" style="width:50px"><label for="correo"><i class="icon-mail2" style="font-size:37px;"></i></label></div>
 					<div class="w3-rest">
-						<input type="hidden" id="ocorreo" name="ocorreo" value="<?php echo $row[0]['correo']; ?>">
+						<?php
+							echo "<input type='hidden' id='ocorreo' name='ocorreo' value='".$row[0]["correo"]."'>";
+						?>
 						<input class="w3-input w3-border" id="mcorreo" name="mcorreo" type="text" placeholder="Correo Electr&oacute;nico" maxlength="255" tabindex="7" value="<?php echo $row[0]['correo']; ?>">
+					</div>
+				</div>
+				<div class="w3-row w3-section">
+					<?php
+						$color = "#f99fbf";
+						if (!empty($row[0]["color"]))
+							$color = $row[0]["color"];
+						echo "<input type='hidden' id='ocolor' name='ocolor' value='".$color."'>";
+					?>
+					<div class="w3-col" style="width:50px"><label for="mcolor"><i class="icon-color-mode" style="font-size:37px;"></i></label></div>
+					<div class="w3-rest">
+						<input type="color" id="mcolor" name="mcolor" value="<?php echo $color; ?>">
 					</div>
 				</div>
 				<div class="w3-row w3-section">
@@ -347,7 +367,7 @@
 				?>
 			</form>
 			<?php
-			pg_free_result($result);
+			//pg_free_result($result);
 		}
 		else
 			unset($result);
@@ -542,6 +562,7 @@
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 	if($bd->conectado)
 	{
+		//print_r($_POST);
 		if(isset($_POST["porcentajes_correctos"]) and !empty($_POST["porcentajes_correctos"]))
 		{
 			if(guardar_porcentajes($bd))
