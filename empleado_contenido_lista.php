@@ -72,46 +72,6 @@
 		if ($bd->actualizar_datos(1,7,$basedatos,"empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"genero",$_POST["ogenero"],$_POST["mgenero"],"correo",$_POST["ocorreo"],$_POST["mcorreo"],"color",$_POST["ocolor"],$_POST["mcolor"],"visible",$ovisible,$mvisible))
 			return true;
 		return false;
-
-		// if($bd->actualizar_datos(1,1,$basedatos,"ingreso","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
-		// {
-		// 	if($bd->actualizar_datos(1,1,$basedatos,"porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
-		// 	{
-		// 		if($bd->actualizar_datos(1,1,$basedatos,"motivo_porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
-		// 		{
-		// 			if ($bd->actualizar_datos(1,1,$basedatos,"cita","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
-		// 			{
-		// 				if ($bd->actualizar_datos(1,1,$basedatos,"abono_empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
-		// 				{
-		// 					if ($bd->actualizar_datos(1,1,$basedatos,"usuario","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
-		// 					{	
-		// 						if($bd->actualizar_datos(1,1,$basedatos,"vale_pago","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
-		// 						{
-		// 							if($bd->actualizar_datos(1,7,$basedatos,"empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"genero",$_POST["ogenero"],$_POST["mgenero"],"correo",$_POST["ocorreo"],$_POST["mcorreo"],"color",$_POST["ocolor"],$_POST["mcolor"],"visible",$ovisible,$mvisible))
-		// 								return true;
-		// 							else
-		// 								return false;
-		// 						}
-		// 						else
-		// 							return false;
-		// 					}
-		// 					else
-		// 						return false;
-		// 				}
-		// 				else
-		// 					return false;
-		// 			}
-		// 			else 
-		// 				return false;
-		// 		}
-		// 		else
-		// 			return false;
-		// 	}
-		// 	else
-		// 		return false;
-		// }
-		// else
-		// 	return false;
 	}
 
 	function eliminar_empleado($bd)
@@ -387,7 +347,7 @@
 								echo "checked";
 						?>
 						>
-						<label for="visible">&nbsp;&nbsp;&nbsp;Visible</label>
+						<label for="mvisible">&nbsp;&nbsp;&nbsp;Visible</label>
 					</div>
 				</div>
 				<div class="w3-row w3-section">

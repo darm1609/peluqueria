@@ -1,4 +1,84 @@
 <script type="text/javascript">
+
+    function enviardatos_crear_cita()
+	{
+		let valido = true;
+		if (!$("#add_cita_hora").val().length)
+		{
+			valido=false;
+			alertify.alert("","HORA INICIAL NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+		}
+		if (valido)
+		{
+			if (!$("#add_cita_minuto").val().length)
+			{
+				valido=false;
+				alertify.alert("","MINUTO INICIAL NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+			}	
+		}
+		if (valido)
+		{
+			if (!$("#add_cita_duracion").val().length)
+			{
+				valido=false;
+				alertify.alert("","DURACIÓN NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+			}	
+		}
+		if (valido)
+		{
+			if (!$("#add_cita_empleado_telf").val().length)
+			{
+				valido=false;
+				alertify.alert("","DEBE SELECCIONAR UN EMPLEADO").set('label', 'Aceptar');
+			}	
+		}
+		if (valido)
+		{
+			if (!$("#add_cita_id_motivo_ingreso").val().length)
+			{
+				valido=false;
+				alertify.alert("","DEBE SELECCIONAR UN TIPO DE TRABAJO").set('label', 'Aceptar');
+			}	
+		}
+		if (valido)
+		{
+			if (!$("#add_cita_cliente_telf").val().length)
+			{
+				valido=false;
+				alertify.alert("","DEBE SELECCIONAR UN CLIENTE").set('label', 'Aceptar');
+			}	
+		}
+		if (valido)
+		{
+			enviardatos_add_cita();
+		}
+	}
+
+    function enviardatos_add_cita()
+    {
+        ajax=objetoAjax();
+        $("#loader").show();
+        $('#loader').html('<div style="display:block;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+        ajax.open("POST","calendario_citas_contenido_lista_add.php",true);
+        ajax.onreadystatechange = function() 
+        {
+            if (ajax.readyState == 1)
+            {
+                $('#loader').html('<div style="position:absolute;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+            }
+            if (ajax.readyState == 4)
+            {
+                $.post("calendario_citas_contenido_lista_add.php",$("#faddcita").serialize(),function(data)
+                {
+                    $("#divformularioadd").show();
+                    $("#divformularioadd").html(data);
+                    $("#loader").hide();
+                });
+            }
+        } 
+        ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+        ajax.send();
+    }
     
     function enviardatos_busqueda()
 	{
@@ -76,7 +156,7 @@
 				</div>
             </div>
             <div class="w3-row w3-section">
-                <div class="w3-col" style="width:50px"><label for="bfecha"><i class="icon-id-badge" style="font-size:37px;"></i></label></div>
+                <div class="w3-col" style="width:50px"><label for="empleado_telf"><i class="icon-id-badge" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
                     <select class="w3-select" id="empleado_telf" name="empleado_telf">
 						<option value="">Empleado</option>
