@@ -197,6 +197,10 @@
 			cambio=true;
 		if(document.getElementById('ocolor').value!=document.getElementById('mcolor').value)
 			cambio=true;
+		let mvisible = $("#mvisible").is(':checked') ? "1" : "0";
+		let ovisible = $("#ovisible").val();
+		if (ovisible != mvisible)
+			cambio = true;
 		if(cambio)
 		{
 			var valido = true;
@@ -470,7 +474,7 @@
 	function guardar($bd)
 	{
 		global $basedatos;
-		if($bd->insertar_datos(8,$basedatos,"empleado","empleado_telf","nombre","apellido","genero","correo","login","dueño","color",$_POST["empleado_telf"],$_POST["nombre"],$_POST["apellido"],$_POST["genero"],$_POST["correo"],$_SESSION["login"],"0",$_POST["color"]))
+		if($bd->insertar_datos(9,$basedatos,"empleado","empleado_telf","nombre","apellido","genero","correo","login","dueño","color","visible",$_POST["empleado_telf"],$_POST["nombre"],$_POST["apellido"],$_POST["genero"],$_POST["correo"],$_SESSION["login"],"0",$_POST["color"],"1"))
 			return true;
 		else
 			return false;

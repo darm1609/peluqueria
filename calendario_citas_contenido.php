@@ -26,14 +26,14 @@
             $("#bfecha_unix").val(fechaUnix.toString());
         }
 
-        if (valido)
-        {
-            if (!empleado.length)
-            {
-                valido = false;
-                alertify.alert("","DEBE SELECCIONAR UN EMPLEADO").set('label', 'Aceptar');
-            }   
-        }
+        // if (valido)
+        // {
+        //     if (!empleado.length)
+        //     {
+        //         valido = false;
+        //         alertify.alert("","DEBE SELECCIONAR UN EMPLEADO").set('label', 'Aceptar');
+        //     }   
+        // }
 
         if (valido)
         {
@@ -81,7 +81,7 @@
                     <select class="w3-select" id="empleado_telf" name="empleado_telf">
 						<option value="">Empleado</option>
 						<?php
-							$sql="SELECT empleado_telf, nombre, apellido FROM empleado;";
+							$sql="SELECT empleado_telf, nombre, apellido FROM empleado where visible = '1';";
 							$result = $bd->mysql->query($sql);
 							unset($sql);
 							if($result)

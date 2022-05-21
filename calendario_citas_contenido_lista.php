@@ -47,52 +47,134 @@
 
 	function formulario_horas_empleado($bd)
 	{
+		if (empty($_POST["empleado_telf"]))
+		{
+			$sql = "select * from empleado where visible = 1 order by nombre asc;";
+			$result = $bd->mysql->query($sql);
+			unset($sql);
+			if ($result)
+			{
+				if (!empty($result->num_rows))
+				{
+					$array_citas = $result->fetch_all(MYSQLI_ASSOC);
+					$result->free();
+					echo "<div class='w3-container w3-card-4 w3-light-grey w3-margin'>";
+					foreach ($array_citas as $row)
+					{
+						$color = $row["color"] ? $row["color"] : "#f99fbf";
+						echo "<div class='w3-row w3-section w3-quarter'>";
+						echo "<table border='0'>";
+						echo "<tr><td style='background-color: ".$color."; width: 1.5em; min-width: 1.5em;' nowrap>&nbsp;</td><td nowrap>".$row["nombre"]." ".$row["apellido"]."</td></tr>";
+						echo "</table>";
+						echo "</div>";
+					}
+					echo "</div>";
+				}
+			}
+			else
+				unset ($result);
+		}
 		?>
 		<div id="horarios" class="w3-container w3-card-4 w3-light-grey w3-margin" id="fbusqueda" name="fbusqueda" method="post">
 			<div class="w3-row w3-section">
 				<?php
-					$sql = "select c.*, e.color, m.motivo tipo, concat(cc.nombre,' ',cc.apellido) cliente
-					from citas c 
-						inner join empleado e on c.empleado_telf = e.empleado_telf 
-						inner join cliente cc on c.id_cliente = cc.id_cliente
-						left join motivo_ingreso m on c.id_motivo_ingreso = m.id_motivo_ingreso
-					where c.empleado_telf = '".$_POST["empleado_telf"]."';";
-					$result = $bd->mysql->query($sql);
-					unset($sql);
-					if ($result)
+					if (!empty($_POST["empleado_telf"]))
 					{
-						if (!empty($result->num_rows))
+						$sql = "select 
+							c.*, 
+							e.color, 
+							m.motivo tipo, 
+							concat(cc.nombre,' ',cc.apellido) cliente
+						from citas c 
+							inner join empleado e on c.empleado_telf = e.empleado_telf 
+							inner join cliente cc on c.id_cliente = cc.id_cliente
+							left join motivo_ingreso m on c.id_motivo_ingreso = m.id_motivo_ingreso
+						where c.empleado_telf = '".$_POST["empleado_telf"]."' and e.visible = 1;";
+						$result = $bd->mysql->query($sql);
+						unset($sql);
+						if ($result)
 						{
-							$array_citas = $result->fetch_all(MYSQLI_ASSOC);
-							$result->free();
-							$pxMarginTop = 2.5;
-							$pxHeigth = 37.5;
-							foreach ($array_citas as $row)
+							if (!empty($result->num_rows))
 							{
-								$fecha_cita = strtotime(date("Y-m-d",$row["desde"]));
-								$margin_top = ((($row["desde"] - $fecha_cita) - 21600) / 60) * $pxMarginTop;
-								$height = (($row["hasta"] - $row["desde"]) * $pxHeigth) / 900;
-								$hora_desde = date("h:i a",$row["desde"]);
-								$hora_hasta = date("h:i a",$row["hasta"]);
-								$color = $row["color"];
-								$tipo = $row["tipo"];
-								$cliente = $row["cliente"];
-								// echo "6->".strtotime("2022-05-21T09:50")."<br>";
-								// echo "7->".strtotime("2022-05-21T10:")."<br>";
-								echo "<div id='cita_id_".$row["id_citas"]."' class='cita div-cita' style='background-color: ".$color."; margin-top: ".$margin_top."px; height: ".$height."px;'>";
-									echo "<div class='w3-third'>";
-										echo $hora_desde." - ".$hora_hasta." - ".$cliente;
+								$array_citas = $result->fetch_all(MYSQLI_ASSOC);
+								$result->free();
+								$pxMarginTop = 2.5;
+								$pxHeigth = 37.5;
+								foreach ($array_citas as $row)
+								{
+									$fecha_cita = strtotime(date("Y-m-d",$row["desde"]));
+									$margin_top = ((($row["desde"] - $fecha_cita) - 21600) / 60) * $pxMarginTop;
+									$height = (($row["hasta"] - $row["desde"]) * $pxHeigth) / 900;
+									$hora_desde = date("h:i a",$row["desde"]);
+									$hora_hasta = date("h:i a",$row["hasta"]);
+									$color = $row["color"] ? $row["color"] : "#f99fbf";
+									$tipo = $row["tipo"];
+									$cliente = $row["cliente"];
+									// echo "6->".strtotime("2022-05-21T09:50")."<br>";
+									// echo "7->".strtotime("2022-05-21T10:")."<br>";
+									echo "<div id='cita_id_".$row["id_citas"]."' class='cita div-cita' style='background-color: ".$color."; margin-top: ".$margin_top."px; height: ".$height."px;'>";
+										echo "<div class='w3-third'>";
+											echo $hora_desde." - ".$hora_hasta." - ".$cliente;
+										echo "</div>";
+										echo "<div class='w3-third'>";
+											echo $tipo;
+										echo "</div>";
 									echo "</div>";
-									echo "<div class='w3-third'>";
-										echo $tipo;
-									echo "</div>";
-								echo "</div>";
+								}
+								unset ($array_citas);
 							}
-							unset ($array_citas);
 						}
+						else
+							unset($result);
 					}
 					else
-						unset($result);
+					{
+						$sql = "select 
+							c.*, 
+							e.color, 
+							m.motivo tipo, 
+							concat(cc.nombre,' ',cc.apellido) cliente,
+							concat(e.nombre,' ',e.apellido) empleado
+						from citas c 
+							inner join empleado e on c.empleado_telf = e.empleado_telf 
+							inner join cliente cc on c.id_cliente = cc.id_cliente
+							left join motivo_ingreso m on c.id_motivo_ingreso = m.id_motivo_ingreso
+						where e.visible = '1';";
+						$result = $bd->mysql->query($sql);
+						unset($sql);
+						if ($result)
+						{
+							if (!empty($result->num_rows))
+							{
+								$array_citas = $result->fetch_all(MYSQLI_ASSOC);
+								$result->free();
+								$pxMarginTop = 2.5;
+								$pxHeigth = 37.5;
+								foreach ($array_citas as $row)
+								{
+									$fecha_cita = strtotime(date("Y-m-d",$row["desde"]));
+									$margin_top = ((($row["desde"] - $fecha_cita) - 21600) / 60) * $pxMarginTop;
+									$height = (($row["hasta"] - $row["desde"]) * $pxHeigth) / 900;
+									$hora_desde = date("h:i a",$row["desde"]);
+									$hora_hasta = date("h:i a",$row["hasta"]);
+									$color = $row["color"] ? $row["color"] : "#f99fbf";
+									$tipo = $row["tipo"];
+									$cliente = $row["cliente"];
+									echo "<div id='cita_id_".$row["id_citas"]."' class='cita div-cita' style='background-color: ".$color."; margin-top: ".$margin_top."px; height: ".$height."px;'>";
+										echo "<div class='w3-third'>";
+											echo $hora_desde." - ".$hora_hasta." - ".$cliente;
+										echo "</div>";
+										echo "<div class='w3-third'>";
+											echo $tipo;
+										echo "</div>";
+									echo "</div>";
+								}
+								unset ($array_citas);
+							}
+						}
+						else
+							unset($result);
+					}
 				?>
 				<table class="table" cellpadding="1em" cellspacing="0">
 					<tr>

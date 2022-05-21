@@ -60,30 +60,58 @@
 	function guardar_modificar($bd)
 	{
 		global $basedatos;
-		if($bd->actualizar_datos(1,1,$basedatos,"ingreso","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
-		{
-			if($bd->actualizar_datos(1,1,$basedatos,"porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
-			{
-				if($bd->actualizar_datos(1,1,$basedatos,"motivo_porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
-				{
-					if($bd->actualizar_datos(1,1,$basedatos,"vale_pago","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
-					{
-						if($bd->actualizar_datos(1,6,$basedatos,"empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"genero",$_POST["ogenero"],$_POST["mgenero"],"correo",$_POST["ocorreo"],$_POST["mcorreo"],"color",$_POST["ocolor"],$_POST["mcolor"]))
-							return true;
-						else
-							return false;
-					}
-					else
-						return false;
-				}
-				else
-					return false;
-			}
-			else
-				return false;
-		}
-		else
-			return false;
+		$ovisible = isset($_POST["ovisible"]) ? $_POST["ovisible"] : 0;
+		$mvisible = isset($_POST["mvisible"]) ? $_POST["mvisible"] : 0;
+		$bd->actualizar_datos(1,1,$basedatos,"ingreso","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
+		$bd->actualizar_datos(1,1,$basedatos,"porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
+		$bd->actualizar_datos(1,1,$basedatos,"motivo_porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
+		$bd->actualizar_datos(1,1,$basedatos,"citas","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
+		$bd->actualizar_datos(1,1,$basedatos,"abono_empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
+		$bd->actualizar_datos(1,1,$basedatos,"usuario","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
+		$bd->actualizar_datos(1,1,$basedatos,"vale_pago","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
+		if ($bd->actualizar_datos(1,7,$basedatos,"empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"genero",$_POST["ogenero"],$_POST["mgenero"],"correo",$_POST["ocorreo"],$_POST["mcorreo"],"color",$_POST["ocolor"],$_POST["mcolor"],"visible",$ovisible,$mvisible))
+			return true;
+		return false;
+
+		// if($bd->actualizar_datos(1,1,$basedatos,"ingreso","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
+		// {
+		// 	if($bd->actualizar_datos(1,1,$basedatos,"porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
+		// 	{
+		// 		if($bd->actualizar_datos(1,1,$basedatos,"motivo_porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
+		// 		{
+		// 			if ($bd->actualizar_datos(1,1,$basedatos,"cita","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
+		// 			{
+		// 				if ($bd->actualizar_datos(1,1,$basedatos,"abono_empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
+		// 				{
+		// 					if ($bd->actualizar_datos(1,1,$basedatos,"usuario","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
+		// 					{	
+		// 						if($bd->actualizar_datos(1,1,$basedatos,"vale_pago","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]))
+		// 						{
+		// 							if($bd->actualizar_datos(1,7,$basedatos,"empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"genero",$_POST["ogenero"],$_POST["mgenero"],"correo",$_POST["ocorreo"],$_POST["mcorreo"],"color",$_POST["ocolor"],$_POST["mcolor"],"visible",$ovisible,$mvisible))
+		// 								return true;
+		// 							else
+		// 								return false;
+		// 						}
+		// 						else
+		// 							return false;
+		// 					}
+		// 					else
+		// 						return false;
+		// 				}
+		// 				else
+		// 					return false;
+		// 			}
+		// 			else 
+		// 				return false;
+		// 		}
+		// 		else
+		// 			return false;
+		// 	}
+		// 	else
+		// 		return false;
+		// }
+		// else
+		// 	return false;
 	}
 
 	function eliminar_empleado($bd)
@@ -269,7 +297,7 @@
 
 	function formulario_modificar($bd)
 	{
-		$sql="SELECT empleado_telf, nombre, apellido, genero, correo, color FROM empleado WHERE empleado_telf='".$_POST["accion_modificar"]."';";
+		$sql="SELECT empleado_telf, nombre, apellido, genero, correo, color, visible FROM empleado WHERE empleado_telf='".$_POST["accion_modificar"]."';";
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if($result)
@@ -346,6 +374,20 @@
 					<div class="w3-col" style="width:50px"><label for="mcolor"><i class="icon-color-mode" style="font-size:37px;"></i></label></div>
 					<div class="w3-rest">
 						<input type="color" id="mcolor" name="mcolor" value="<?php echo $color; ?>">
+					</div>
+				</div>
+				<div class="w3-row w3-section">
+					<div class="w3-rest">
+						<?php
+							echo "<input type='hidden' id='ovisible' name='ovisible' value='".$row[0]["visible"]."'>";
+						?>
+						<input class="w3-check" type="checkbox" id="mvisible" name="mvisible" value="1"
+						<?php
+							if ($row[0]["visible"] == 1)
+								echo "checked";
+						?>
+						>
+						<label for="visible">&nbsp;&nbsp;&nbsp;Visible</label>
 					</div>
 				</div>
 				<div class="w3-row w3-section">
