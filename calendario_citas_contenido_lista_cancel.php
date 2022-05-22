@@ -16,7 +16,8 @@
         }
         if (strlen($id_cita))
         {
-            if ($bd->eliminar_datos(1,$basedatos,"citas","id_citas",$id_cita))
+            $estado_cancelado = 2;
+            if ($bd->actualizar_datos(1,1,$basedatos,"citas","id_citas",$id_cita,"estado",0,$estado_cancelado))
                 return true;
         }
         return false;

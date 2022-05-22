@@ -14,6 +14,7 @@
 	setlocale(LC_MONETARY, 'es_CO');
 	global $mensajeRecordatorio;
 	global $mensajeCreacionCita;
+	global $mensajeRecordatorioUnaHora;
 	$mensajeRecordatorioUnaHora = "DULCE VANIDAD le recuerda que tiene una cita con [empleado] que comienza en aproximadamente 1 hora";
 	$mensajeRecordatorio = "DULCE VANIDAD le recuerda que tiene una cita con [empleado] que comienza en aproximadamente [hora]";
 	$mensajeCreacionCita = "DULCE VANIDAD le informa que se agendo una cita para el [dia] [hora] con [empleado]";

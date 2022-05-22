@@ -110,7 +110,7 @@
 	require("librerias/basedatos.php");
 	require("funciones_generales.php");
 
-	function crear_modal_cita_detalle($id_cita,$empleado,$bd)
+	function crear_modal_cita_detalle($id_cita,$bd)
 	{
 		echo "<div id='modal_detalle_cita_".$id_cita."' class='w3-modal'>";
 			echo "<div class='w3-modal-content'>";
@@ -176,7 +176,15 @@
 								<div class="w3-col" style="width:50px"><label for="add_cita_empleado_telf"><i class="icon-clipboard3" style="font-size:37px;"></i></label></div>
 								<div class="w3-rest" style="padding-top: 0.5em;">
 									<?php
-										echo "Tipo de trabajo: ".$array[0]["tipo"];
+										echo "<b>Tipo de trabajo: </b>".$array[0]["tipo"];
+									?>
+								</div>
+							</div>
+							<div class="w3-row w3-section">
+								<div class="w3-col" style="width:50px"><label for="add_cita_empleado_telf"><i class="icon-sticky-note-o" style="font-size:37px;"></i></label></div>
+								<div class="w3-rest" style="padding-top: 0.5em;">
+									<?php
+										echo "<b>Nota: </b>".$array[0]["nota"];
 									?>
 								</div>
 							</div>
@@ -549,7 +557,7 @@
 											echo $tipo;
 										echo "</div>";
 									echo "</div>";
-									crear_modal_cita_detalle($row["id_citas"],$_POST["empleado_telf"],$bd);
+									crear_modal_cita_detalle($row["id_citas"],$bd);
 								}
 								unset ($array_citas);
 							}
@@ -590,27 +598,31 @@
 								{									
 									if ($i == 0)
 									{
-										$empleado_aux = $row["empleado_telf"];
 										$margin_left = 6;
 										$margin_array[$row["empleado_telf"]] = 6;
 									}
 									else
 									{
-										if ($empleado_aux != $row["empleado_telf"])
+										$encontrado = false;
+										foreach ($margin_array as $i => $v)
 										{
-											$encontrado = false;
+											if ($i == $row["empleado_telf"])
+											{
+												$encontrado = true;
+												$margin_left = $v;
+												$margin_array[$row["empleado_telf"]] = $margin_left;
+											}
+										}
+										if (!$encontrado)
+										{
+											$margin_left = 0;
 											foreach ($margin_array as $i => $v)
 											{
-												if ($i == $row["empleado_telf"])
-												{
-													$encontrado = true;
+												if ($v > $margin_left)
 													$margin_left = $v;
-												}
 											}
-											if (!$encontrado)
-											{
-												$margin_left += 2;
-											}
+											$margin_left += 2;
+											$margin_array[$row["empleado_telf"]] = $margin_left;
 										}
 									}
 
@@ -629,9 +641,8 @@
 										echo "<span class='tooltiptext'><b>".$row["empleado"]."</b><br>".$hora_desde." - ".$hora_hasta." - ".$cliente."</span>";
 										echo "<p>";
 									echo "</div>";
-									crear_modal_cita_detalle($row["id_citas"],$_POST["empleado_telf"],$bd);
+									crear_modal_cita_detalle($row["id_citas"],$bd);
 									$i++;
-									$empleado_aux = $row["empleado_telf"];
 								}
 								unset ($array_citas);
 							}
