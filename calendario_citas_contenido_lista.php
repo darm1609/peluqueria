@@ -19,17 +19,27 @@
 				let text = $(this).text();
 				let val = $(this).attr('value');
 				if (Number(hora) == Number(val))
-				{
 					$(this).attr("selected", true);
-				}
+				else
+					$(this).removeAttr("selected");
 			});
 			$("#modal_nueva_cita").show();
+		});
+
+		$(".detalle_cita").on("click", function(e){
+			let id_cita = $(this).data("id-cita");
+			$("#modal_detalle_cita_" + id_cita).show();
 		});
 	});
 
 	function confirmar_crear_cita()
 	{
 		alertify.confirm('','¿Desea crear la cita?', function(){ alertify.success('Sí');enviardatos_crear_cita(); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
+	}
+
+	function confirmar_cancelar_cita(id_cita)
+	{
+		alertify.confirm('','¿Desea cancelar la cita?', function(){ alertify.success('Sí');enviardatos_cancelar_cita(id_cita); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
 	}
 
 	//1 hora o 60 min son 150px de height
@@ -100,6 +110,104 @@
 	require("librerias/basedatos.php");
 	require("funciones_generales.php");
 
+	function crear_modal_cita_detalle($id_cita,$empleado,$bd)
+	{
+		echo "<div id='modal_detalle_cita_".$id_cita."' class='w3-modal'>";
+			echo "<div class='w3-modal-content'>";
+				echo "<div id='divformularioDetalle_".$id_cita."'></div>";
+				echo "<div onclick=\"document.getElementById('modal_detalle_cita_".$id_cita."').style.display='none'\" class='w3-button w3-display-topright closeDetalleCitaModal'>&times;</div>";
+				echo "<div class='w3-display-topleft' style='padding: 1em;'>";
+					echo "<b>Cita</b><br><br>"; 
+				echo "</div>";
+				echo "<br><br>";
+        		echo "<div style='padding: 1em;'>";
+				$sql = "select c.*,
+				concat(e.nombre,' ',e.apellido) empleado,
+				e.empleado_telf empleado_telf,
+				concat(cc.nombre,' ',cc.apellido) cliente,
+				cc.telf cliente_telf,
+				m.motivo tipo
+				from
+					citas c
+					inner join empleado e on c.empleado_telf = e.empleado_telf
+					inner join cliente cc on c.id_cliente = cc.id_cliente
+					left join motivo_ingreso m on c.id_motivo_ingreso = m.id_motivo_ingreso
+				where 
+					c.id_citas = ".$id_cita.";";
+				$result = $bd->mysql->query($sql);
+				unset($sql);
+				if ($result)
+				{
+					if (!empty($result->num_rows))
+					{
+						$array = $result->fetch_all(MYSQLI_ASSOC);
+                		$result->free();
+						?>
+						<form id='fdetallecita_<?php echo $id_cita; ?>' name='fdetallecita_<?php echo $id_cita; ?>' method="post">
+							<?php
+								echo "<input type='hidden' id='cancel_cita_id_cita_".$id_cita."' name='cancel_cita_id_cita_".$id_cita."' value='".$id_cita."'>";
+								echo "<input type='hidden' id='cancel_cita_cliente_telf_".$id_cita."' name='cancel_cita_cliente_telf_".$id_cita."' value='".$array[0]["cliente_telf"]."'>";
+							?>
+							<div class="w3-row w3-section">
+								<div class="w3-col" style="width:50px"><label for="add_cita_hora"><i class="icon-clock2" style="font-size:37px;"></i></label></div>
+								<div class="w3-rest" style="padding-top: 0.5em;">
+									<?php
+										echo date("d/m/Y", $array[0]["desde"])." ".date("h:i a", $array[0]["desde"])." - ".date("h:i a", $array[0]["hasta"]);
+									?>
+								</div>
+							</div>
+							<div class="w3-row w3-section">
+								<div class="w3-col" style="width:50px"><label for="add_cita_empleado_telf"><i class="icon-id-badge" style="font-size:37px;"></i></label></div>
+								<div class="w3-rest" style="padding-top: 0.5em;">
+									<?php
+										echo $array[0]["empleado"];
+									?>
+								</div>
+							</div>
+							<div class="w3-row w3-section">
+								<div class="w3-col" style="width:50px"><label for="add_cita_empleado_telf"><i class="icon-person" style="font-size:37px;"></i></label></div>
+								<div class="w3-rest" style="padding-top: 0.5em;">
+									<?php
+										echo $array[0]["cliente"]." - Telf: ".$array[0]["cliente_telf"];
+									?>
+								</div>
+							</div>
+							<div class="w3-row w3-section">
+								<div class="w3-col" style="width:50px"><label for="add_cita_empleado_telf"><i class="icon-clipboard3" style="font-size:37px;"></i></label></div>
+								<div class="w3-rest" style="padding-top: 0.5em;">
+									<?php
+										echo "Tipo de trabajo: ".$array[0]["tipo"];
+									?>
+								</div>
+							</div>
+							<label for="observacion"><b>Mensaje SMS:</b></label>
+							<?php
+								global $mensajeRecordatorio;
+								echo "<div class='w3-row'>";
+								echo "<div class='w3-rest'>";
+									echo "<textarea style='float: left;width: 100%;height: auto;' id='sms_recordatorio_".$id_cita."' name='sms_recordatorio_".$id_cita."' maxlength=160>".$mensajeRecordatorio."</textarea>";
+								echo "</div>";
+								echo "</div>";
+							?>
+							<div class="w3-row w3-section">
+								<p>
+								<div class="w3-half">
+									<input type="button" class="w3-button w3-block w3-red" onclick="return confirmar_cancelar_cita(<?php echo $id_cita; ?>);" value="Cancelar cita">
+								</div>
+								<div class="w3-half">
+									<input type="button" class="w3-button w3-block w3-green" onclick="return confirmar_enviar_sms_recordatorio();" value="Enviar recordatorio">
+								</div>
+								</p>
+							</div>
+						</form>
+						<?php
+					}
+				}
+				echo "</div>";
+			echo "</div>";
+		echo "</div>";
+	}
+
 	function crear_modal_add_cita($empleado, $bd)
 	{
 		echo "<div id='modal_nueva_cita' class='w3-modal'>";
@@ -114,7 +222,7 @@
 				?>
 				<form id='faddcita' name='faddcita' method="post">
 					<div class="w3-row w3-section">
-						<div class="w3-col" style="width:50px"><label for="id_motivo_ingreso"><i class="icon-clock2" style="font-size:37px;"></i></label></div>
+						<div class="w3-col" style="width:50px"><label for="add_cita_hora"><i class="icon-clock2" style="font-size:37px;"></i></label></div>
 						<div class="w3-rest">
 							<select class="w3-select" id="add_cita_hora" name="add_cita_hora">
 								<option value="">Hora</option>
@@ -277,7 +385,7 @@
 						</div>
 					</div>
 					<div class="w3-row w3-section">
-						<div class="w3-col" style="width:50px"><label for="id_motivo_ingreso"><i class="icon-menu" style="font-size:37px;"></i></label></div>
+						<div class="w3-col" style="width:50px"><label for="add_cita_id_motivo_ingreso"><i class="icon-menu" style="font-size:37px;"></i></label></div>
 						<div class="w3-rest">
 							<select class="w3-select" id="add_cita_id_motivo_ingreso" name="add_cita_id_motivo_ingreso">
 								<option value="">Tipo de Trabajo</option>
@@ -301,12 +409,12 @@
 						</div>
 					</div>
 					<div class="w3-row w3-section">
-						<div class="w3-col" style="width:50px"><label for="add_cita_cliente_telf"><i class="icon-menu" style="font-size:37px;"></i></label></div>
+						<div class="w3-col" style="width:50px"><label for="add_cita_id_cliente"><i class="icon-menu" style="font-size:37px;"></i></label></div>
 						<div class="w3-rest">
-							<select class="w3-select" id="add_cita_cliente_telf" name="add_cita_cliente_telf">
+							<select class="w3-select" id="add_cita_id_cliente" name="add_cita_id_cliente">
 								<option value="">Cliente</option>
 								<?php
-									$sql="SELECT telf, nombre, apellido, alias FROM cliente;";
+									$sql="SELECT id_cliente, telf, nombre, apellido, alias FROM cliente;";
 									$result = $bd->mysql->query($sql);
 									unset($sql);
 									if($result)
@@ -314,9 +422,9 @@
 										while($row = $result->fetch_array())
 										{
 											if(empty($row["alias"]))
-												echo"<option value='".$row["telf"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
+												echo"<option value='".$row["id_cliente"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
 											else
-												echo"<option value='".$row["telf"]."'>".$row["alias"]." - ".$row["nombre"]." ".$row["apellido"]."</option>";
+												echo"<option value='".$row["id_cliente"]."'>".$row["alias"]." - ".$row["nombre"]." ".$row["apellido"]."</option>";
 										}
 										unset($row);
 										$result->free();
@@ -327,7 +435,7 @@
 							</select>
 						</div>
 					</div>
-					<label for="observacion"><b>Nota</b></label>
+					<label for="add_cita_nota"><b>Nota</b></label>
 					<div class="w3-row">
 						<div class="w3-rest">
 							<textarea style="float: left;width: 100%;height: auto;" id="add_cita_nota" name="add_cita_nota"></textarea>
@@ -339,6 +447,14 @@
 							<label for="add_cita_sms">&nbsp;&nbsp;&nbsp;Notificar al cliente por SMS</label>
 						</div>
 					</div>
+					<?php
+						global $mensajeCreacionCita;
+						echo "<div class='w3-row'>";
+						echo "<div class='w3-rest'>";
+							echo "<textarea style='float: left;width: 100%;height: auto;' id='sms_crecion' name='sms_crecion' maxlength=160>".$mensajeCreacionCita."</textarea>";
+						echo "</div>";
+						echo "</div>";
+					?>
 					<div class="w3-row w3-section">
 						<p>
 						<div class="w3-rest">
@@ -346,6 +462,8 @@
 						</div>
 						</p>
 					</div>
+					<input type="hidden" id="bfecha_unix" name="bfecha_unix" value="<?php echo $_POST["bfecha_unix"]; ?>">
+					<input type="hidden" id="bfecha" name="bfecha" value="<?php echo $_POST["bfecha"]; ?>">
 				</form>
 				<?php
 				echo "</div>";
@@ -397,7 +515,10 @@
 							inner join empleado e on c.empleado_telf = e.empleado_telf 
 							inner join cliente cc on c.id_cliente = cc.id_cliente
 							left join motivo_ingreso m on c.id_motivo_ingreso = m.id_motivo_ingreso
-						where c.empleado_telf = '".$_POST["empleado_telf"]."' and e.visible = 1 and c.estado = 1;";
+						where c.empleado_telf = '".$_POST["empleado_telf"]."' and 
+						e.visible = 1 and 
+						c.estado = 1 and
+						c.desde > ".$_POST["bfecha_unix"]." and c.hasta < ".($_POST["bfecha_unix"] + 86400).";";
 						$result = $bd->mysql->query($sql);
 						unset($sql);
 						if ($result)
@@ -420,7 +541,7 @@
 									$cliente = $row["cliente"];
 									// echo "6->".strtotime("2022-05-21T09:40")."<br>";
 									// echo "7->".strtotime("2022-05-21T10:00")."<br>";
-									echo "<div id='cita_id_".$row["id_citas"]."' class='cita div-cita' style='background-color: ".$color."; margin-top: ".$margin_top."px; height: ".$height."px;'>";
+									echo "<div id='cita_id_".$row["id_citas"]."' class='cita div-cita detalle_cita' data-id-cita='".$row["id_citas"]."' style='background-color: ".$color."; margin-top: ".$margin_top."px; height: ".$height."px;'>";
 										echo "<div class='w3-third'>";
 											echo "<b>".$hora_desde." - ".$hora_hasta." - ".$cliente."</b>";
 										echo "</div>";
@@ -428,6 +549,7 @@
 											echo $tipo;
 										echo "</div>";
 									echo "</div>";
+									crear_modal_cita_detalle($row["id_citas"],$_POST["empleado_telf"],$bd);
 								}
 								unset ($array_citas);
 							}
@@ -447,7 +569,9 @@
 							inner join empleado e on c.empleado_telf = e.empleado_telf 
 							inner join cliente cc on c.id_cliente = cc.id_cliente
 							left join motivo_ingreso m on c.id_motivo_ingreso = m.id_motivo_ingreso
-						where e.visible = '1' and c.estado = 1;";
+						where e.visible = '1' and 
+						c.estado = 1 and 
+						c.desde > ".$_POST["bfecha_unix"]." and c.hasta < ".($_POST["bfecha_unix"] + 86400).";";
 						$result = $bd->mysql->query($sql);
 						unset($sql);
 						if ($result)
@@ -499,13 +623,13 @@
 									$tipo = $row["tipo"];
 									$cliente = $row["cliente"];
 
-									echo "<div id='cita_id_".$row["id_citas"]."' class='cita-multiple div-cita-multiple' style='margin-left: ".$margin_left."em; background-color: ".$color."; margin-top: ".$margin_top."px; height: ".$height."px;'>";
+									echo "<div id='cita_id_".$row["id_citas"]."' class='cita-multiple div-cita-multiple detalle_cita' data-id-cita='".$row["id_citas"]."' style='margin-left: ".$margin_left."em; background-color: ".$color."; margin-top: ".$margin_top."px; height: ".$height."px;'>";
 										echo "<p class='tooltip' style='font-size: 10px;'>";
 										echo "&nbsp;";
 										echo "<span class='tooltiptext'><b>".$row["empleado"]."</b><br>".$hora_desde." - ".$hora_hasta." - ".$cliente."</span>";
 										echo "<p>";
 									echo "</div>";
-
+									crear_modal_cita_detalle($row["id_citas"],$_POST["empleado_telf"],$bd);
 									$i++;
 									$empleado_aux = $row["empleado_telf"];
 								}
