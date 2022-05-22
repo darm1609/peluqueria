@@ -12,6 +12,55 @@
 		$(".cita").show();
 		$(".cita-multiple").show();
 
+		let num_empleado = Number($("#num_empleado").val());
+		let multiplicador = 2;
+		if (divHoras.clientWidth < 500)
+			multiplicador = 4;
+		let width = (divHoras.clientWidth / (num_empleado * multiplicador));
+		let marginIni = 75;
+		let i = 0;
+		let marginArray = [];
+		$(".div-cita-multiple").width(width);
+		$(".div-cita-multiple").each(function(){
+			let id_cita = $(this).data("id-cita");
+			let widthCuadro = document.getElementById("cita_id_" + id_cita).clientWidth;
+			let margin = $(this).css("margin-left");
+			let empleado = $(this).data("empleado");
+			if (i == 0)
+			{
+				$(this).css("margin-left", marginIni + "px");
+				marginArray.push({empleado: empleado, margin: marginIni});
+			}
+			else
+			{
+				let encontrado = false;
+				marginArray.forEach((i,v) => {
+					if (i.empleado == empleado)
+					{
+						encontrado = true;
+						marginIni = i.margin;
+						marginArray.push({empleado: empleado, margin: marginIni});
+					}
+				});
+				if (!encontrado)
+				{
+					marginIni = 0;
+					marginArray.forEach((i,v) => {
+						if (i.margin > marginIni)
+							marginIni = i.margin;
+					});
+					marginIni += width + (25 - (num_empleado - 3));
+					marginArray.push({empleado: empleado, margin: marginIni});
+				}
+			}
+
+			$(this).css("margin-left", (marginIni) + "px");
+			i++;
+		});
+
+		let widthMargin = width / 15;
+		
+
 		$(".add-cita").on("click", function(e){
 			let elem = $(this);
 			let hora = elem.data("hora");
@@ -490,6 +539,7 @@
 			{
 				if (!empty($result->num_rows))
 				{
+					echo "<input type='hidden' id='num_empleado' name='num_empleado' value='".$result->num_rows."'>";
 					$array_citas = $result->fetch_all(MYSQLI_ASSOC);
 					$result->free();
 					echo "<div class='w3-container w3-card-4 w3-light-grey w3-margin'>";
@@ -635,7 +685,7 @@
 									$tipo = $row["tipo"];
 									$cliente = $row["cliente"];
 
-									echo "<div id='cita_id_".$row["id_citas"]."' class='cita-multiple div-cita-multiple detalle_cita' data-id-cita='".$row["id_citas"]."' style='margin-left: ".$margin_left."em; background-color: ".$color."; margin-top: ".$margin_top."px; height: ".$height."px;'>";
+									echo "<div id='cita_id_".$row["id_citas"]."' class='cita-multiple div-cita-multiple detalle_cita' data-id-cita='".$row["id_citas"]."' data-empleado='".$row["empleado_telf"]."' style='background-color: ".$color."; margin-top: ".$margin_top."px; height: ".$height."px;'>";
 										echo "<p class='tooltip' style='font-size: 10px;'>";
 										echo "&nbsp;";
 										echo "<span class='tooltiptext'><b>".$row["empleado"]."</b><br>".$hora_desde." - ".$hora_hasta." - ".$cliente."</span>";
