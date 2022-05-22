@@ -58,9 +58,6 @@
 			i++;
 		});
 
-		let widthMargin = width / 15;
-		
-
 		$(".add-cita").on("click", function(e){
 			let elem = $(this);
 			let hora = elem.data("hora");
