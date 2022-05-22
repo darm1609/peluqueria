@@ -1,5 +1,31 @@
 <script type="text/javascript">
 
+    function enviardatos_sms_cita(id_cita)
+    {
+        ajax=objetoAjax();
+        $("#loader").show();
+        $('#loader').html('<div style="display:block;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+        ajax.open("POST","calendario_citas_contenido_lista_sms_recordatorio.php",true);
+        ajax.onreadystatechange = function() 
+        {
+            if (ajax.readyState == 1)
+            {
+                $('#loader').html('<div style="position:absolute;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+            }
+            if (ajax.readyState == 4)
+            {
+                $.post("calendario_citas_contenido_lista_sms_recordatorio.php",$("#fdetallecita_" + id_cita).serialize(),function(data)
+                {
+                    $("#divformularioDetalle_" + id_cita).show();
+                    $("#divformularioDetalle_" + id_cita).html(data);
+                    $("#loader").hide();
+                });
+            }
+        } 
+        ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+        ajax.send();
+    }
+
     function enviardatos_cancelar_cita(id_cita)
     {
         ajax=objetoAjax();

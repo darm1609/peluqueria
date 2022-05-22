@@ -16,6 +16,11 @@
 	global $mensajeCreacionCita;
 	global $mensajeRecordatorioUnaHora;
 	$mensajeRecordatorioUnaHora = "DULCE VANIDAD le recuerda que tiene una cita con [empleado] que comienza en aproximadamente 1 hora";
-	$mensajeRecordatorio = "DULCE VANIDAD le recuerda que tiene una cita con [empleado] que comienza en aproximadamente [hora]";
+	$mensajeRecordatorio = "DULCE VANIDAD le recuerda que tiene una cita con [empleado] el día [dia] a la(s) [hora]";
 	$mensajeCreacionCita = "DULCE VANIDAD le informa que se agendo una cita para el [dia] [hora] con [empleado]";
+	require("librerias/httpPHPAltiria.php");
+	$altiriaSMS = new AltiriaSMS();
+	$altiriaSMS->setLogin('darm1609@gmail.com');
+	$altiriaSMS->setPassword('uy5smaqb');
+	$altiriaSMS->setDebug(false);
 ?>

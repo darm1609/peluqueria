@@ -88,6 +88,11 @@
 		alertify.confirm('','¿Desea cancelar la cita?', function(){ alertify.success('Sí');enviardatos_cancelar_cita(id_cita); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
 	}
 
+	function confirmar_enviar_sms_recordatorio(id_cita)
+	{
+		alertify.confirm('','¿Desea enviar el mensaje?', function(){ alertify.success('Sí');enviardatos_sms_cita(id_cita); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
+	}
+
 	//1 hora o 60 min son 150px de height
 	//1 min son
 	//15min 37.5px de height
@@ -150,7 +155,6 @@
 	}
 </style>
 <?php
-    session_start();
 	require("head.php");
 	require("config.php");
 	require("librerias/basedatos.php");
@@ -193,6 +197,8 @@
 							<?php
 								echo "<input type='hidden' id='cancel_cita_id_cita_".$id_cita."' name='cancel_cita_id_cita_".$id_cita."' value='".$id_cita."'>";
 								echo "<input type='hidden' id='cancel_cita_cliente_telf_".$id_cita."' name='cancel_cita_cliente_telf_".$id_cita."' value='".$array[0]["cliente_telf"]."'>";
+								echo "<input type='hidden' id='sms_cita_id_cita_".$id_cita."' name='sms_cita_id_cita_".$id_cita."' value='".$id_cita."'>";
+								echo "<input type='hidden' id='sms_cita_cliente_telf_".$id_cita."' name='sms_cita_cliente_telf_".$id_cita."' value='".$array[0]["cliente_telf"]."'>";
 							?>
 							<div class="w3-row w3-section">
 								<div class="w3-col" style="width:50px"><label for="add_cita_hora"><i class="icon-clock2" style="font-size:37px;"></i></label></div>
@@ -249,7 +255,7 @@
 									<input type="button" class="w3-button w3-block w3-red" onclick="return confirmar_cancelar_cita(<?php echo $id_cita; ?>);" value="Cancelar cita">
 								</div>
 								<div class="w3-half">
-									<input type="button" class="w3-button w3-block w3-green" onclick="return confirmar_enviar_sms_recordatorio();" value="Enviar recordatorio">
+									<input type="button" class="w3-button w3-block w3-green" onclick="return confirmar_enviar_sms_recordatorio(<?php echo $id_cita; ?>);" value="Enviar recordatorio">
 								</div>
 								</p>
 							</div>
