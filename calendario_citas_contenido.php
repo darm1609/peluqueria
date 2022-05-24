@@ -210,25 +210,55 @@
             <div class="w3-row w3-section">
                 <div class="w3-col" style="width:50px"><label for="empleado_telf"><i class="icon-id-badge" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
-                    <select class="w3-select" id="empleado_telf" name="empleado_telf">
-						<option value="">Empleado</option>
-						<?php
-							$sql="SELECT empleado_telf, nombre, apellido FROM empleado where visible = '1';";
-							$result = $bd->mysql->query($sql);
-							unset($sql);
-							if($result)
-							{
-								while($row = $result->fetch_array())
-								{
-									echo"<option value='".$row["empleado_telf"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
-								}
-								unset($row);
-								$result->free();
-							}
-							else
-								unset($result);
-						?>
-					</select>
+                    <?php
+                        if (usuario_empleado())
+                        {
+                    ?>
+                            <select class="w3-select" id="empleado_telf" name="empleado_telf">
+                                <?php
+                                    $sql="SELECT empleado_telf, nombre, apellido FROM empleado where empleado_telf = '".$_SESSION["login"]."' and visible = '1';";
+                                    $result = $bd->mysql->query($sql);
+                                    unset($sql);
+                                    if($result)
+                                    {
+                                        while($row = $result->fetch_array())
+                                        {
+                                            echo"<option value='".$row["empleado_telf"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
+                                        }
+                                        unset($row);
+                                        $result->free();
+                                    }
+                                    else
+                                        unset($result);
+                                ?>
+                            </select>
+                    <?php
+                        }
+                        else
+                        {
+                    ?>
+                            <select class="w3-select" id="empleado_telf" name="empleado_telf">
+                                <option value="">Empleado</option>
+                                <?php
+                                    $sql="SELECT empleado_telf, nombre, apellido FROM empleado where visible = '1';";
+                                    $result = $bd->mysql->query($sql);
+                                    unset($sql);
+                                    if($result)
+                                    {
+                                        while($row = $result->fetch_array())
+                                        {
+                                            echo"<option value='".$row["empleado_telf"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
+                                        }
+                                        unset($row);
+                                        $result->free();
+                                    }
+                                    else
+                                        unset($result);
+                                ?>
+                            </select>
+                    <?php
+                        }
+                    ?>
 				</div>
             </div>
             <div class="w3-row w3-section">
@@ -244,7 +274,7 @@
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 	if($bd->conectado)
 	{
-		if(usuario_admin() or usuario_cajero())
+		if(usuario_admin() or usuario_cajero() or usuario_empleado())
 		{
             ?>
             <header class="w3-container" style="padding-top:22px">

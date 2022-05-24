@@ -6,6 +6,7 @@
 	require("funciones_generales.php");
 	if(isset($_SESSION["login"]))
 	{
+		$citas = true;
 		require("superior.php");
 		require_once("menu_lateral.php");
 		require_once("contenido_head.php");

