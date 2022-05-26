@@ -203,6 +203,8 @@
 			cambio=true;
 		if(document.getElementById('otelf').value!=document.getElementById('mtelf').value)
 			cambio=true;
+		if(document.getElementById('ocorreo').value!=document.getElementById('mcorreo').value)
+			cambio=true;
 		
 		let oespecial = document.getElementById('oespecial').value;
 		let mespecial;
@@ -400,7 +402,7 @@
 		$especial = "0";
 		if (isset($_POST["especial"]))
 			$especial = $_POST["especial"];
-		if($bd->insertar_datos(7,$basedatos,"cliente","nombre","apellido","alias","telf","login","fecha_num","especial",$_POST["nombre"],$_POST["apellido"],$_POST["alias"],$_POST["telf"],$_SESSION["login"],time(),$especial))
+		if($bd->insertar_datos(8,$basedatos,"cliente","nombre","apellido","alias","telf","login","fecha_num","especial","correo",$_POST["nombre"],$_POST["apellido"],$_POST["alias"],$_POST["telf"],$_SESSION["login"],time(),$especial,$_POST["correo"]))
 			return true;
 		else
 			return false;
@@ -422,7 +424,7 @@
 			<div class="w3-row w3-section">
 				<div class="w3-col" style="width:50px"><label for="telf"><i class=" icon-phone" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
-					<input class="w3-input w3-border" id="telf" name="telf" type="text" placeholder="Tel&eacute;fono" maxlength="11" onkeypress="return NumCheck3(event, this)" tabindex="5">
+					<input class="w3-input w3-border" id="telf" name="telf" type="text" placeholder="Tel&eacute;fono" maxlength="11" onkeypress="return NumCheck3(event, this)" tabindex="1">
 				</div>
 			</div>
 			<div class="w3-row w3-section">
@@ -441,6 +443,12 @@
 				<div class="w3-col" style="width:50px"><label for="alias"><i class="icon-pencil" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
 					<input class="w3-input w3-border" id="alias" name="alias" type="text" placeholder="Alias" maxlength="30" tabindex="4">
+				</div>
+			</div>
+			<div class="w3-row w3-section">
+				<div class="w3-col" style="width:50px"><label for="correo"><i class="icon-mail2" style="font-size:37px;"></i></label></div>
+				<div class="w3-rest">
+					<input class="w3-input w3-border" id="correo" name="correo" type="text" placeholder="Correo" maxlength="255" tabindex="5">
 				</div>
 			</div>
 			<div class="w3-row w3-section">

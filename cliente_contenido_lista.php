@@ -27,7 +27,7 @@
 			{
 				$oespecial = $_POST["oespecial"];
 				$mespecial = isset($_POST["mespecial"]) ? 1 : 0;
-				if($bd->actualizar_datos(1,5,$basedatos,"cliente","telf",$_POST["otelf"],"telf",$_POST["otelf"],$_POST["mtelf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"alias",$_POST["oalias"],$_POST["malias"],"especial",$oespecial,$mespecial))
+				if($bd->actualizar_datos(1,6,$basedatos,"cliente","telf",$_POST["otelf"],"telf",$_POST["otelf"],$_POST["mtelf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"alias",$_POST["oalias"],$_POST["malias"],"especial",$oespecial,$mespecial,"correo",$_POST["ocorreo"],$_POST["mcorreo"]))
 				{
 					foreach($_POST as $index => $value)
 					{
@@ -243,7 +243,7 @@
 
 	function formulario_modificar($bd)
 	{
-		$sql="SELECT nombre, apellido, alias, telf, especial FROM cliente WHERE telf='".$_POST["accion_modificar"]."';";
+		$sql="SELECT nombre, apellido, alias, telf, especial, correo FROM cliente WHERE telf='".$_POST["accion_modificar"]."';";
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if($result)
@@ -257,7 +257,7 @@
 					<div class="w3-col" style="width:50px"><label for="mtelf"><i class=" icon-phone" style="font-size:37px;"></i></label></div>
 					<div class="w3-rest">
 						<input type="hidden" id="otelf" name="otelf" value="<?php echo $row[0]['telf']; ?>">
-						<input class="w3-input w3-border" id="mtelf" name="mtelf" type="text" placeholder="Tel&eacute;fono" maxlength="11" onkeypress="return NumCheck3(event, this)" tabindex="5" value="<?php echo $row[0]['telf']; ?>">
+						<input class="w3-input w3-border" id="mtelf" name="mtelf" type="text" placeholder="Tel&eacute;fono" maxlength="11" onkeypress="return NumCheck3(event, this)" tabindex="1" value="<?php echo $row[0]['telf']; ?>">
 					</div>
 				</div>
 				<div class="w3-row w3-section">
@@ -279,6 +279,13 @@
 					<div class="w3-rest">
 						<input type="hidden" id="oalias" name="oalias" value="<?php echo $row[0]['alias']; ?>">
 						<input class="w3-input w3-border" id="malias" name="malias" type="text" placeholder="Alias" maxlength="30" tabindex="4" value="<?php echo $row[0]['alias']; ?>">
+					</div>
+				</div>
+				<div class="w3-row w3-section">
+					<div class="w3-col" style="width:50px"><label for="mcorreo"><i class="icon-mail2" style="font-size:37px;"></i></label></div>
+					<div class="w3-rest">
+						<input type="hidden" id="ocorreo" name="ocorreo" value="<?php echo $row[0]['correo']; ?>">
+						<input class="w3-input w3-border" id="mcorreo" name="mcorreo" type="text" placeholder="Correo" maxlength="255" tabindex="5" value="<?php echo $row[0]['correo']; ?>">
 					</div>
 				</div>
 				<div class="w3-row w3-section">
