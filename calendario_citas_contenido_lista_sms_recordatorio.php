@@ -46,6 +46,8 @@
                 $diaInicio = date("d-m-Y",$array[0]["desde"]);
                 $horaInicio = date("h:i a",$array[0]["desde"]);
 
+                $tipo = $array[0]["tipo"];
+
                 $mensajeSeparado = explode(" ", $mensaje);
 
                 foreach ($mensajeSeparado as $i => $v)
@@ -53,6 +55,13 @@
                     if ($v == "[empleado]") $mensajeSeparado[$i] = $empleado;
                     if ($v == "[dia]") $mensajeSeparado[$i] = $diaInicio;
                     if ($v == "[hora]") $mensajeSeparado[$i] = $horaInicio;
+                    if (!empty($tipo)) 
+                    {
+                        if ($v == "[tipo]") 
+                            $mensajeSeparado[$i] = "para ".$tipo;
+                    }
+                    else
+                        $mensajeSeparado[$i] = " ";
                 }
 
                 $mensaje = implode(" ", $mensajeSeparado);
