@@ -109,7 +109,7 @@
 						<select class="w3-select" id="selEmpleado" name="selEmpleado">
 							<option value="">Empleado</option>
 							<?php
-								$sql="SELECT empleado_telf, nombre, apellido FROM empleado where visible = '1';";
+								$sql="SELECT e.empleado_telf, e.nombre, e.apellido FROM empleado e inner join usuario u on e.empleado_telf = u.empleado_telf where e.visible = '1';";
 								$result = $bd->mysql->query($sql);
 								unset($sql);
 								if($result)
