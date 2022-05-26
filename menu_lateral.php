@@ -92,6 +92,7 @@
       <a href="usuario.php" style="text-decoration:none;" class="w3-bar-item w3-button w3-padding <?php if(isset($u)) echo "w3-dulcevanidad"; ?>">Usuario</a>
       <a href="cliente.php" style="text-decoration:none;" class="w3-bar-item w3-button w3-padding <?php if(isset($c)) echo "w3-dulcevanidad"; ?>">Cliente</a>
       <a href="empleado.php" class="w3-bar-item w3-button w3-padding <?php if(isset($e)) echo "w3-dulcevanidad"; ?>">Empleado</a>
+      <a href="campaña.php" style="text-decoration:none;" class="w3-bar-item w3-button w3-padding <?php if(isset($campaña)) echo "w3-dulcevanidad"; ?>">Campa&ntilde;a</a>
       <a href="tipo_trabajo.php" class="w3-bar-item w3-button w3-padding <?php if(isset($tipo)) echo "w3-dulcevanidad"; ?>">Tipo de Trabajo</a>
       <a href="vale_pago.php" class="w3-bar-item w3-button w3-padding <?php if(isset($vale_pago)) echo "w3-dulcevanidad"; ?>">Vale Pago</a>
       <a href="egreso.php" class="w3-bar-item w3-button w3-padding <?php if(isset($egreso)) echo "w3-dulcevanidad"; ?>">Egreso</a>
