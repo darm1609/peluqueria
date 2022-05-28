@@ -180,7 +180,7 @@
 				</div>
 			</div>
 			<div class="w3-container">
-				<input class="w3-check" type="checkbox" id="enviar_todos" name="enviar_todos" value="1" checked>
+				<input class="w3-check" type="checkbox" id="enviar_todos" name="enviar_todos" value="1">
 				<label for="enviar_todos">&nbsp;&nbsp;&nbsp;Enviar a todos</label>
 			</div>
 			<div id="clientes"></div>
