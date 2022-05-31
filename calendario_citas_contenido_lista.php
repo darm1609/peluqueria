@@ -474,7 +474,7 @@
 							<select class="w3-select" id="add_cita_id_cliente" name="add_cita_id_cliente">
 								<option value="">Cliente</option>
 								<?php
-									$sql="SELECT id_cliente, telf, nombre, apellido, alias FROM cliente;";
+									$sql="SELECT id_cliente, telf, nombre, apellido, alias FROM cliente order by nombre asc;";
 									$result = $bd->mysql->query($sql);
 									unset($sql);
 									if($result)
