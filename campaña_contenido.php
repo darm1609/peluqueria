@@ -25,61 +25,68 @@
 		});
 
 		$("#enviar_sms").on("click", function() {
-			if($("#fbusqueda").is(':visible')) {
-				$("#clientes").empty();
-				$("input[name^='sel_cliente_']").each(function (i, obj) {
-					if ($(this).prop("checked"))
-					{
-						let id = $(this).val();
-						$("#clientes").append("<input type='hidden' id='cliente_" + id + "' name='cliente_" + id + "' value='" + id +"'>");
-					}
-				});
-			}
 
-			let valido = true;
-			let mensaje = $("#mensaje").val($("#mensaje").val().trim()).val();
-			if (!mensaje.length)
-			{
-				valido=false;
-				alertify.alert("","EL MENSAJE ESTA VACIO").set('label', 'Aceptar');
-			}
-			if (valido)
-			{
-				if (!$("#enviar_todos").prop("checked")) {
-					if (!$("input[name^='cliente_']").length)
-					{
-						valido=false;
-						alertify.alert("","NO EXISTEN CLIENTES SELECCIONADOS").set('label', 'Aceptar');
-					}
-				}
-			}
-			if (valido)
-			{
-				ajax=objetoAjax();
-				$("#loader").show();
-				$('#loader').html('<div style="display:block;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
-				ajax.open("POST","campaña_contenido_enviar_sms.php",true);
-				ajax.onreadystatechange = function() 
-				{
-					if (ajax.readyState == 1)
-					{
-						$('#loader').html('<div style="position:absolute;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
-					}
-					if (ajax.readyState == 4)
-					{
-						$.post("campaña_contenido_enviar_sms.php",$("#fsms").serialize(),function(data)
-						{
-							$("#divformularioSMSEnvio").show();
-							$("#divformularioSMSEnvio").html(data);
-							$("#loader").hide();
-						});
-					}
-				} 
-				ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
-				ajax.send();
-			}
+			alertify.confirm('','¿Desea enviar el mensaje?', function(){ alertify.success('Sí');enviardatos_mensaje(); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
+			
 		});
 	});
+
+	function enviardatos_mensaje()
+	{
+		if($("#fbusqueda").is(':visible')) {
+			$("#clientes").empty();
+			$("input[name^='sel_cliente_']").each(function (i, obj) {
+				if ($(this).prop("checked"))
+				{
+					let id = $(this).val();
+					$("#clientes").append("<input type='hidden' id='cliente_" + id + "' name='cliente_" + id + "' value='" + id +"'>");
+				}
+			});
+		}
+
+		let valido = true;
+		let mensaje = $("#mensaje").val($("#mensaje").val().trim()).val();
+		if (!mensaje.length)
+		{
+			valido=false;
+			alertify.alert("","EL MENSAJE ESTA VACIO").set('label', 'Aceptar');
+		}
+		if (valido)
+		{
+			if (!$("#enviar_todos").prop("checked")) {
+				if (!$("input[name^='cliente_']").length)
+				{
+					valido=false;
+					alertify.alert("","NO EXISTEN CLIENTES SELECCIONADOS").set('label', 'Aceptar');
+				}
+			}
+		}
+		if (valido)
+		{
+			ajax=objetoAjax();
+			$("#loader").show();
+			$('#loader').html('<div style="display:block;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+			ajax.open("POST","campaña_contenido_enviar_sms.php",true);
+			ajax.onreadystatechange = function() 
+			{
+				if (ajax.readyState == 1)
+				{
+					$('#loader').html('<div style="position:absolute;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+				}
+				if (ajax.readyState == 4)
+				{
+					$.post("campaña_contenido_enviar_sms.php",$("#fsms").serialize(),function(data)
+					{
+						$("#divformularioSMSEnvio").show();
+						$("#divformularioSMSEnvio").html(data);
+						$("#loader").hide();
+					});
+				}
+			} 
+			ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+			ajax.send();
+		}
+	}
 
 	function enviardatos_busqueda()
 	{
