@@ -1422,7 +1422,8 @@
                             $por_pago_de_deuda_encontrado = 0;
                             foreach($array_ingresos as $row)
                             {
-                                if ($row["fecha_num"] >= $fecha_num_consulta_desde and $row["fecha_num"] <= $fecha_num_consulta_hasta and $row["deuda"] != 1) 
+                                if ($row["fecha_num"] >= $fecha_num_consulta_desde and $row["fecha_num"] <= $fecha_num_consulta_hasta /*and $row["deuda"] != 1*/
+                                and ($row["efectivo_monto"] || $row["transferencia_monto"] || $row["debito_monto"])) 
                                 {
                                     $total_ingreso_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
                                     $total_ingreso_del_dia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
