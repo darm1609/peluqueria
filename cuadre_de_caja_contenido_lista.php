@@ -840,14 +840,11 @@
                     $total_ganancia_dueño_efectivo += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño) / 100;
                     $total_ganancia_dueño_datafono += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100;
                     $total_ganancia_dueño_transferencia += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño) / 100;
-                    $total_ganancia_dueño_deuda += (($row["deuda_monto"] ? $row["deuda_monto"] : 0) * $porcentaje_dueño) / 100;
-                    $total_ganancia_dueño += ((($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño) / 100) + 
-                                        ((($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100) + 
-                                        ((($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño) / 100) +
-                                        ((($row["deuda_monto"] ? $row["deuda_monto"] : 0) * $porcentaje_dueño) / 100);
+                    // $total_ganancia_dueño_deuda += (($row["deuda_monto"] ? $row["deuda_monto"] : 0) * $porcentaje_dueño) / 100;
+                    $total_ganancia_dueño = $total_ganancia_dueño_efectivo + $total_ganancia_dueño_datafono + $total_ganancia_dueño_transferencia;
                 }
 
-                if ($row["dueño"] == 1 and $row["empleado_telf"] == '3226773809') {
+                if ($row["dueño"] == 1 /*and $row["empleado_telf"] == '3226773809'*/) {
                     $porcentaje_empleado_dueño = porcentaje_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
 
                     $total_ganancia_dueño_por_trabajo_efectivo += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_empleado_dueño) / 100;
@@ -1350,31 +1347,6 @@
                         </table>
                     </div>
                 </div>
-                <!-- <div class="w3-quarter w3-container">
-                    <div style="background-color: #567C95; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
-                        <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
-                            Cuadre de caja del d&iacute;a
-                        </div>
-                        <table border="0" width="100%">
-                            <tr>
-                                <td>Total efectivo:</td>
-                                <td align="right" nowrap><?php echo money_format('%.2n', ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) >= 0 ? ($total_ingreso_efectivo_del_dia - $total_egreso_efectivo_del_dia) : 0); ?></td>
-                            </tr>
-                            <tr>
-                                <td>Total dat&aacute;fono:</td>
-                                <td align="right" nowrap><?php echo money_format('%.2n', ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) >= 0 ? ($total_ingreso_datafono_del_dia - $total_egreso_datafono_del_dia) : 0); ?></td>
-                            </tr>
-                            <tr>
-                                <td>Total transferencia:</td>
-                                <td align="right" nowrap><?php echo money_format('%.2n', ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) >= 0 ? ($total_ingreso_transferencia_del_dia - $total_egreso_transferencia_del_dia) : 0); ?></td>
-                            </tr>
-                            <tr>
-                                <td>Total:</td>
-                                <td align="right" nowrap><?php echo money_format('%.2n', ($total_ingreso_del_dia - $total_egreso_del_dia) >= 0 ? ($total_ingreso_del_dia - $total_egreso_del_dia) : 0); ?></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div> -->
             </div>
         </form>
         <?php
