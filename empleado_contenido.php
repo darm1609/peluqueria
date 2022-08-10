@@ -474,7 +474,10 @@
 	function guardar($bd)
 	{
 		global $basedatos;
-		if($bd->insertar_datos(9,$basedatos,"empleado","empleado_telf","nombre","apellido","genero","correo","login","dueño","color","visible",$_POST["empleado_telf"],$_POST["nombre"],$_POST["apellido"],$_POST["genero"],$_POST["correo"],$_SESSION["login"],"0",$_POST["color"],"1"))
+		$dueño = "0";
+		if (isset($_POST["dueño"]))
+			$dueño = $_POST["dueño"];
+		if($bd->insertar_datos(9,$basedatos,"empleado","empleado_telf","nombre","apellido","genero","correo","login","dueño","color","visible",$_POST["empleado_telf"],$_POST["nombre"],$_POST["apellido"],$_POST["genero"],$_POST["correo"],$_SESSION["login"],$dueño,$_POST["color"],"1"))
 			return true;
 		else
 			return false;
@@ -484,8 +487,14 @@
 	{
 		if($bd->existe(1,"empleado","empleado_telf",$_POST["empleado_telf"]))
 			return true;
-		else
-			return false;
+		return false;
+	}
+
+	function existe_dueño($bd)
+	{
+		if($bd->existe(1,"empleado","dueño","1") and isset($_POST["dueño"]))
+			return true;
+		return false;
 	}
 
 	function formulario_agregar_empleado()
@@ -526,6 +535,14 @@
 				<div class="w3-rest">
 					<input class="w3-input w3-border" id="correo" name="correo" type="text" placeholder="Correo Electr&oacute;nico" maxlength="255" tabindex="7">
 				</div>
+			</div>
+			<div class="w3-row w3-section">
+				<label>
+					<div class="w3-col" style="width:50px"><input class="w3-check" type="checkbox" id="dueño" name="dueño" value="1"></div>
+					<div class="w3-rest">	
+						Dueño
+					</div>
+				</label>
 			</div>
 			<div class="w3-row w3-section">
 				<div class="w3-col" style="width:50px"><label for="color"><i class="icon-color-mode" style="font-size:37px;"></i></label></div>
@@ -637,21 +654,32 @@
 			echo"<div id='loader'></div>";
 			if(isset($_POST["empleado_telf"]))
 			{
-				if(!validar_exite($bd))
+				if (!validar_exite($bd))
 				{
-					if(guardar($bd))
+					if (!existe_dueño($bd))
 					{
-						?>
-						<script language='JavaScript' type='text/JavaScript'>
-							alertify.alert("","GUARDADO SATISFACTORIAMENTE").set('label', 'Aceptar');
-						</script>
-						<?php
+						if(guardar($bd))
+						{
+							?>
+							<script language='JavaScript' type='text/JavaScript'>
+								alertify.alert("","GUARDADO SATISFACTORIAMENTE").set('label', 'Aceptar');
+							</script>
+							<?php
+						}
+						else
+						{
+							?>
+							<script language='JavaScript' type='text/JavaScript'>
+								alertify.alert("","NO SE PUDO GUARDAR EL EMPLEADO").set('label', 'Aceptar');
+							</script>
+							<?php
+						}
 					}
 					else
 					{
 						?>
 						<script language='JavaScript' type='text/JavaScript'>
-							alertify.alert("","NO SE PUDO GUARDAR EL EMPLEADO").set('label', 'Aceptar');
+							alertify.alert("","YA SE HA AGREGADO UN DUEÑO").set('label', 'Aceptar');
 						</script>
 						<?php
 					}

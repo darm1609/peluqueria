@@ -62,6 +62,8 @@
 		global $basedatos;
 		$ovisible = isset($_POST["ovisible"]) ? $_POST["ovisible"] : 0;
 		$mvisible = isset($_POST["mvisible"]) ? $_POST["mvisible"] : 0;
+		$odueño = isset($_POST["odueño"]) ? $_POST["odueño"] : 0;
+		$mdueño = isset($_POST["mdueño"]) ? $_POST["mdueño"] : 0;
 		$bd->actualizar_datos(1,1,$basedatos,"ingreso","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
 		$bd->actualizar_datos(1,1,$basedatos,"porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
 		$bd->actualizar_datos(1,1,$basedatos,"motivo_porcentaje_ganancia","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
@@ -69,7 +71,7 @@
 		$bd->actualizar_datos(1,1,$basedatos,"abono_empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
 		$bd->actualizar_datos(1,1,$basedatos,"usuario","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
 		$bd->actualizar_datos(1,1,$basedatos,"vale_pago","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"]);
-		if ($bd->actualizar_datos(1,7,$basedatos,"empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"genero",$_POST["ogenero"],$_POST["mgenero"],"correo",$_POST["ocorreo"],$_POST["mcorreo"],"color",$_POST["ocolor"],$_POST["mcolor"],"visible",$ovisible,$mvisible))
+		if ($bd->actualizar_datos(1,8,$basedatos,"empleado","empleado_telf",$_POST["oempleado_telf"],"empleado_telf",$_POST["oempleado_telf"],$_POST["mempleado_telf"],"nombre",$_POST["onombre"],$_POST["mnombre"],"apellido",$_POST["oapellido"],$_POST["mapellido"],"genero",$_POST["ogenero"],$_POST["mgenero"],"correo",$_POST["ocorreo"],$_POST["mcorreo"],"color",$_POST["ocolor"],$_POST["mcolor"],"visible",$ovisible,$mvisible,"dueño",$odueño,$mdueño))
 			return true;
 		return false;
 	}
@@ -111,6 +113,13 @@
 			return true;
 		else
 			return false;
+	}
+
+	function existe_dueño($bd)
+	{
+		if($bd->existe(1,"empleado","dueño","1") and isset($_POST["mdueño"]))
+			return true;
+		return false;
 	}
 
 	function formulario_modificar_porcentaje($bd)
@@ -257,7 +266,7 @@
 
 	function formulario_modificar($bd)
 	{
-		$sql="SELECT empleado_telf, nombre, apellido, genero, correo, color, visible FROM empleado WHERE empleado_telf='".$_POST["accion_modificar"]."';";
+		$sql="SELECT empleado_telf, nombre, apellido, genero, correo, color, visible, dueño FROM empleado WHERE empleado_telf='".$_POST["accion_modificar"]."';";
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if($result)
@@ -323,6 +332,22 @@
 						?>
 						<input class="w3-input w3-border" id="mcorreo" name="mcorreo" type="text" placeholder="Correo Electr&oacute;nico" maxlength="255" tabindex="7" value="<?php echo $row[0]['correo']; ?>">
 					</div>
+				</div>
+				<div class="w3-row w3-section">
+					<label>
+						<div class="w3-col" style="width:50px">
+							<?php
+								echo "<input type=\"hidden\" id=\"odueño\" name=\"odueño\" value=\"".$row[0]["dueño"]."\">";
+								echo "<input class=\"w3-check\" type=\"checkbox\" id=\"mdueño\" name=\"mdueño\" value=\"1\" ";
+								if ($row[0]["dueño"] == 1)
+									echo "checked";
+								echo ">";
+							?>
+						</div>
+						<div class="w3-rest">
+							Dueño
+						</div>
+					</label>
 				</div>
 				<div class="w3-row w3-section">
 					<?php
@@ -617,6 +642,15 @@
 					</script>
 					<?php
 				}
+			}
+			if (existe_dueño($bd))
+			{
+				$valido=false;
+				?>
+				<script language='JavaScript' type='text/JavaScript'>
+					alertify.alert("","YA SE HA AGREGADO UN DUEÑO").set('label', 'Aceptar');
+				</script>
+				<?php
 			}
 			if($valido)
 			{
