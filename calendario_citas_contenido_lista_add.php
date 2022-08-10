@@ -93,6 +93,7 @@
         (desde = ".$horaInicio." and desde < ".$horaFin." and hasta > ".$horaFin.") or
         (desde = ".$horaInicio." and desde = ".$horaFin.") or
         (desde < ".$horaInicio." and hasta > ".$horaFin.") or
+        (desde > ".$horaInicio." and hasta < ".$horaFin.") or
         (desde < ".$horaInicio." and hasta = ".$horaFin.") or
         (desde < ".$horaInicio." and hasta > ".$horaInicio." and desde < ".$horaFin.") or
         (hasta = ".($horaInicio + 1)." and hasta < ".$horaFin."));";
