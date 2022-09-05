@@ -962,17 +962,17 @@
                                     ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
                                     ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
             }*/
+        }
 
-            if (GananciaDePeluqueriaMenosEgresos())
-            {
-                $total_ganancia_peluqueria_efectivo -= ($total_egreso_efectivo_compra + 
-                                                        $total_egreso_efectivo_abono_empleado);
-                $total_ganancia_peluqueria_datafono -= $total_egreso_datafono_compra;
-                $total_ganancia_peluqueria_transferencia -= ($total_egreso_transferencia_compra + 
-                                                            $total_egreso_transferencia_abono_empleado);
-                $total_ganancia_peluqueria -= ($total_egreso_compra +
-                                                $total_egreso_abono_empleado);
-            }
+        if (GananciaDePeluqueriaMenosEgresos())
+        {
+            $total_ganancia_peluqueria_efectivo -= ($total_egreso_efectivo_compra + 
+                                                    $total_egreso_efectivo_abono_empleado);
+            $total_ganancia_peluqueria_datafono -= $total_egreso_datafono_compra;
+            $total_ganancia_peluqueria_transferencia -= ($total_egreso_transferencia_compra + 
+                                                        $total_egreso_transferencia_abono_empleado);
+            $total_ganancia_peluqueria -= ($total_egreso_compra +
+                                            $total_egreso_abono_empleado);
         }
 
         ?>
