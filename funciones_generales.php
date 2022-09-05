@@ -1,5 +1,5 @@
 <?php
-	if ( ! function_exists( 'money_format' ) ) {
+	if (!function_exists('money_format')) {
 
 		function money_format($format, $number)
 		{
@@ -122,6 +122,28 @@
 	function Fecha($val, $bd)
 	{
 		return $val;
+	}
+
+	function GananciaDePeluqueriaMenosEgresos() 
+	{
+		global $servidor, $puerto, $usuario, $pass, $basedatos;
+		$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
+		if($bd->conectado)
+		{
+			$sql="SELECT nombre FROM configuracion WHERE nombre='GananciaDePeluqueriaMenosEgresos' and valor=1;";
+			$result = $bd->mysql->query($sql);
+			if ($result)
+			{
+				if (!empty($result->num_rows))
+				{
+					$result->free();
+					return true;
+				}
+			}
+			else
+				unset($result);
+		}
+		return false;
 	}
 
 	function usuario_empleado()

@@ -824,7 +824,7 @@
                                     ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
 
                 $porcentaje_peluqueria = porcentaje_peluqueria($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
-            
+                
                 if ($row["cliente_especial"] != 1) {
                 $total_ganancia_peluqueria_efectivo += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_peluqueria) / 100;
                 $total_ganancia_peluqueria_datafono += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_peluqueria) / 100;
@@ -962,6 +962,17 @@
                                     ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
                                     ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
             }*/
+
+            if (GananciaDePeluqueriaMenosEgresos())
+            {
+                $total_ganancia_peluqueria_efectivo -= ($total_egreso_efectivo_compra + 
+                                                        $total_egreso_efectivo_abono_empleado);
+                $total_ganancia_peluqueria_datafono -= $total_egreso_datafono_compra;
+                $total_ganancia_peluqueria_transferencia -= ($total_egreso_transferencia_compra + 
+                                                            $total_egreso_transferencia_abono_empleado);
+                $total_ganancia_peluqueria -= ($total_egreso_compra +
+                                                $total_egreso_abono_empleado);
+            }
         }
 
         ?>
@@ -1273,7 +1284,27 @@
                     </div>
                 </div>
                 <div class="w3-quarter w3-container">
-                    <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                    <div id="modal_descripcion_ganancia_peluqueria" class="w3-modal">
+                        <div class="w3-modal-content">
+                            <div onclick="document.getElementById('modal_descripcion_ganancia_peluqueria').style.display='none'" class='w3-button w3-display-topright'>&times;</div>
+                            <div class="w3-display-topleft" style="padding: 1em;"><b>Ganancia de la peluquer&iacute;a por trabajos realizados</b><br><br> 
+                            </div>
+                            <br><br>
+                            <div style='padding: 1em;'>
+                            <?php
+                                if (GananciaDePeluqueriaMenosEgresos())
+                                {
+                                    echo "Se refiere al dinero que ingresa a la peluquer&iacute;a por trabajos realizados menos los <b>Egresos por compra o pagos de servicios</b> y <b>Egresos por abono a empleados</b>";
+                                }
+                                else
+                                {
+                                    echo "Se refiere al dinero que ingresa a la peluquer&iacute;a por trabajos realizados</b>";
+                                }
+                            ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;" onclick="document.getElementById('modal_descripcion_ganancia_peluqueria').style.display='block';">
                         <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
                             Ganancia de la peluquer&iacute;a por trabajos realizados
                         </div>
