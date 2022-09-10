@@ -254,8 +254,16 @@
 				else
 					$valido = false;
 			}
+			if (isset($_POST["vale_pago_tipo"]))
+			{
+				if ($bd->insertar_datos(2,$basedatos,"vale_pago_dueño_por_trabajo_por_empleado","id_vale_pago","tipo",$insert_id,$_POST["vale_pago_tipo"]))
+					$valido = true;
+				else
+					$valido = false;
+			}
 			if (!$valido) //Devolver todos los cambios
 			{
+				$bd->eliminar_datos(1,$basedatos,"vale_pago_dueño_por_trabajo_por_empleado","id_ingreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"vale_pago_transferencia","id_ingreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"vale_pago_efectivo","id_ingreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"vale_pago","id_ingreso",$insert_id);
@@ -292,6 +300,40 @@
 					Pago
 				</label>
 			</div>
+			<?php
+				$dueño = false;
+				if (GananciaDelDueñoSeparada())
+				{
+					$sql = "select * from empleado where empleado_telf = '".$_POST["accion_vale_pago"]."' and dueño = 1;";
+					$result = $bd->mysql->query($sql);
+					unset($sql);
+					if ($result)
+					{
+						if (!empty($result->num_rows))
+						{
+							$dueño = true;
+						}
+					}
+					else
+						unset($result);
+
+					if ($dueño)
+					{
+						?>
+						<div class="w3-row w3-section">
+							<label>
+								<input class="w3-radio" type="radio" id="vale_pago_tipo" name="vale_pago_tipo" value="Por Empleado" checked>
+								Por Empleados
+							</label>
+							<label>
+								<input class="w3-radio" type="radio" id="vale_pago_tipo" name="vale_pago_tipo" value="Por Trabajos'">
+								Por Trabajos Realizados
+							</label>
+						</div>
+						<?php
+					}
+				}
+			?>
 			<div class="w3-row w3-section">
 				<div class="w3-col" style="width:50px"><label for="comentario"><i class="icon-pencil" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">

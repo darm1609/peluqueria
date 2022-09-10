@@ -146,6 +146,28 @@
 		return false;
 	}
 
+	function GananciaDelDueñoSeparada() 
+	{
+		global $servidor, $puerto, $usuario, $pass, $basedatos;
+		$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
+		if($bd->conectado)
+		{
+			$sql="SELECT nombre FROM configuracion WHERE nombre='GananciaDelDueñoSeparada' and valor=1;";
+			$result = $bd->mysql->query($sql);
+			if ($result)
+			{
+				if (!empty($result->num_rows))
+				{
+					$result->free();
+					return true;
+				}
+			}
+			else
+				unset($result);
+		}
+		return false;
+	}
+
 	function usuario_empleado()
 	{
 		global $servidor, $puerto, $usuario, $pass, $basedatos;
