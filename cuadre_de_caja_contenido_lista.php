@@ -1945,6 +1945,7 @@
                     $resultado[$i]["transferencia_referencia"] = !empty($row["transferencia_referencia"]) ? $row["transferencia_referencia"] : 0;
                     $resultado[$i]["empleado_telf"] = $row["empleado_telf"];
                     $resultado[$i]["empleado"] = $row["empleado"];
+                    $resultado[$i]["vale_pago_tipo"] = $row["vale_pago_tipo"];
                     $i++;
                 }
             }
@@ -1972,6 +1973,10 @@
                     $total_por_dia = 0;
                     $total_por_dia_ingreso = 0;
                     $total_por_dia_pago = 0;
+                    $total_por_dia_ingreso_por_empleado = 0;
+                    $total_por_dia_ingreso_por_trabajos = 0;
+                    $total_por_dia_pago_por_empleado = 0;
+                    $total_por_dia_pago_por_trabajos = 0;
                     foreach ($resultado as $row2)
                     {
                         $total_por_linea_con_porcentaje = 0;
@@ -2004,6 +2009,11 @@
                                     $total_por_dia_ingreso += ($row2["debito_monto"] * $row2["porcentaje_dueño"] / 100);
                                     $total_por_dia_ingreso += ($row2["transferencia_monto"] * $row2["porcentaje_dueño"] / 100);
                                     $total_por_dia_ingreso += ($row2["deuda_monto"] * $row2["porcentaje_dueño"] / 100);
+
+                                    if (GananciaDelDueñoSeparada()) 
+                                    {
+                                        $total_por_dia_ingreso_por_empleado += $total_por_linea_con_porcentaje;
+                                    }
                                 }
                                 else 
                                 {
@@ -2022,6 +2032,11 @@
                                     $total_por_dia_ingreso += ($row2["debito_monto"] * $row2["porcentaje_empleado"] / 100);
                                     $total_por_dia_ingreso += ($row2["transferencia_monto"] * $row2["porcentaje_empleado"] / 100);
                                     $total_por_dia_ingreso += ($row2["deuda_monto"] * $row2["porcentaje_empleado"] / 100);
+
+                                    if (GananciaDelDueñoSeparada()) 
+                                    {
+                                        $total_por_dia_ingreso_por_trabajos += $total_por_linea_con_porcentaje;
+                                    }
                                 }
                             }
                             else 
@@ -2043,6 +2058,14 @@
                                     $total_por_dia_pago += $row2["efectivo_monto"];
                                     $total_por_dia_pago += $row2["debito_monto"];
                                     $total_por_dia_pago += $row2["transferencia_monto"];
+
+                                    if (GananciaDelDueñoSeparada()) 
+                                    {
+                                        if ($row2["vale_pago_tipo"] == "Por Empleado")
+                                            $total_por_dia_pago_por_empleado = $total_por_linea_con_porcentaje;
+                                        if ($row2["vale_pago_tipo"] == "Por Trabajos")
+                                            $total_por_dia_pago_por_trabajos = $total_por_linea_con_porcentaje;
+                                    }
                                 }
                             }
                         }
@@ -2050,7 +2073,16 @@
                     echo "</tr>";
                     echo "<tr>";
                     echo "<td class='table-celda-texto'><b>Totales:</b></td>";
-                    echo "<td class='table-celda-texto-ultima' colspan='6' align='center' nowrap><b>Ingreso:&nbsp;".money_format('%.2n', $total_por_dia_ingreso)."&nbsp;&nbsp;Pago:&nbsp;".money_format('%.2n', $total_por_dia_pago)."</b></td>";
+                    echo "<td class='table-celda-texto-ultima' colspan='6' align='center' nowrap>";
+                        if (GananciaDelDueñoSeparada()) 
+                        {
+                            echo "<b>Ingreso por empleados:</b>&nbsp;".money_format('%.2n', $total_por_dia_ingreso_por_empleado);
+                            echo "<b>&nbsp;&nbsp;Pago:</b>&nbsp;".money_format('%.2n', $total_por_dia_pago_por_empleado)."<br>";
+                            echo "<b>Ingreso por trabajos realizados:</b>&nbsp;".money_format('%.2n', $total_por_dia_ingreso_por_trabajos); 
+                            echo "<b>&nbsp;&nbsp;Pago:</b>&nbsp;".money_format('%.2n', $total_por_dia_pago_por_trabajos)."<br>";
+                        }
+                        echo "<b>Ingreso:</b>&nbsp;".money_format('%.2n', $total_por_dia_ingreso)."&nbsp;&nbsp;<b>Pago:</b>&nbsp;".money_format('%.2n', $total_por_dia_pago)."<br>";
+                    echo "</td>";
                     echo "</tr>";
                     $total_por_dia = 0;
                     echo "</tbody>";
@@ -2310,8 +2342,10 @@
                                 {
                                     echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
                                     echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
-                                    echo "<td class='table-celda-numerica' nowrap>Por&nbsp;empleado:&nbsp;".money_format('%.2n', total_dueño_por_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."&nbsp;|&nbsp;Por&nbsp;Trabajos&nbsp;Realizados:&nbsp;".money_format('%.2n', total_dueño_por_trabajos_realizados($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
-                                    // echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_dueño($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
+                                    if (GananciaDelDueñoSeparada())
+                                        echo "<td class='table-celda-numerica' nowrap><b>Por&nbsp;empleado:</b>&nbsp;".money_format('%.2n', total_dueño_por_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."&nbsp;<b>|</b>&nbsp;<b>Por&nbsp;Trabajos&nbsp;Realizados:</b>&nbsp;".money_format('%.2n', total_dueño_por_trabajos_realizados($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
+                                    else
+                                        echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_dueño($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
                                     echo "</tr>";
                                 }
                                 else
