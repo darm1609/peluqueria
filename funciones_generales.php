@@ -168,6 +168,72 @@
 		return false;
 	}
 
+	function GananciaDelDueñoPorEmpleadoMenosEgresos() 
+	{
+		global $servidor, $puerto, $usuario, $pass, $basedatos;
+		$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
+		if($bd->conectado)
+		{
+			$sql="SELECT nombre FROM configuracion WHERE nombre='GananciaDelDueñoPorEmpleadoMenosEgresos' and valor=1;";
+			$result = $bd->mysql->query($sql);
+			if ($result)
+			{
+				if (!empty($result->num_rows))
+				{
+					$result->free();
+					return true;
+				}
+			}
+			else
+				unset($result);
+		}
+		return false;
+	}
+
+	function GananciaDelDueñoPorTrabajosMenosEgresos() 
+	{
+		global $servidor, $puerto, $usuario, $pass, $basedatos;
+		$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
+		if($bd->conectado)
+		{
+			$sql="SELECT nombre FROM configuracion WHERE nombre='GananciaDelDueñoPorTrabajosMenosEgresos' and valor=1;";
+			$result = $bd->mysql->query($sql);
+			if ($result)
+			{
+				if (!empty($result->num_rows))
+				{
+					$result->free();
+					return true;
+				}
+			}
+			else
+				unset($result);
+		}
+		return false;
+	}
+
+	function dueño($empleado_telf)
+	{
+		global $servidor, $puerto, $usuario, $pass, $basedatos;
+		$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
+		if($bd->conectado)
+		{
+			$sql="SELECT * FROM empleado WHERE empleado_telf='".$empleado_telf."' and dueño=1;";
+			$result = $bd->mysql->query($sql);
+			if ($result)
+			{
+				if (!empty($result->num_rows))
+				{
+					$result->free();
+					return true;
+				}
+			}
+			else
+				unset($result);
+		}
+		return false;
+	}
+
 	function usuario_empleado()
 	{
 		global $servidor, $puerto, $usuario, $pass, $basedatos;

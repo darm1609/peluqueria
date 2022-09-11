@@ -586,6 +586,7 @@
                 when e.transferencia = 1 then et.referencia 
                 else '' 
             end transferencia_referencia, 
+            '' vale_pago_tipo,
             case 
                 when e.debito = 1 then ed.monto 
                 else 0 
@@ -618,7 +619,11 @@
             case 
                 when vp.transferencia = 1 then vpt.referencia 
                 else '' 
-            end transferencia_referencia, 
+            end transferencia_referencia,
+            case
+                when vpdptpe.tipo = 'Por Empleado' or vpdptpe.tipo = 'Por Trabajos' then vpdptpe.tipo
+                else ''
+            end vale_pago_tipo,
             0 debito_monto,
             e.empleado_telf empleado_telf, 
             concat(e.nombre,' ',e.apellido) empleado,
@@ -628,6 +633,7 @@
             inner join empleado e on vp.empleado_telf = e.empleado_telf
             left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago
             left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago
+            left join vale_pago_dueño_por_trabajo_por_empleado vpdptpe on vp.id_vale_pago = vpdptpe.id_vale_pago
         union all
         select 
             ae.fecha_num,
@@ -648,7 +654,8 @@
             case 
                 when ae.transferencia = 1 then aet.referencia 
                 else '' 
-            end transferencia_referencia, 
+            end transferencia_referencia,
+            '' vale_pago_tipo, 
             0 debito_monto,
             e.empleado_telf empleado_telf, 
             concat(e.nombre,' ',e.apellido) empleado,
@@ -900,6 +907,14 @@
         $total_egreso_transferencia_abono_empleado = 0;
         $total_egreso_abono_empleado = 0;
 
+        $total_egreso_pago_a_dueño_por_empleado = 0;
+        $total_egreso_pago_a_dueño_por_empleado_efectivo = 0;
+        $total_egreso_pago_a_dueño_por_empleado_transferencia = 0;
+
+        $total_egreso_pago_a_dueño_por_trabajos = 0;
+        $total_egreso_pago_a_dueño_por_trabajos_efectivo = 0;
+        $total_egreso_pago_a_dueño_por_trabajos_transferencia = 0;
+
         $total_egreso_efectivo_del_dia = 0;
         $total_egreso_datafono_del_dia = 0;
         $total_egreso_transferencia_del_dia = 0;
@@ -953,6 +968,28 @@
                                     ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
             }
 
+            if (GananciaDelDueñoPorEmpleadoMenosEgresos())
+            {
+                if ($row["fecha_num"] >= $fecha_num_consulta_desde and $row["fecha_num"] <= $fecha_num_consulta_hasta and $row["tipo_egreso"] == "pago_empleado" and dueño($row["empleado_telf"]) and $row["vale_pago_tipo"] == "Por Empleado")
+                {
+                    $total_egreso_pago_a_dueño_por_empleado_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                    $total_egreso_pago_a_dueño_por_empleado_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                    $total_egreso_pago_a_dueño_por_empleado = ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) +
+                                                            ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+                }
+            }
+
+            if (GananciaDelDueñoPorTrabajosMenosEgresos())
+            {
+                if ($row["fecha_num"] >= $fecha_num_consulta_desde and $row["fecha_num"] <= $fecha_num_consulta_hasta and $row["tipo_egreso"] == "pago_empleado" and dueño($row["empleado_telf"]) and $row["vale_pago_tipo"] == "Por Trabajos")
+                {
+                    $total_egreso_pago_a_dueño_por_trabajos_efectivo += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
+                    $total_egreso_pago_a_dueño_por_trabajos_transferencia += $row["transferencia_monto"] ? $row["transferencia_monto"] : 0;
+                    $total_egreso_pago_a_dueño_por_trabajos = ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) +
+                                                            ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+                }
+            }
+
             /*if ($row["fecha"] == $fecha)
             {
                 $total_egreso_efectivo_del_dia += $row["efectivo_monto"] ? $row["efectivo_monto"] : 0;
@@ -973,6 +1010,20 @@
                                                         $total_egreso_transferencia_abono_empleado);
             $total_ganancia_peluqueria -= ($total_egreso_compra +
                                             $total_egreso_abono_empleado);
+        }
+
+        if (GananciaDelDueñoPorEmpleadoMenosEgresos())
+        {
+            $total_ganancia_dueño_efectivo -= $total_egreso_pago_a_dueño_por_empleado_efectivo;
+            $total_ganancia_dueño_transferencia -= $total_egreso_pago_a_dueño_por_empleado_transferencia;
+            $total_ganancia_dueño -= $total_egreso_pago_a_dueño_por_empleado;
+        }
+
+        if (GananciaDelDueñoPorTrabajosMenosEgresos())
+        {
+            $total_ganancia_dueño_por_trabajo_efectivo -= $total_egreso_pago_a_dueño_por_trabajos_efectivo;
+            $total_ganancia_dueño_por_trabajo_transferencia -= $total_egreso_pago_a_dueño_por_trabajos_transferencia;
+            $total_ganancia_dueño_por_trabajo -= $total_egreso_pago_a_dueño_por_trabajos;
         }
 
         ?>
@@ -1298,7 +1349,7 @@
                                 }
                                 else
                                 {
-                                    echo "Se refiere al dinero que ingresa a la peluquer&iacute;a por trabajos realizados</b>";
+                                    echo "Se refiere al dinero que ingresa a la peluquer&iacute;a por trabajos realizados";
                                 }
                             ?>
                             </div>
@@ -1329,7 +1380,27 @@
                     </div>
                 </div>
                 <div class="w3-quarter w3-container">
-                    <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                    <div id="modal_descripcion_ganancia_dueño_por_empleados" class="w3-modal">
+                        <div class="w3-modal-content">
+                            <div onclick="document.getElementById('modal_descripcion_ganancia_dueño_por_empleados').style.display='none'" class='w3-button w3-display-topright'>&times;</div>
+                            <div class="w3-display-topleft" style="padding: 1em;"><b>Ganancia del dueño por empleados</b><br><br> 
+                            </div>
+                            <br><br>
+                            <div style='padding: 1em;'>
+                            <?php
+                                if (GananciaDelDueñoPorEmpleadoMenosEgresos())
+                                {
+                                    echo "Se refiere al porcentaje de ganancia por trabajos realizados de los empleados <b>menos el egreso por Vale o Pago del dueño</b>";
+                                }
+                                else
+                                {
+                                    echo "Se refiere al porcentaje de ganancia por trabajos realizados de los empleados";
+                                }
+                            ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;" onclick="document.getElementById('modal_descripcion_ganancia_dueño_por_empleados').style.display='block';">
                         <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
                             Ganancia del dueño por empleados
                         </div>
@@ -1354,7 +1425,27 @@
                     </div>
                 </div>
                 <div class="w3-quarter w3-container">
-                    <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
+                    <div id="modal_descripcion_ganancia_dueño_por_trabajos" class="w3-modal">
+                        <div class="w3-modal-content">
+                            <div onclick="document.getElementById('modal_descripcion_ganancia_dueño_por_trabajos').style.display='none'" class='w3-button w3-display-topright'>&times;</div>
+                            <div class="w3-display-topleft" style="padding: 1em;"><b>Ganancia del dueño por trabajos realizados</b><br><br> 
+                            </div>
+                            <br><br>
+                            <div style='padding: 1em;'>
+                            <?php
+                                if (GananciaDelDueñoPorTrabajosMenosEgresos())
+                                {
+                                    echo "Se refiere al porcentaje de ganancia por trabajos realizados del dueño <b>menos el egreso por Vale o Pago del dueño</b>";
+                                }
+                                else
+                                {
+                                    echo "Se refiere al porcentaje de ganancia por trabajos realizados del dueño";
+                                }
+                            ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;" onclick="document.getElementById('modal_descripcion_ganancia_dueño_por_trabajos').style.display='block';">
                         <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
                             Ganancia del dueño por trabajos realizados
                         </div>
@@ -2120,6 +2211,78 @@
         //Fin de modal de detalles pagos a empleados
     }
 
+    function total_dueño_por_empleado($dueño_telf, $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha, $fecha_num_consulta)
+    {
+        $total = 0;
+        foreach ($array_ingresos as $row)
+        {
+            if ($row["tipo_ingreso"] == "trabajo" and $row["fecha_num"] <= $fecha_num_consulta)
+            {
+                if ($dueño_telf != $row["empleado_telf"])
+                {
+                    $porcentaje_dueño = porcentaje_dueño_por_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
+                    $total += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_dueño) / 100;
+                    $total += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_dueño) / 100;
+                    $total += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_dueño) / 100;
+                    if ($row["cliente_especial"] != "1") 
+                    {
+                        $total += (($row["deuda_monto"] ? $row["deuda_monto"] : 0) * $porcentaje_dueño) / 100;
+                    }
+                }
+            }
+        }
+
+        foreach ($array_egresos as $row)
+        {
+            if ($row["tipo_egreso"] == "pago_empleado" and $row["vale_pago_tipo"] == "Por Empleado" and $row["fecha_num"] <= $fecha_num_consulta)
+            {
+                if ($dueño_telf == $row["empleado_telf"])
+                {
+                    $total -= ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0);
+                    $total -= ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+                }
+            }
+        }
+
+        return $total;
+    }
+
+    function total_dueño_por_trabajos_realizados($dueño_telf, $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha, $fecha_num_consulta)
+    {
+        $total = 0;
+        foreach ($array_ingresos as $row)
+        {
+            if ($row["tipo_ingreso"] == "trabajo" and $row["fecha_num"] <= $fecha_num_consulta)
+            {
+                if ($dueño_telf == $row["empleado_telf"])
+                {
+                    $porcentaje_empleado = porcentaje_empleado($array_porcentajes, $array_porcentajes_motivo, $row["fecha_num"], $row["empleado_telf"], $row["id_motivo_ingreso"]);
+                    $total += (($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) * $porcentaje_empleado) / 100;
+                    $total += (($row["transferencia_monto"] ? $row["transferencia_monto"] : 0) * $porcentaje_empleado) / 100;
+                    $total += (($row["debito_monto"] ? $row["debito_monto"] : 0) * $porcentaje_empleado) / 100;
+                    if ($row["cliente_especial"] != "1") 
+                    {
+                        $total += (($row["deuda_monto"] ? $row["deuda_monto"] : 0) * $porcentaje_empleado) / 100;
+                    }
+                }
+            }
+        }
+
+        foreach ($array_egresos as $row)
+        {
+            if ($row["tipo_egreso"] == "pago_empleado" and $row["vale_pago_tipo"] == "Por Trabajos" and $row["fecha_num"] <= $fecha_num_consulta)
+            {
+                if ($dueño_telf == $row["empleado_telf"])
+                {
+                    $total -= ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0);
+                    $total -= ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+                }
+            }
+        }
+
+        return $total;
+    }
+
     function mostrar_acumulado_empleados($array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $array_empleados, $fecha_desde, $fecha_hasta, $fecha_num_consulta_desde, $fecha_num_consulta_hasta)
     {
         ?>
@@ -2147,7 +2310,8 @@
                                 {
                                     echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
                                     echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
-                                    echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_dueño($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
+                                    echo "<td class='table-celda-numerica' nowrap>Por&nbsp;empleado:&nbsp;".money_format('%.2n', total_dueño_por_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."&nbsp;|&nbsp;Por&nbsp;Trabajos&nbsp;Realizados:&nbsp;".money_format('%.2n', total_dueño_por_trabajos_realizados($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
+                                    // echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_dueño($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
                                     echo "</tr>";
                                 }
                                 else

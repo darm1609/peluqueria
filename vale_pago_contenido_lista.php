@@ -20,11 +20,15 @@
 	{
 		global $basedatos;
 		$valida = true;
+
 		if (!$bd->eliminar_datos(1,$basedatos,"vale_pago_efectivo","id_vale_pago",$_POST["accion_eliminar"]))
 			$valida = false;
 		if ($valida)
 			if(!$bd->eliminar_datos(1,$basedatos,"vale_pago_transferencia","id_vale_pago",$_POST["accion_eliminar"]))
 				$valida = false;
+		if ($valida)
+			if(!$bd->eliminar_datos(1,$basedatos,"vale_pago_dueño_por_trabajo_por_empleado","id_vale_pago",$_POST["accion_eliminar"]))
+					$valida = false;
 		if ($valida)
 			if(!$bd->eliminar_datos(1,$basedatos,"vale_pago","id_vale_pago",$_POST["accion_eliminar"]))
 				$valida = false;
@@ -326,7 +330,7 @@
 								Por Empleados
 							</label>
 							<label>
-								<input class="w3-radio" type="radio" id="vale_pago_tipo" name="vale_pago_tipo" value="Por Trabajos'">
+								<input class="w3-radio" type="radio" id="vale_pago_tipo" name="vale_pago_tipo" value="Por Trabajos">
 								Por Trabajos Realizados
 							</label>
 						</div>
