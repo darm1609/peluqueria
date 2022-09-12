@@ -174,7 +174,7 @@
 		$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 		if($bd->conectado)
 		{
-			$sql="SELECT nombre FROM configuracion WHERE nombre='GananciaDelDueñoPorEmpleadoMenosEgresos' and valor=1;";
+			$sql="SELECT nombre FROM configuracion WHERE nombre like 'GananciaDelDueñoPorEmpleadoMenosEgresos%' and valor=1;";
 			$result = $bd->mysql->query($sql);
 			if ($result)
 			{
