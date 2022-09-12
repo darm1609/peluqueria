@@ -1338,14 +1338,14 @@
                     <div id="modal_descripcion_ganancia_peluqueria" class="w3-modal">
                         <div class="w3-modal-content">
                             <div onclick="document.getElementById('modal_descripcion_ganancia_peluqueria').style.display='none'" class='w3-button w3-display-topright'>&times;</div>
-                            <div class="w3-display-topleft" style="padding: 1em;"><b>Ganancia de la peluquer&iacute;a por trabajos realizados</b><br><br> 
+                            <div class="w3-display-topleft" style="padding: 1em;"><b>Porcentaje de materia prima de mano y/o pies</b><br><br> 
                             </div>
                             <br><br>
                             <div style='padding: 1em;'>
                             <?php
                                 if (GananciaDePeluqueriaMenosEgresos())
                                 {
-                                    echo "Se refiere al dinero que ingresa a la peluquer&iacute;a por trabajos realizados menos los <b>Egresos por compra o pagos de servicios</b> y <b>Egresos por abono a empleados</b>";
+                                    echo "Se refiere al dinero que ingresa a la peluquer&iacute;a por trabajos realizados del tipo <b>General Manos y/o Pies</b>";
                                 }
                                 else
                                 {
@@ -1357,7 +1357,7 @@
                     </div>
                     <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;" onclick="document.getElementById('modal_descripcion_ganancia_peluqueria').style.display='block';">
                         <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
-                            Ganancia de la peluquer&iacute;a por trabajos realizados
+                            Porcentaje de materia prima de mano y/o pies
                         </div>
                         <table border="0" width="100%">
                             <tr>

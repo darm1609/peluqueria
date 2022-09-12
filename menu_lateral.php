@@ -97,8 +97,8 @@
       <a href="vale_pago.php" class="w3-bar-item w3-button w3-padding <?php if(isset($vale_pago)) echo "w3-dulcevanidad"; ?>">Vale Pago</a>
       <a href="egreso.php" class="w3-bar-item w3-button w3-padding <?php if(isset($egreso)) echo "w3-dulcevanidad"; ?>">Egreso</a>
       <a href="venta.php" class="w3-bar-item w3-button w3-padding <?php if(isset($venta)) echo "w3-dulcevanidad"; ?>">Venta</a>
-      <a href="abono_peluqueria.php" class="w3-bar-item w3-button w3-padding <?php if(isset($abono_peluqueria)) echo "w3-dulcevanidad"; ?>">Abono Peluquer&iacute;a</a>
-      <a href="abono_empleado.php" class="w3-bar-item w3-button w3-padding <?php if(isset($abono_empleado)) echo "w3-dulcevanidad"; ?>">Abono Empleado</a>
+      <!-- <a href="abono_peluqueria.php" class="w3-bar-item w3-button w3-padding <?php if(isset($abono_peluqueria)) echo "w3-dulcevanidad"; ?>">Abono Peluquer&iacute;a</a> -->
+      <!-- <a href="abono_empleado.php" class="w3-bar-item w3-button w3-padding <?php if(isset($abono_empleado)) echo "w3-dulcevanidad"; ?>">Abono Empleado</a> -->
       <a href="ingreso.php" class="w3-bar-item w3-button w3-padding <?php if(isset($ingreso)) echo "w3-dulcevanidad"; ?>">Ingreso</a>
       <a href="cuadre_de_caja.php" class="w3-bar-item w3-button w3-padding <?php if(isset($cuadre)) echo "w3-dulcevanidad"; ?>">Cuadre de caja</a>
     <?php

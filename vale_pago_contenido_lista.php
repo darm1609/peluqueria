@@ -303,24 +303,35 @@
 					<input class="w3-radio" type="radio" id="vale_pago" name="vale_pago" value="pago">
 					Pago
 				</label>
-			</div>
 			<?php
 				$dueño = false;
+				$sql = "select * from empleado where empleado_telf = '".$_POST["accion_vale_pago"]."' and dueño = 1;";
+				$result = $bd->mysql->query($sql);
+				unset($sql);
+				if ($result)
+				{
+					if (!empty($result->num_rows))
+					{
+						$dueño = true;
+					}
+				}
+				else
+					unset($result);
+
+				if ($dueño)
+				{
+					?>
+					<label>
+						<input class="w3-radio" type="radio" id="vale_pago" name="vale_pago" value="gastos_de_peluqueria">
+						Gastos de peluquer&iacute;a
+					</label>
+					<?php
+				}
+			?>
+			</div>
+			<?php
 				if (GananciaDelDueñoSeparada())
 				{
-					$sql = "select * from empleado where empleado_telf = '".$_POST["accion_vale_pago"]."' and dueño = 1;";
-					$result = $bd->mysql->query($sql);
-					unset($sql);
-					if ($result)
-					{
-						if (!empty($result->num_rows))
-						{
-							$dueño = true;
-						}
-					}
-					else
-						unset($result);
-
 					if ($dueño)
 					{
 						?>
