@@ -1,5 +1,5 @@
 <script type="text/javascript">
-
+    //Prueba
     function show_acumulado()
     {
         $("#ingreso-egreso-no-acumulado").hide();
