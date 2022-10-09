@@ -1,6 +1,6 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
-
+    //Prueba
     function show_acumulado()
     {
         $("#ingreso-egreso-no-acumulado").hide();
