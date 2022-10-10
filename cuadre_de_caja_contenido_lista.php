@@ -113,14 +113,14 @@
     require("funciones_generales.php");
 	require("librerias/basedatos.php");
 
-    function crear_grafico($div, $array_fechas, $array_valores) 
+    function crear_grafico($div, $array_fechas) 
     {
         ?>
         <script type="text/javascript">
             var xValues = [];
 
             <?php 
-                foreach ($array_fechas as $fecha) {
+                foreach ($array_fechas as $fecha => $valor) {
                     ?>
                     xValues.push('<?php echo $fecha; ?>');
                     <?php
@@ -130,7 +130,7 @@
             var yValues = [];
 
             <?php 
-                foreach ($array_valores as $valor) {
+                foreach ($array_fechas as $fecha => $valor) {
                     ?>
                     yValues.push(<?php echo $valor; ?>);
                     <?php
@@ -141,7 +141,7 @@
 
             <?php
                 $i = 0;
-                foreach ($array_fechas as $fecha) {
+                foreach ($array_fechas as $fecha => $valor) {
                     if ($i % 2 == 0)
                     {
                         ?>
@@ -170,8 +170,8 @@
             options: {
                 legend: {display: false},
                 title: {
-                display: true,
-                text: "World Wine Production 2018"
+                display: false,
+                text: ""
                 }
             }
             });
@@ -853,8 +853,10 @@
         $total_ganancia_dueño_por_trabajo_transferencia = 0;
         $total_ganancia_dueño_por_trabajo = 0;
 
-        $array_fechas_ingresos_egresos = [];
+        $array_fechas_ingresos_egresos = array();
+        $array_fechas_ingresos = array();
 
+        $fecha_aux = "";
         foreach ($array_ingresos as $row)
         {
             if ($row["fecha_num"] < $fecha_num_consulta_desde)
@@ -877,14 +879,34 @@
                                     ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
 
                 $fecha_encontrada = false;
-                foreach ($array_fechas_ingresos_egresos as $fechas) {
-                    if ($fechas  == $row["fecha"]) {
+                foreach ($array_fechas_ingresos_egresos as $fecha => $valor) {
+                    if ($fecha  == $row["fecha"]) {
                         $fecha_encontrada = true;
+                        $array_fechas_ingresos_egresos[$row["fecha"]] += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                        ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                        ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
                         break;
                     }
                 }
                 if (!$fecha_encontrada)
-                    $array_fechas_ingresos_egresos[] = $row["fecha"];
+                    $array_fechas_ingresos_egresos[$row["fecha"]] = ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                    ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+
+                $fecha_encontrada = false;
+                foreach ($array_fechas_ingresos as $fecha => $valor) {
+                    if ($fecha  == $row["fecha"]) {
+                        $fecha_encontrada = true;
+                        $array_fechas_ingresos[$row["fecha"]] += ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                        ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                        ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
+                        break;
+                    }
+                }
+                if (!$fecha_encontrada)
+                    $array_fechas_ingresos[$row["fecha"]] = ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                    ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
             }
 
             if ($row["fecha_num"] >= $fecha_num_consulta_desde and $row["fecha_num"] <= $fecha_num_consulta_hasta and $row["tipo_ingreso"] == "venta")
@@ -996,6 +1018,7 @@
         $total_egreso_transferencia_del_dia = 0;
         $total_egreso_del_dia = 0;
 
+        $fecha_aux = "";
         foreach ($array_egresos as $row)
         {
             if ($row["fecha_num"] < $fecha_num_consulta_desde)
@@ -1018,14 +1041,19 @@
                                     ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
 
                 $fecha_encontrada = false;
-                foreach ($array_fechas_ingresos_egresos as $fechas) {
-                    if ($fechas  == $row["fecha"]) {
+                foreach ($array_fechas_ingresos_egresos as $fecha => $valor) {
+                    if ($fecha  == $row["fecha"]) {
                         $fecha_encontrada = true;
+                        $array_fechas_ingresos_egresos[$row["fecha"]] -= ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                        ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                        ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
                         break;
                     }
                 }
                 if (!$fecha_encontrada)
-                    $array_fechas_ingresos_egresos[] = $row["fecha"];
+                    $array_fechas_ingresos_egresos[$row["fecha"]] = ($row["efectivo_monto"] ? $row["efectivo_monto"] : 0) + 
+                    ($row["debito_monto"] ? $row["debito_monto"] : 0) + 
+                    ($row["transferencia_monto"] ? $row["transferencia_monto"] : 0);
             }
 
             if ($row["fecha_num"] >= $fecha_num_consulta_desde and $row["fecha_num"] <= $fecha_num_consulta_hasta and $row["tipo_egreso"] == "pago_empleado")
@@ -1166,11 +1194,11 @@
                                 <td>Total:</td>
                                 <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso - $total_egreso); ?></td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan='2' align='center'>
                                     <input class="w3-button w3-block w3-dulcevanidad" type='button' value='Graf&iacute;ca' onclick="document.getElementById('modal-grafica-ingreso-egreso-no-acumulado').style.display='block';">
                                 </td>
-                            </tr>
+                            </tr> -->
                         </table>
                     </div>
                     <div id="ingreso-egreso-acumulado" style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em; display: none;">
@@ -1198,6 +1226,20 @@
                     </div>
                 </div>
                 <div class="w3-quarter w3-container">
+                <div id="modal-grafica-ingreso-no-acumulado" class="w3-modal">
+                        <div class="w3-modal-content" style="width: 100%;">
+                            <div onclick="document.getElementById('modal-grafica-ingreso-no-acumulado').style.display='none'" class='w3-button w3-display-topright'>&times;</div>
+                            <div class="w3-display-topleft" style="padding: 1em;"><b>Graf&iacute;ca</b><br><br> 
+                            </div>
+                            <br><br>
+                            <div style='padding: 1em;'>
+                            <canvas id="div-modal-grafica-ingreso-no-acumulado" style="width:100%;max-width:600px"></canvas>
+                            <?php
+                                crear_grafico("div-modal-grafica-ingreso-no-acumulado", $array_fechas_ingresos);
+                            ?>
+                            </div>
+                        </div>
+                    </div>
                     <div id="ingreso-no-acumulado" style="background-color: #a03e61; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;">
                         <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
                             Ingresos
@@ -1218,6 +1260,11 @@
                             <tr>
                                 <td>Total:</td>
                                 <td align="right" nowrap><?php echo money_format('%.2n', $total_ingreso); ?></td>
+                            </tr>
+                            <tr>
+                                <td colspan='2' align='center'>
+                                    <input class="w3-button w3-block w3-dulcevanidad" type='button' value='Graf&iacute;ca' onclick="document.getElementById('modal-grafica-ingreso-no-acumulado').style.display='block';">
+                                </td>
                             </tr>
                         </table>
                     </div>
