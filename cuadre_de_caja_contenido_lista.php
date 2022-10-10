@@ -145,13 +145,13 @@
                     if ($i % 2 == 0)
                     {
                         ?>
-                        barColors.push('red');
+                        barColors.push('pink');
                         <?php
                     }
                     else
                     {
                         ?>
-                        barColors.push('blue');
+                        barColors.push('pink');
                         <?php
                     }
                     $i++;
