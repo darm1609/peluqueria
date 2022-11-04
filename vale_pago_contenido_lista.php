@@ -171,7 +171,7 @@
 
 	function crear_sql_busqueda2($bd)
 	{
-		$sql = "select vp.id_vale_pago, vp.fecha, vp.vale_pago, case when vp.efectivo = 1 then vpe.monto else '' end as 'efectivo', case when vp.transferencia = 1 then vpt.monto else '' end as 'transferencia', case when vp.transferencia = 1 then vpt.referencia else '' end as 'referencia', ifnull(vpe.monto,0) + ifnull(vpt.monto,0) total, vp.comentario from empleado e inner join vale_pago vp on e.empleado_telf = vp.empleado_telf left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago where e.empleado_telf = '".$_POST["accion_mostrar"]."' order by vp.fecha_num asc;";
+		$sql = "select vp.id_vale_pago, vp.fecha, vp.vale_pago, (select tipo from vale_pago_dueño_por_trabajo_por_empleado where id_vale_pago = vp.id_vale_pago) tipo, case when vp.efectivo = 1 then vpe.monto else '' end as 'efectivo', case when vp.transferencia = 1 then vpt.monto else '' end as 'transferencia', case when vp.transferencia = 1 then vpt.referencia else '' end as 'referencia', ifnull(vpe.monto,0) + ifnull(vpt.monto,0) total, vp.comentario from empleado e inner join vale_pago vp on e.empleado_telf = vp.empleado_telf left join vale_pago_efectivo vpe on vp.id_vale_pago = vpe.id_vale_pago left join vale_pago_transferencia vpt on vp.id_vale_pago = vpt.id_vale_pago where e.empleado_telf = '".$_POST["accion_mostrar"]."' order by vp.fecha_num asc;";
 		$result = $bd->mysql->query($sql);
 		unset($sql);
 		if($result)
@@ -209,9 +209,9 @@
 			if(isset($_POST["cantxpag2"]) and !empty($_POST["cantxpag2"]))
 				$cantxpag=$_POST["cantxpag2"];
 			$colocultar[0] = "id_vale_pago";
-			$colespeciales[3] = "Efectivo";
-			$colespeciales[4] = "Transferencia";
-			$colespeciales[6] = "Total";
+			$colespeciales[4] = "Efectivo";
+			$colespeciales[5] = "Transferencia";
+			$colespeciales[7] = "Total";
 			if(isset($pag) and isset($cantxpag))
 				mostrar_busqueda2($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
 			else
