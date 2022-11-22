@@ -20,7 +20,7 @@
 	$mensajeCreacionCita = "DULCE VANIDAD le informa que se agendo una cita para el [dia] [hora] con [empleado] [tipo]";
 	require("librerias/httpPHPAltiria.php");
 	$altiriaSMS = new AltiriaSMS();
-	$altiriaSMS->setLogin('darm1609@gmail.com');
-	$altiriaSMS->setPassword('uy5smaqb');
+	$altiriaSMS->setLogin('darm1609co@gmail.com');
+	$altiriaSMS->setPassword('Temporal2022J');
 	$altiriaSMS->setDebug(false);
 ?>

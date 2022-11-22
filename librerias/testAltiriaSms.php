@@ -12,8 +12,8 @@ include('httpPHPAltiria.php');
 
 $altiriaSMS = new AltiriaSMS();
 
-$altiriaSMS->setLogin('darm1609@gmail.com');
-$altiriaSMS->setPassword('uy5smaqb');
+$altiriaSMS->setLogin('darm1609co@gmail.com');
+$altiriaSMS->setPassword('7fc4phnb');
 // Descomentar para utilizar la autentificaci�n mediante apikey
 //$altiriaSMS->setApikey('YY');
 //$altiriaSMS->setApisecret('ZZ');
