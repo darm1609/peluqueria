@@ -125,13 +125,13 @@
 				<div class="w3-row w3-section">
 					<label for="trabajo" class='w3-text-blue'><b>Nuevo&nbsp;secundario</b></label>
 					<div class="w3-rest">
-						<input class="w3-input w3-border" id="trabajo" name="trabajo" type="text" placeholder="Tipo de Trabajo">
+						<input class="w3-input w3-border" id="trabajo_nuevo_secundario" name="trabajo_nuevo_secundario" type="text" placeholder="Tipo de Trabajo">
 					</div>
 				</div>
 				<div class="w3-row w3-section">
 					<label for="trabajo" class='w3-text-blue'><b>Principal existente</b></label>
 					<div class="w3-rest">
-						<select class='w3-select w3-border' id='sel_tipo_trabajo_principal' name='sel_tipo_trabajo_principal'>
+						<select class='w3-select w3-border' id='sel_tipo_trabajo_principal_nuevo_secundario' name='sel_tipo_trabajo_principal_nuevo_secundario'>
 							<option value=''>Trabajo</option>
 							<?php 
 								$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso WHERE visible='1' AND principal='1' order by motivo asc;";
