@@ -1,6 +1,7 @@
 <script type="text/javascript">
+	
 	$(document).ready(function(){
-		$("#agregar_tipo_trabajo").click(function(){
+		$("#agregar_trabajo").click(function(){
 			if($("#divfagregar").is(':visible'))
 				$("#divfagregar").hide("linear");
 			else
@@ -8,81 +9,159 @@
 		});
 	});
 
-	function submit_tipo_trabajo()
+	var nextinput_nuevo_principal=0;
+
+	function agregar_campos_nuevo_principal(arreglo)
 	{
-		var valido=new Boolean(true);
-		if(document.getElementById('trabajo').value=='')
+		let n = arreglo.length;
+		nextinput_nuevo_principal++;
+		campo="<div id='contenido_"+nextinput_nuevo_principal+"' class='w3-row w3-section' style='border:1px solid #cccccc;padding:5px;'>";
+		campo+="<label for='sel_tipo_trabajo_secundario_nuevo_principal_"+nextinput_nuevo_principal+"' class='w3-text-blue'><b>Secundario existente</b></label>";
+		campo+="<select class='w3-select w3-border' id='sel_tipo_trabajo_secundario_nuevo_principal_"+nextinput_nuevo_principal+"' name='sel_tipo_trabajo_secundario_nuevo_principal_"+nextinput_nuevo_principal+"'>";
+		campo+="<option value=''>Trabajo</option>";
+		let i;
+		for(i=0;i<n;i++)
 		{
-			valido=false;
-			alertify.alert("","EL NOMBRE DEL TRABAJO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+			campo+="<option value='"+arreglo[i][0]+"'>"+arreglo[i][1]+"</option>";
 		}
-		if(valido)
-			document.getElementById('fagregar').submit();
+		campo+="</select>";
+		campo+="<label for='tipo_trabajo_secundario_nuevo_principal_"+nextinput_nuevo_principal+"' class='w3-text-blue'><b>Secundario nuevo</b></label>";
+		campo+="<input class='w3-input w3-border' id='tipo_trabajo_secundario_nuevo_principal_"+nextinput_nuevo_principal+"' name='tipo_trabajo_secundario_nuevo_principal_"+nextinput_nuevo_principal+"' type='text'>";
+		campo+="</div>";
+		$("#div_tipo_de_trabajo_nuevo_pricipal").append(campo);
 	}
 
-	function enviardatos_lista()
+	function eliminar_campos_nuevo_principal()
 	{
-		ajax=objetoAjax();
-		$("#loader").show();
-		$('#loader').html('<div style="display:block;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
-		ajax.open("POST","tipo_trabajo_contenido_lista.php",true);
-		ajax.onreadystatechange = function() 
+		if(nextinput_nuevo_principal>=1)
 		{
-			if (ajax.readyState == 1)
-			{
-				$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
-			}
-			if (ajax.readyState == 4)
-			{
-				$.post("tipo_trabajo_contenido_lista.php",$("#flista").serialize(),function(data)
-			    {
-			    	$("#divformulariolista").show();
-					$("#divformulariolista").html(data);
-			    	$("#loader").hide();
-			    });
-			}
-		} 
-		ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
-		ajax.send();
+			$("#contenido_"+nextinput_nuevo_principal).remove();
+			nextinput_nuevo_principal--;
+		}
 	}
 
-	enviardatos_lista();
-
-	function eliminar_trabajo(x)
-	{
-		document.getElementById("id_motivo_ingreso").value=x;
-		alertify.confirm('','Eliminar el trabajo', function(){ alertify.success('Sí');enviardatos_lista(); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
-	}
 </script>
 <header class="w3-container" style="padding-top:22px">
-	<h5><b>Administraci&oacute;n de Trabajos</b></h5>
+	<h5><b>Administración de Trabajos</b></h5>
 </header>
-<form id="flista" name="flista" method="post">
-	<input type="hidden" id="id_motivo_ingreso" name="id_motivo_ingreso">
-</form>
 <?php
-	function guardar($bd)
-	{
-		global $basedatos;
-		if($bd->insertar_datos(2,$basedatos,"motivo_ingreso","motivo","login",mb_strtoupper($_POST["trabajo"],'UTF-8'),$_SESSION["login"]))
-			return true;
-		else
-			return false;
-	}
 
-	function formulario_agregar_tipo_trabajo()
+	function formulario_agregar_trabajo($bd)
 	{
 		?>
 		<form class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin" id="fagregar" name="fagregar" method="post">
-			<h2 class="w3-center">Nuevo Trabajo</h2>
+			<h2 class="w3-center">Nuevo Trabajo</h2>	
 			<div class="w3-row w3-section">
-				<div class="w3-col" style="width:50px"><label for="trabajo"><i class="icon-pencil" style="font-size:37px;"></i></label></div>
-				<div class="w3-rest">
-					<input class="w3-input w3-border" id="trabajo" name="trabajo" type="text" placeholder="Tipo de Trabajo">
-				</div>
+				<label>
+					<div class="w3-cell" style="width:50px"><input class="w3-radio" type="radio" id="modo" name="modo" value="principal" checked></div>
+					<div class="w3-cell">	
+						Agregar nuevo principal
+					</div>
+				</label>
+				<label>
+					<div class="w3-cell" style="width:50px"><input class="w3-radio" type="radio" id="modo" name="modo" value="secundario"></div>
+					<div class="w3-cell">	
+						Agregar nuevo secundario
+					</div>
+				</label>
 			</div>
+
+			<?php
+				$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso WHERE visible='1' AND principal='0' order by motivo asc;";
+				$result = $bd->mysql->query($sql);
+				unset($sql);
+				if($result)
+				{
+					$arreglo=array();
+					$i=0;
+					while($row = $result->fetch_array())
+					{
+						$arreglo[$i][0]=$row["id_motivo_ingreso"];
+						$arreglo[$i][1]=$row["motivo"];
+						$i++;
+					}
+					$result->free();
+				}
+				else
+					unset($result);
+				$arreglo=json_encode($arreglo);
+			?>
+
+			<div id="agregar_nuevo_principal">
+				<div class="w3-row w3-section">
+					<label for="trabajo" class='w3-text-blue'><b>Nuevo&nbsp;principal</b></label>
+					<div class="w3-rest">
+						<input class="w3-input w3-border" id="trabajo" name="trabajo" type="text" placeholder="Tipo de Trabajo">
+					</div>
+				</div>
+				<div class="w3-row w3-section">
+					<p>
+						Secundario:
+						<?php
+							echo"<i class='icon-plus4 icon_mas' onclick='agregar_campos_nuevo_principal(".$arreglo.");'></i>";
+						?>
+						&nbsp;
+						<i class="icon-minus3 icon_menos" onclick="eliminar_campos_nuevo_principal();"></i>
+					</p>
+				</div>
+				<div id="div_tipo_de_trabajo_nuevo_pricipal"></div>
+			</div>
+
+			<div id="agregar_nuevo_secundario">
+			</div>
+
 			<div class="w3-row w3-section">
-				<input type="button" class="w3-button w3-block w3-green" onclick="submit_tipo_trabajo();" value="Guardar">
+				<input type="button" class="w3-button w3-block w3-green" onclick="submit_cliente();" value="Guardar">
+			</div>
+		</form>
+		<?php
+	}
+
+	function formulario_busqueda($bd)
+	{
+		?>
+		<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fbusqueda" name="fbusqueda" method="post">
+			<h2 class="w3-text-blue"><i class="icon-search3"></i>&nbsp;Busqueda</h2>
+			<p>
+				<label>
+				<input class="w3-radio" type="radio" id="especificar" name="sel_opcion" value="especificar" onclick="habilitar_especificar();">
+				Especificar
+				</label>
+			</p>
+			<div class="w3-row w3-section">
+				<table border="0" style="width: 100%;">
+					<tr>
+						<td align="right">
+							<input class="w3-check" type="checkbox" id="chbtelf" name="chbtelf" disabled onclick="if(document.getElementById('chbtelf').checked){document.getElementById('btelf').disabled=false;}else{document.getElementById('btelf').disabled=true;}">
+						</td>
+						<td>
+							<label>
+								Tel&eacute;fono
+								<input class="w3-input w3-border" type="text" id="btelf" name="btelf" onkeypress="return NumCheck2(event, this)" disabled>
+							</label>
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							<input class="w3-check" type="checkbox" id="chbnombre" name="chbnombre" disabled onclick="if(document.getElementById('chbnombre').checked){document.getElementById('bnombre').disabled=false;}else{document.getElementById('bnombre').disabled=true;}">
+						</td>
+						<td>
+							<label>
+								Nombre
+								<input class="w3-input w3-border" type="text" id="bnombre" name="bnombre" disabled>
+							</label>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<p>
+				<label>
+				<input class="w3-radio" type="radio" id="listar" name="sel_opcion" value="listar" onclick="deshabilitar_especificar();" checked>
+				Listar
+				</label>
+			</p>
+			<div class="w3-row w3-section">
+				<input class="w3-button w3-block w3-dulcevanidad" type="button" id="enviar" name="enviar" value="Buscar" onclick="return enviardatos_busqueda();">
 			</div>
 		</form>
 		<?php
@@ -94,42 +173,24 @@
 	{
 		if(usuario_admin() or usuario_cajero())
 		{
-			echo"<div id='loader'></div>";
-			if(isset($_POST["trabajo"]))
-			{
-				if(guardar($bd))
-				{
-					?>
-					<script language='JavaScript' type='text/JavaScript'>
-						alertify.alert("","GUARDADO SATISFACTORIAMENTE").set('label', 'Aceptar');
-					</script>
-					<?php
-				}
-				else
-				{
-					?>
-					<script language='JavaScript' type='text/JavaScript'>
-						alertify.alert("","NO SE PUDO GUARDAR EL TRABAJO").set('label', 'Aceptar');
-					</script>
-					<?php
-				}
-			}
 			?>
 			<div class="w3-container">
-				<button id='agregar_tipo_trabajo' class="w3-button w3-dulcevanidad"><i class='icon-plus4'>&nbsp;</i>Agregar Tipo de Trabajo</button>
+				<button id='agregar_trabajo' class="w3-button w3-dulcevanidad"><i class='icon-plus4'>&nbsp;</i>Agregar</button>
 			</div>
 			<?php
 			echo"<div id='divfagregar' class='w3-container' style='display:none;'>";
-			formulario_agregar_tipo_trabajo();
+				formulario_agregar_trabajo($bd);
 			echo"</div>";
-			echo"<div id='divformulariolista'></div>";
+			formulario_busqueda($bd);
+			echo"<div id='loader'></div>";
+			echo"<div id='divformulariolista'></div>";			
 		}
 		else
 		{
 			?>
 			<div class="w3-panel w3-yellow">
 				<h3>Advertencia</h3>
-				<p>Acceso Restringido</p>
+				<p>Acceso Restringido / Solo Administradores o Cajeros</p>
 			</div> 
 			<?php
 		}
