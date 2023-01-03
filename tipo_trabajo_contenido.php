@@ -7,6 +7,20 @@
 			else
 				$("#divfagregar").show("swing");
 		});
+
+		$("#modo_principal").click(function(){
+			if($("#agregar_nuevo_secundario").is(':visible')) {
+				$("#agregar_nuevo_secundario").hide("linear");
+			}
+			$("#agregar_nuevo_principal").show("swing");
+		});
+
+		$("#modo_secundario").click(function(){
+			if($("#agregar_nuevo_principal").is(':visible')) {
+				$("#agregar_nuevo_principal").hide("linear");
+			}
+			$("#agregar_nuevo_secundario").show("swing");	
+		});
 	});
 
 	var nextinput_nuevo_principal=0;
@@ -53,13 +67,13 @@
 			<h2 class="w3-center">Nuevo Trabajo</h2>	
 			<div class="w3-row w3-section">
 				<label>
-					<div class="w3-cell" style="width:50px"><input class="w3-radio" type="radio" id="modo" name="modo" value="principal" checked></div>
+					<div class="w3-cell" style="width:50px"><input class="w3-radio" type="radio" id="modo_principal" name="modo" value="principal" checked></div>
 					<div class="w3-cell">	
 						Agregar nuevo principal
 					</div>
 				</label>
 				<label>
-					<div class="w3-cell" style="width:50px"><input class="w3-radio" type="radio" id="modo" name="modo" value="secundario"></div>
+					<div class="w3-cell" style="width:50px"><input class="w3-radio" type="radio" id="modo_secundario" name="modo" value="secundario"></div>
 					<div class="w3-cell">	
 						Agregar nuevo secundario
 					</div>
@@ -91,7 +105,7 @@
 				<div class="w3-row w3-section">
 					<label for="trabajo" class='w3-text-blue'><b>Nuevo&nbsp;principal</b></label>
 					<div class="w3-rest">
-						<input class="w3-input w3-border" id="trabajo" name="trabajo" type="text" placeholder="Tipo de Trabajo">
+						<input class="w3-input w3-border" id="trabajo_nuevo_principal" name="trabajo_nuevo_principal" type="text" placeholder="Trabajo">
 					</div>
 				</div>
 				<div class="w3-row w3-section">
@@ -107,11 +121,41 @@
 				<div id="div_tipo_de_trabajo_nuevo_pricipal"></div>
 			</div>
 
-			<div id="agregar_nuevo_secundario">
+			<div id="agregar_nuevo_secundario" style='display:none;'>
+				<div class="w3-row w3-section">
+					<label for="trabajo" class='w3-text-blue'><b>Nuevo&nbsp;secundario</b></label>
+					<div class="w3-rest">
+						<input class="w3-input w3-border" id="trabajo" name="trabajo" type="text" placeholder="Tipo de Trabajo">
+					</div>
+				</div>
+				<div class="w3-row w3-section">
+					<label for="trabajo" class='w3-text-blue'><b>Principal existente</b></label>
+					<div class="w3-rest">
+						<select class='w3-select w3-border' id='sel_tipo_trabajo_principal' name='sel_tipo_trabajo_principal'>
+							<option value=''>Trabajo</option>
+							<?php 
+								$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso WHERE visible='1' AND principal='1' order by motivo asc;";
+								$result = $bd->mysql->query($sql);
+								unset($sql);
+								if($result)
+								{
+									$arreglo=array();
+									while($row = $result->fetch_array())
+									{
+										echo "<option value='".$row["id_motivo_ingreso"]."'>".$row["motivo"]."</option>";
+									}
+									$result->free();
+								}
+								else
+									unset($result);
+							?>
+						</select>
+					</div>
+				</div>
 			</div>
 
 			<div class="w3-row w3-section">
-				<input type="button" class="w3-button w3-block w3-green" onclick="submit_cliente();" value="Guardar">
+				<input type="button" class="w3-button w3-block w3-green" onclick="submit_nuevo();" value="Guardar">
 			</div>
 		</form>
 		<?php
