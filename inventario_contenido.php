@@ -102,7 +102,7 @@
 		ajax.send();
 	}
 
-	function enviardatos_busqueda_producto()
+	function enviardatos_busqueda_productos()
 	{
 		ajax=objetoAjax();
 		$("#loader").show();
@@ -196,7 +196,7 @@
 	function formulario_busqueda_productos($bd)
 	{
 		?>
-		<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fbusqueda_fabricantes" name="fbusqueda_fabricantes" method="post">
+		<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fbusqueda_productos" name="fbusqueda_productos" method="post">
 			<h4 class="w3-text-blue"><i class="icon-search3"></i>&nbsp;Buscar productos</h4>
 			<div class="w3-container">
 				<div class="w3-row w3-section">
@@ -204,7 +204,7 @@
 						<input class="w3-input w3-border" id="buscar_productos" name="buscar_productos" type="text" placeholder="Buscar">
 					</div>
 					<div class="w3-cell">
-						<input class="w3-button w3-block w3-dulcevanidad" type="button" id="enviar" name="enviar" value="Buscar" onclick="return enviardatos_busqueda_productos();">
+						<input class="w3-button w3-block w3-dulcevanidad" type="button" id="enviar_buscar_productos" name="enviar" value="Buscar" onclick="return enviardatos_busqueda_productos();">
 					</div>
 				</div>
 			</div>

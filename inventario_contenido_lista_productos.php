@@ -133,13 +133,20 @@
 	function crear_sql_busqueda($bd)
 	{
 		$sql = "";
-		if (strlen($_POST["buscar_fabricantes"]))
+		if (strlen($_POST["buscar_productos"]))
 		{
-			$sql = "SELECT * FROM fabricantes WHERE nombre like '%".$_POST["buscar_fabricantes"]."%';";
+			$sql = "SELECT p.id_producto id, f.nombre fabricante, p.nombre producto
+			FROM 
+			productos p INNER JOIN fabricantes f on f.id_fabricante = p.id_fabricante
+			WHERE
+			f.nombre like '%".$_POST['buscar_productos']."%' or 
+			p.nombre like '%".$_POST["buscar_productos"]."%';";
 		}
 		else
 		{
-			$sql = "SELECT * FROM fabricantes;";
+			$sql = "SELECT p.id_producto id, f.nombre fabricante, p.nombre producto
+			FROM 
+			productos p INNER JOIN fabricantes f on f.id_fabricante = p.id_fabricante;";
 		}
 		$result = $bd->mysql->query($sql);
 		unset($sql);
@@ -176,7 +183,7 @@
 				$pag=$_POST["pag"];
 			if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
 				$cantxpag=$_POST["cantxpag"];
-			$colocultar[0]="id_fabricante";
+			$colocultar[0] = "id";
 			if(isset($pag) and isset($cantxpag))
 				mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
 			else
