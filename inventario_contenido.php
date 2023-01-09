@@ -165,6 +165,29 @@
 		</div>
 		<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fagregar_productos" name="fagregar_productos" method="post" style="display:none;">
 			<div class="w3-row w3-section">
+				<label for="trabajo" class='w3-text-blue'><b>Fabricante</b></label>
+				<div class="w3-rest">
+					<select class="w3-input w3-border" id="fabricante_id" name="fabricante_id">
+						<option value=''></option>
+						<?php
+							$sql = "SELECT * FROM fabricantes;";
+							$result = $bd->mysql->query($sql);
+							unset($sql);
+							if ($result)
+							{
+								while($row = $result->fetch_array())
+								{
+									echo"<option value='".$row["id_fabricante"]."'>".$row["nombre"]."</option>";
+								}
+								unset($row);
+								$result->free();
+							}
+							unset($result);
+						?>
+					</select>
+				</div>
+			</div>
+			<div class="w3-row w3-section">
 				<label for="trabajo" class='w3-text-blue'><b>Nombre&nbsp;del&nbsp;producto</b></label>
 				<div class="w3-rest">
 					<input class="w3-input w3-border" id="productos_nombre" name="productos_nombre" type="text" placeholder="Producto">
