@@ -2,8 +2,10 @@
 	
 	$(document).ready(function(){
 		$("#fabricantes").click(function(){
-			if($("#div_buscar_productos").is(':visible'))
+			if($("#div_buscar_productos").is(':visible')){
 				$("#div_buscar_productos").hide("linear");
+				$("#divformulariolistaproductos").hide("linear");
+			}
 			if($("#div_buscar_movimientos").is(':visible'))
 				$("#div_buscar_movimientos").hide("linear");
 			$("#div_buscar_fabricantes").show("swing");
@@ -18,6 +20,7 @@
 			if($("#div_buscar_movimientos").is(':visible'))
 				$("#div_buscar_movimientos").hide("linear");
 			$("#div_buscar_productos").show("swing");
+			$("#divformulariolistaproductos").show("swing");
 		});
 
 		$("#movimientos").click(function(){
@@ -25,8 +28,10 @@
 				$("#div_buscar_fabricantes").hide("linear");
 				$("#divformulariolistafabicantes").hide("linear");
 			}
-			if($("#div_buscar_productos").is(':visible'))
+			if($("#div_buscar_productos").is(':visible')){
 				$("#div_buscar_productos").hide("linear");
+				$("#divformulariolistaproductos").hide("linear");
+			}
 			$("#div_buscar_movimientos").show("swing");
 		});
 
@@ -128,6 +133,11 @@
 		ajax.send();
 	}
 
+	function select_fabricantes_reload()
+	{
+		$("#fabricante_id").empty();
+	}
+
 </script>
 <header class="w3-container" style="padding-top:22px">
 	<h5><b>Administraci&oacute;n de inventario</b></h5>
@@ -150,7 +160,7 @@
 	function guardar_fabricante($bd)
 	{
 		global $basedatos;
-		if ($bd->insertar_datos(1,$basedatos,"fabricante","nombre",$_POST["fabricante_nombre"]))
+		if ($bd->insertar_datos(1,$basedatos,"fabricantes","nombre",$_POST["fabricante_nombre"]))
 			return true;
 		else
 			return false;
@@ -219,7 +229,7 @@
 		<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fagregar_productos" name="fagregar_productos" method="post" style="display:none;">
 			<div class="w3-row w3-section">
 				<label for="trabajo" class='w3-text-blue'><b>Fabricante</b></label>
-				<div class="w3-rest">
+				<div class="w3-rest" id="select_fabricantes_reload">
 					<select class="w3-input w3-border" id="fabricante_id" name="fabricante_id">
 						<option value=''></option>
 						<?php
@@ -283,7 +293,7 @@
 						<button id='fabricantes' class="w3-button w3-dulcevanidad">Fabricantes</button>
 					</div>
 					<div class="w3-cell">
-						<button id='productos' class="w3-button w3-dulcevanidad">Productos</button>
+						<button id='productos' class="w3-button w3-dulcevanidad" onclick="return select_fabricantes_reload();">Productos</button>
 					</div>
 					<div class="w3-cell">
 						<button id='movimientos' class="w3-button w3-dulcevanidad">Movimientos</button>
@@ -312,6 +322,7 @@
 					?>
 					<script language='JavaScript' type='text/JavaScript'>
 						alertify.alert("","GUARDADO SATISFACTORIAMENTE").set('label', 'Aceptar');
+						select_fabricantes_reload();
 					</script>
 					<?php
 				}
