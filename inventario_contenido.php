@@ -58,6 +58,24 @@
 			$("#fagregar_fabricante").submit();
 	}
 
+	function submit_nuevo_producto()
+	{
+		let valido = true;
+		$('#productos_nombre').val($.trim($('#productos_nombre').val()));
+		if($("#fabricante_id").val() === '')
+		{
+			valido=false;
+			alertify.alert("","DEBE SELECCIONAR UN FABRICANTE").set('label', 'Aceptar');
+		}
+		if($("#productos_nombre").val() === '')
+		{
+			valido=false;
+			alertify.alert("","EL PRODUCTO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+		}
+		if(valido)
+			$("#fagregar_productos").submit();
+	}
+
 	function enviardatos_busqueda_fabricante()
 	{
 		ajax=objetoAjax();
@@ -84,6 +102,32 @@
 		ajax.send();
 	}
 
+	function enviardatos_busqueda_producto()
+	{
+		ajax=objetoAjax();
+		$("#loader").show();
+		$('#loader').html('<div style="display:block;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+		ajax.open("POST","inventario_contenido_lista_productos.php",true);
+		ajax.onreadystatechange = function() 
+		{
+			if (ajax.readyState == 1)
+			{
+				$('#loader').html('<div style="position:absolute;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+			}
+			if (ajax.readyState == 4)
+			{
+				$.post("inventario_contenido_lista_productos.php",$("#fbusqueda_productos").serialize(),function(data)
+				{
+					$("#divformulariolistaproductos").show();
+					$("#divformulariolistaproductos").html(data);
+					$("#loader").hide();
+				});
+			}
+		} 
+		ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+		ajax.send();
+	}
+
 </script>
 <header class="w3-container" style="padding-top:22px">
 	<h5><b>Administraci&oacute;n de inventario</b></h5>
@@ -94,10 +138,19 @@
 </form>
 <?php
 
-	function guardar($bd)
+	function guardar_productos($bd)
 	{
 		global $basedatos;
-		if($bd->insertar_datos(1,$basedatos,"fabricante","nombre",$_POST["fabricante_nombre"]))
+		if ($bd->insertar_datos(2,$basedatos,"productos","id_fabricante","nombre",$_POST["fabricante_id"],$_POST["productos_nombre"]))
+			return true;
+		else
+			return false;
+	}
+
+	function guardar_fabricante($bd)
+	{
+		global $basedatos;
+		if ($bd->insertar_datos(1,$basedatos,"fabricante","nombre",$_POST["fabricante_nombre"]))
 			return true;
 		else
 			return false;
@@ -151,7 +204,7 @@
 						<input class="w3-input w3-border" id="buscar_productos" name="buscar_productos" type="text" placeholder="Buscar">
 					</div>
 					<div class="w3-cell">
-						<input class="w3-button w3-block w3-dulcevanidad" type="button" id="enviar" name="enviar" value="Buscar" onclick="return enviardatos_busqueda_fabricante();">
+						<input class="w3-button w3-block w3-dulcevanidad" type="button" id="enviar" name="enviar" value="Buscar" onclick="return enviardatos_busqueda_productos();">
 					</div>
 				</div>
 			</div>
@@ -177,7 +230,7 @@
 							{
 								while($row = $result->fetch_array())
 								{
-									echo"<option value='".$row["id_fabricante"]."'>".$row["nombre"]."</option>";
+									echo"<option value='".$row["id_fabricante"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
 								}
 								unset($row);
 								$result->free();
@@ -250,10 +303,11 @@
 			echo"</div>";
 			echo"<div id='loader'></div>";
 			echo"<div id='divformulariolistafabicantes' style='display:none;'></div>";
+			echo"<div id='divformulariolistaproductos' style='display:none;'></div>";
 			
 			if (isset($_POST["fabricante_nombre"]))//Agregar fabricante
 			{
-				if(guardar($bd))
+				if(guardar_fabricante($bd))
 				{
 					?>
 					<script language='JavaScript' type='text/JavaScript'>
@@ -266,6 +320,26 @@
 					?>
 					<script language='JavaScript' type='text/JavaScript'>
 						alertify.alert("","NO SE PUDO GUARDAR EL FABRICANTE").set('label', 'Aceptar');
+					</script>
+					<?php
+				}
+			}
+
+			if (isset($_POST["fabricante_id"]) && isset($_POST["productos_nombre"]))//Agregar productos
+			{
+				if(guardar_productos($bd))
+				{
+					?>
+					<script language='JavaScript' type='text/JavaScript'>
+						alertify.alert("","GUARDADO SATISFACTORIAMENTE").set('label', 'Aceptar');
+					</script>
+					<?php
+				}
+				else
+				{
+					?>
+					<script language='JavaScript' type='text/JavaScript'>
+						alertify.alert("","NO SE PUDO GUARDAR EL PRODUCTO").set('label', 'Aceptar');
 					</script>
 					<?php
 				}
