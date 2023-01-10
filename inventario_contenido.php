@@ -6,8 +6,10 @@
 				$("#div_buscar_productos").hide("linear");
 				$("#divformulariolistaproductos").hide("linear");
 			}
-			if($("#div_buscar_movimientos").is(':visible'))
+			if($("#div_buscar_movimientos").is(':visible')){
 				$("#div_buscar_movimientos").hide("linear");
+				$("#divformulariolistamovimientos").hide("linear");
+			}
 			$("#div_buscar_fabricantes").show("swing");
 			$("#divformulariolistafabicantes").show("swing");
 		});
@@ -17,8 +19,10 @@
 				$("#div_buscar_fabricantes").hide("linear");
 				$("#divformulariolistafabicantes").hide("linear");
 			}
-			if($("#div_buscar_movimientos").is(':visible'))
+			if($("#div_buscar_movimientos").is(':visible')){
 				$("#div_buscar_movimientos").hide("linear");
+				$("#divformulariolistamovimientos").hide("linear");
+			}
 			$("#div_buscar_productos").show("swing");
 			$("#divformulariolistaproductos").show("swing");
 		});
@@ -33,6 +37,7 @@
 				$("#divformulariolistaproductos").hide("linear");
 			}
 			$("#div_buscar_movimientos").show("swing");
+			$("#divformulariolistamovimientos").show("swing");
 		});
 
 		$("#agregar_fabricante").click(function(){
@@ -47,6 +52,13 @@
 				$("#fagregar_productos").hide("linear");
 			else
 				$("#fagregar_productos").show("swing");
+		});
+
+		$("#agregar_movimientos").click(function(){
+			if($("#fagregar_movimientos").is(':visible'))
+				$("#fagregar_movimientos").hide("linear");
+			else
+				$("#fagregar_movimientos").show("swing");
 		});
 	});
 
@@ -266,15 +278,88 @@
 	function formulario_busqueda_movimientos($bd)
 	{
 		?>
-		<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fbusqueda" name="fbusqueda" method="post">
-			<h2 class="w3-text-blue"><i class="icon-search3"></i>&nbsp;Busqueda movimientos</h2>
+		<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fbusqueda_movimientos" name="fbusqueda_movimientos" method="post">
+			<h4 class="w3-text-blue"><i class="icon-search3"></i>&nbsp;Buscar movimientos</h4>
+			<div class="w3-container">
+				<div class="w3-row w3-section">
+					<div class="w3-cell w3-rest">
+						<input class="w3-input w3-border" id="buscar_movimientos" name="buscar_movimientos" type="text" placeholder="Buscar">
+					</div>
+					<div class="w3-cell">
+						<input class="w3-button w3-block w3-dulcevanidad" type="button" id="enviar_buscar_movimientos" name="enviar" value="Buscar" onclick="return enviardatos_busqueda_movimientos();">
+					</div>
+				</div>
+			</div>
+		</form>
+		<div class="w3-container">
 			<div class="w3-row w3-section">
+				<div class="w3-cell">
+					<button id='agregar_movimientos' class="w3-button w3-dulcevanidad"><i class='icon-plus4'>&nbsp;</i>Agregar</button>
+				</div>
+			</div>
+		</div>
+		<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fagregar_movimientos" name="fagregar_movimientos" method="post" style="display:none;">
+			<div class="w3-row w3-section">
+				<label for="fecha" class='w3-text-blue'><b>Fecha</b></label>
 				<div class="w3-rest">
-					<input class="w3-input w3-border" id="buscar_movimientos" name="buscar_movimientos" type="text" placeholder="Buscar">
+                    <input type='date' class='w3-input w3-border' id='fecha' name='fecha'>
 				</div>
 			</div>
 			<div class="w3-row w3-section">
-				<input class="w3-button w3-block w3-dulcevanidad" type="button" id="enviar" name="enviar" value="Buscar" onclick="return enviardatos_busqueda();">
+				<label for="producto_id" class='w3-text-blue'><b>Producto</b></label>
+				<div class="w3-rest">
+					<select class="w3-input w3-border" id="producto_id" name="producto_id">
+						<option value=''></option>
+						<?php
+							$sql = "SELECT p.id_producto id, p.nombre producto, f.nombre fabricante FROM productos p INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante;";
+							$result = $bd->mysql->query($sql);
+							unset($sql);
+							if ($result)
+							{
+								while($row = $result->fetch_array())
+								{
+									echo"<option value='".$row["id"]."'>".$row["producto"]." (".$row["fabricante"].")</option>";
+								}
+								unset($row);
+								$result->free();
+							}
+							unset($result);
+						?>
+					</select>
+				</div>
+			</div>
+			<div class="w3-row w3-section">
+				<label>
+					<input class="w3-radio" type="radio" id="entrada_salida" name="entrada_salida" value="Entrada" checked>
+					Entrada
+				</label>
+				<label>
+					<input class="w3-radio" type="radio" id="entrada_salida" name="entrada_salida" value="Salida">
+					Salida
+				</label>
+			</div>
+			<div class="w3-row w3-section">
+				<label for="medida" class='w3-text-blue'><b>Medida</b></label>
+				<div class="w3-rest">
+					<select class="w3-input w3-border" id="medida" name="medida">
+						<option value=""></option>
+						<option value="unidad">Unidad</option>
+						<option value="gramos">Gramos</option>
+						<option value="Kilogramos">Kilogramos</option>
+						<option value="litros">Litros</option>
+						<option value="mililitros">Mililitros</option>
+						<option value="onzas">Onzas</option>
+					</select>
+				</div>
+			</div>
+			<div class="w3-row w3-section">
+				<label for="medida" class='w3-text-blue'><b>Cantidad</b></label>
+				<div class="w3-rest">
+					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="cantidad" name="cantidad" placeholder="Cantidad" min=0>
+				</div>
+			</div>
+			<div class="w3-row w3-section">
+				<input type="button" class="w3-button w3-block w3-green" onclick="submit_nuevo_movimiento();" value="Guardar">
 			</div>
 		</form>
 		<?php
@@ -282,9 +367,9 @@
 
 	global $servidor, $puerto, $usuario, $pass, $basedatos;
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
-	if($bd->conectado)
+	if ($bd->conectado)
 	{
-		if(usuario_admin() or usuario_cajero())
+		if (usuario_admin() or usuario_cajero())
 		{
 			?>
 			<div class="w3-container">
@@ -314,10 +399,11 @@
 			echo"<div id='loader'></div>";
 			echo"<div id='divformulariolistafabicantes' style='display:none;'></div>";
 			echo"<div id='divformulariolistaproductos' style='display:none;'></div>";
+			echo"<div id='divformulariolistamovimientos' style='display:none;'></div>";
 			
 			if (isset($_POST["fabricante_nombre"]))//Agregar fabricante
 			{
-				if(guardar_fabricante($bd))
+				if (guardar_fabricante($bd))
 				{
 					?>
 					<script language='JavaScript' type='text/JavaScript'>
@@ -338,7 +424,7 @@
 
 			if (isset($_POST["fabricante_id"]) && isset($_POST["productos_nombre"]))//Agregar productos
 			{
-				if(guardar_productos($bd))
+				if (guardar_productos($bd))
 				{
 					?>
 					<script language='JavaScript' type='text/JavaScript'>
