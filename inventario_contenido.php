@@ -110,7 +110,6 @@
                 mes = "0" + mes.toString();
             let anio  = dateFecha.getFullYear();
             let fechaFormato = dia.toString() + "-" + mes + "-" + anio.toString();
-			alert(fechaFormato);
 			$('#fecha_str').val(fechaFormato);
 		}
 		else

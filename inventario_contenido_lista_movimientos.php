@@ -80,7 +80,7 @@
 								$row=$result->fetch_array();
 								$num_col=count($row)/2;
 								echo"<td align='center' nowrap>";
-									if ($admin and false) { //Se quita la opcion de eliminar
+									if ($admin) {
 										echo"<i class='icon-cross2 icon_table' id='eliminar_<?php echo $i; ?>' name='eliminar_<?php echo $i; ?>' alt='Eliminar' title='Eliminar' ";
 										?>
 										onclick="document.getElementById('accion_eliminar').value='<?php echo $row[0]; ?>';return confirmar_eliminar('<?php echo $row[0]; ?>');"
@@ -88,11 +88,13 @@
 										echo"'></i>";
 										echo"&nbsp;&nbsp;";
 									}
-									echo"<i class='icon-pencil icon_table' id='editar_<?php echo $i; ?>' name='editar_<?php echo $i; ?>' alt='Modificar' title='Modificar' ";
-									?>
-									onclick="document.getElementById('accion_modificar').value='<?php echo $row[0]; ?>';return enviardatos_lista();"
-									<?php
-									echo"'></i>";
+									if (false) { //Se quita la opcion editar
+										echo"<i class='icon-pencil icon_table' id='editar_<?php echo $i; ?>' name='editar_<?php echo $i; ?>' alt='Modificar' title='Modificar' ";
+										?>
+										onclick="document.getElementById('accion_modificar').value='<?php echo $row[0]; ?>';return enviardatos_lista();"
+										<?php
+										echo"'></i>";
+									}
 								echo"</td>";
 								for($j=1;$j<$num_col;$j++)
 								{
@@ -144,9 +146,18 @@
 		}
 		else
 		{
-			$sql = "SELECT p.id_producto id, f.nombre fabricante, p.nombre producto
-			FROM 
-			productos p INNER JOIN fabricantes f on f.id_fabricante = p.id_fabricante;";
+			$sql = "SELECT
+				m.id_productos_movimientos id, 
+				m.fecha,
+				f.nombre fabricante, 
+				p.nombre producto,
+				m.entrada_salida movimiento,
+				m.medida,
+				m.cantidad
+			FROM
+			productos_movimientos m 
+			INNER JOIN productos p on m.id_producto = p.id_producto
+			INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante;";
 		}
 		$result = $bd->mysql->query($sql);
 		unset($sql);
