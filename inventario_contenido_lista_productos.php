@@ -19,11 +19,14 @@
 		?>
 		<div class="w3-container">
 			<p>
-			<form id='form_tabla' name='form_tabla' method='post'>
+			<form id='form_tabla_productos' name='form_tabla_productos' method='post'>
+				<?php
+					if(isset($_POST["buscar_productos"])) echo"<input type='hidden' id='buscar_productos' name='buscar_productos' value='".$_POST["buscar_productos"]."'>";
+				?>
 				<div class="w3-row-padding">
 					<div class="w3-third">
 						<label for="pag">P&aacute;gina:</label>
-						<select class="w3-select w3-border" id="pag" name="pag" onchange="if ($('#accion_eliminar').length) document.getElementById('accion_eliminar').value=''; if ($('#accion_modificar').length) document.getElementById('accion_modificar').value='';return enviardatos_lista();">
+						<select class="w3-select w3-border" id="pag" name="pag" onchange="if ($('#accion_eliminar').length) document.getElementById('accion_eliminar').value=''; if ($('#accion_modificar').length) document.getElementById('accion_modificar').value='';return enviardatos_lista_productos();">
 						<?php
 							for($i=1;$i<=$cantpag;$i++)
 							{
@@ -41,7 +44,7 @@
 					</div>
 					<div class="w3-third">
 						<br>
-						<input type="button" class="w3-button w3-block w3-dulcevanidad" id="mostrarxpag" name="mostrarxpag" value="Mostrar" onclick="if ($('#accion_eliminar').length) document.getElementById('accion_eliminar').value=''; if ($('#accion_modificar').length) document.getElementById('accion_modificar').value='';return enviardatos_lista();">
+						<input type="button" class="w3-button w3-block w3-dulcevanidad" id="mostrarxpag" name="mostrarxpag" value="Mostrar" onclick="if ($('#accion_eliminar').length) document.getElementById('accion_eliminar').value=''; if ($('#accion_modificar').length) document.getElementById('accion_modificar').value='';return enviardatos_lista_productos();">
 					</div>
 				</div>
 				<div style="overflow-x: scroll; overflow-x: auto;">
@@ -71,8 +74,8 @@
 					<tbody>
 						<?php
 							if($pag>1) for($i=0;$i<$pag-1;$i++) for($j=0;$j<$cantxpag;$j++) $row=$result->fetch_array();
-							echo"<input type='hidden' id='accion_eliminar' name='accion_eliminar'>";
-							echo"<input type='hidden' id='accion_modificar' name='accion_modificar'>";
+							echo"<input type='hidden' id='accion_eliminar_productos' name='accion_eliminar_productos'>";
+							echo"<input type='hidden' id='accion_modificar_productos' name='accion_modificar_productos'>";
 							$admin = usuario_admin();
 							for($i=$ini;$i<=$fin and $i<$fil;$i++)
 							{

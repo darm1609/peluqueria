@@ -216,6 +216,81 @@
 		ajax.send();
 	}
 
+	function enviardatos_lista_fabricantes()
+	{
+		ajax=objetoAjax();
+		$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+		ajax.open("POST","inventario_contenido_lista_fabricantes.php",true);
+		ajax.onreadystatechange = function() 
+		{
+			if (ajax.readyState == 1)
+			{
+				$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+			}
+			if (ajax.readyState == 4)
+			{
+				$.post("inventario_contenido_lista_fabricantes.php",$("#form_tabla_fabricantes").serialize(),function(data)
+				{
+					$("#divformulariolistafabicantes").show();
+					$("#divformulariolistafabicantes").html(data);
+					$("#loader").hide();
+				});
+			}
+		} 
+		ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+		ajax.send();
+	}
+
+	function enviardatos_lista_productos()
+	{
+		ajax=objetoAjax();
+		$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+		ajax.open("POST","inventario_contenido_lista_productos.php",true);
+		ajax.onreadystatechange = function() 
+		{
+			if (ajax.readyState == 1)
+			{
+				$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+			}
+			if (ajax.readyState == 4)
+			{
+				$.post("inventario_contenido_lista_productos.php",$("#form_tabla_productos").serialize(),function(data)
+				{
+					$("#divformulariolistaproductos").show();
+					$("#divformulariolistaproductos").html(data);
+					$("#loader").hide();
+				});
+			}
+		} 
+		ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+		ajax.send();
+	}
+
+	function enviardatos_lista_movimientos()
+	{
+		ajax=objetoAjax();
+		$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+		ajax.open("POST","inventario_contenido_lista_movimientos.php",true);
+		ajax.onreadystatechange = function() 
+		{
+			if (ajax.readyState == 1)
+			{
+				$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+			}
+			if (ajax.readyState == 4)
+			{
+				$.post("inventario_contenido_lista_movimientos.php",$("#form_tabla_movimientos").serialize(),function(data)
+				{
+					$("#divformulariolistamovimientos").show();
+					$("#divformulariolistamovimientos").html(data);
+					$("#loader").hide();
+				});
+			}
+		} 
+		ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+		ajax.send();
+	}
+
 	function select_fabricantes_reload()
 	{
 		$("#fabricante_id").empty();
