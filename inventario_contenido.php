@@ -93,6 +93,52 @@
 			$("#fagregar_productos").submit();
 	}
 
+	function submit_nuevo_movimiento()
+	{
+		let valido = true;
+		$('#cantidad').val($.trim($('#cantidad').val()));
+		let fecha = $('#fecha').val();
+		let fechaFormato = "";
+        if (fecha.length)
+        {
+            let dateFecha = new Date(Date.parse(fecha) + 5 * 60 * 60 * 1000);
+            let dia  = dateFecha.getDate();
+            let mes  = dateFecha.getMonth() + 1;
+            if (Number(dia) < 10)
+                dia = "0" + dia.toString();
+            if (Number(mes) < 10)
+                mes = "0" + mes.toString();
+            let anio  = dateFecha.getFullYear();
+            let fechaFormato = dia.toString() + "-" + mes + "-" + anio.toString();
+			alert(fechaFormato);
+			$('#fecha_str').val(fechaFormato);
+		}
+		else
+		{
+			valido = false;
+			alertify.alert("","DEBE ESTABLECER UNA FECHA").set('label', 'Aceptar');
+		}
+		if (!$('#producto_id').val().length)
+		{
+			valido = false;
+			alertify.alert("","DEBE SELECCIONAR UN PRODUCTO").set('label', 'Aceptar');
+		}
+		if (!$('#medida').val().length)
+		{
+			valido = false;
+			alertify.alert("","DEBE SELECCIONAR UNA MEDIDA").set('label', 'Aceptar');
+		}
+		if (!$('#cantidad').val().length)
+		{
+			valido = false;
+			alertify.alert("","DEBE ESTABLECER UNA CANTIDAD").set('label', 'Aceptar');
+		}
+		if (valido)
+		{
+			$("#fagregar_movimientos").submit();
+		}
+	}
+
 	function enviardatos_busqueda_fabricante()
 	{
 		ajax=objetoAjax();
@@ -145,6 +191,32 @@
 		ajax.send();
 	}
 
+	function enviardatos_busqueda_movimientos()
+	{
+		ajax=objetoAjax();
+		$("#loader").show();
+		$('#loader').html('<div style="display:block;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+		ajax.open("POST","inventario_contenido_lista_movimientos.php",true);
+		ajax.onreadystatechange = function() 
+		{
+			if (ajax.readyState == 1)
+			{
+				$('#loader').html('<div style="position:absolute;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+			}
+			if (ajax.readyState == 4)
+			{
+				$.post("inventario_contenido_lista_movimientos.php",$("#fbusqueda_movimientos").serialize(),function(data)
+				{
+					$("#divformulariolistamovimientos").show();
+					$("#divformulariolistamovimientos").html(data);
+					$("#loader").hide();
+				});
+			}
+		} 
+		ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+		ajax.send();
+	}
+
 	function select_fabricantes_reload()
 	{
 		$("#fabricante_id").empty();
@@ -154,10 +226,10 @@
 <header class="w3-container" style="padding-top:22px">
 	<h5><b>Administraci&oacute;n de inventario</b></h5>
 </header>
-<form id="flistac" name="flistac" method="post">
+<!-- <form id="flistac" name="flistac" method="post">
 	<input type="hidden" id="telf_eliminar" name="telf_eliminar">
 	<input type="hidden" id="telf_editar" name="telf_editar">
-</form>
+</form> -->
 <?php
 
 	function guardar_productos($bd)
@@ -173,6 +245,15 @@
 	{
 		global $basedatos;
 		if ($bd->insertar_datos(1,$basedatos,"fabricantes","nombre",$_POST["fabricante_nombre"]))
+			return true;
+		else
+			return false;
+	}
+
+	function guardar_movimientos($bd)
+	{
+		global $basedatos;
+		if ($bd->insertar_datos(6,$basedatos,"productos_movimientos","id_producto","fecha_num","fecha","entrada_salida","cantidad","medida",$_POST["producto_id"],time(),$_POST["fecha_str"],$_POST["entrada_salida"],$_POST["cantidad"],$_POST["medida"]))
 			return true;
 		else
 			return false;
@@ -299,6 +380,7 @@
 			</div>
 		</div>
 		<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fagregar_movimientos" name="fagregar_movimientos" method="post" style="display:none;">
+			<input type="hidden" id="fecha_str" name="fecha_str">
 			<div class="w3-row w3-section">
 				<label for="fecha" class='w3-text-blue'><b>Fecha</b></label>
 				<div class="w3-rest">
@@ -437,6 +519,26 @@
 					?>
 					<script language='JavaScript' type='text/JavaScript'>
 						alertify.alert("","NO SE PUDO GUARDAR EL PRODUCTO").set('label', 'Aceptar');
+					</script>
+					<?php
+				}
+			}
+
+			if (isset($_POST["fecha"]) && isset($_POST["producto_id"]))
+			{
+				if (guardar_movimientos($bd))
+				{
+					?>
+					<script language='JavaScript' type='text/JavaScript'>
+						alertify.alert("","GUARDADO SATISFACTORIAMENTE").set('label', 'Aceptar');
+					</script>
+					<?php
+				}
+				else
+				{
+					?>
+					<script language='JavaScript' type='text/JavaScript'>
+						alertify.alert("","NO SE PUDO GUARDAR EL MOVIMIENTO").set('label', 'Aceptar');
 					</script>
 					<?php
 				}
