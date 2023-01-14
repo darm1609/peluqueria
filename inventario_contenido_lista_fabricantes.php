@@ -93,7 +93,7 @@
 									}
 									echo"<i class='icon-pencil icon_table' id='editar_<?php echo $i; ?>' name='editar_<?php echo $i; ?>' alt='Modificar' title='Modificar' ";
 									?>
-									onclick="document.getElementById('accion_modificar').value='<?php echo $row[0]; ?>';return enviardatos_lista();"
+									onclick="document.getElementById('accion_modificar_fabricantes').value='<?php echo $row[0]; ?>';return enviardatos_lista_fabricantes();"
 									<?php
 									echo"'></i>";
 								echo"</td>";
@@ -167,31 +167,110 @@
 		return false;
 	}
 
+	function formulario_modificar_fabricantes($bd)
+	{
+		$sql = "SELECT nombre FROM fabricantes WHERE id_fabricante = '".$_POST["accion_modificar_fabricantes"]."';";
+		$result = $bd->mysql->query($sql);
+		unset($sql);
+		if($result)
+		{
+			$row = $result->fetch_all(MYSQLI_ASSOC);
+			?>
+			<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fmodificar_fabricante" name="fmodificar_fabricante" method="post">
+				<?php
+					if(isset($_POST["buscar_fabricantes"])) echo"<input type='hidden' id='buscar_fabricantes' name='buscar_fabricantes' value='".$_POST["buscar_fabricantes"]."'>";
+					if(isset($_POST["cantxpag"])) echo"<input type='hidden' id='cantxpag' name='cantxpag' value='".$_POST["cantxpag"]."'>";
+					if(isset($_POST["pag"])) echo"<input type='hidden' id='pag' name='pag' value='".$_POST["pag"]."'>";
+					if(isset($_POST["mostrarxpag"])) echo"<input type='hidden' id='mostrarxpag' name='mostrarxpag' value='".$_POST["mostrarxpag"]."'>";
+					echo"<input type='hidden' id='id_fabricante' name='id_fabricante' value='".$_POST["accion_modificar_fabricantes"]."'>";
+					echo"<input type='hidden' id='guardar_modificar_fabricante' name='guardar_modificar_fabricante' value=''>";
+				?>
+				<div class="w3-row w3-section">
+					<label for="trabajo" class='w3-text-blue'><b>Nombre&nbsp;del&nbsp;fabricante</b></label>
+					<div class="w3-rest">
+						<?php
+							echo "<input type='hidden' id='ofabricante_nombre' name='ofabricante_nombre' value='".$row[0]["nombre"]."'>";
+						?>
+						<input class="w3-input w3-border" id="mfabricante_nombre" name="mfabricante_nombre" type="text" placeholder="Fabricante" value="<?php echo $row[0]['nombre']; ?>">
+					</div>
+				</div>
+				<div class="w3-row w3-section">
+					<p>
+					<div class="w3-half">
+						<input type="button" class="w3-button w3-block w3-red" onclick="return enviardatos_modificar_fabricantes();" value="Cancelar">
+					</div>
+					<div class="w3-half">
+						<input type="button" class="w3-button w3-block w3-green" onclick="return confirmar_modificar_fabricante();" value="Guardar">
+					</div>
+					</p>
+				</div>
+			</form>
+			<?php
+		}
+		else
+			unset($result);
+	}
+
+	function guardar_modificar_fabricante($bd)
+	{
+		global $basedatos;
+		if($bd->actualizar_datos(1,1,$basedatos,"fabricantes","id_fabricante",$_POST["id_fabricante"],"nombre",$_POST["ofabricante_nombre"],$_POST["mfabricante_nombre"]))
+			return true;
+		else
+			return false;
+	}
+
 	global $servidor, $puerto, $usuario, $pass, $basedatos;
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 	if($bd->conectado)
 	{
-		if($result = crear_sql_busqueda($bd))
+		if(isset($_POST["guardar_modificar_fabricante"]) and !empty($_POST["guardar_modificar_fabricante"]))
 		{
-			$colespeciales=array();
-			$colocultar=array();
-			if(isset($_POST["pag"]) and !empty($_POST["pag"]))
-				$pag=$_POST["pag"];
-			if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
-				$cantxpag=$_POST["cantxpag"];
-			$colocultar[0]="id_fabricante";
-			if(isset($pag) and isset($cantxpag))
-				mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
+			if (guardar_modificar_fabricante($bd))
+			{
+				?>
+				<script language='JavaScript' type='text/JavaScript'>
+					alertify.alert("","LOS DATOS SE MODIFICARON SATISFACTORIAMENTE").set('label', 'Aceptar');
+				</script>
+				<?php
+			}
 			else
-				mostrar_busqueda($result,$colespeciales,$colocultar,$bd);
+			{
+				?>
+				<script language='JavaScript' type='text/JavaScript'>
+					alertify.alert("","ERROR AL MODIFICAR LOS DATOS").set('label', 'Aceptar');
+				</script>
+				<?php
+			}
 		}
-		else
+		elseif(isset($_POST["accion_modificar_fabricantes"]) and !empty($_POST["accion_modificar_fabricantes"]))
 		{
-			?>
-			<script language='JavaScript' type='text/JavaScript'>
-				alertify.alert("","LA CONSULTA NO GENERO RESULTADOS").set('label', 'Aceptar');
-			</script>
-			<?php
+			formulario_modificar_fabricantes($bd);
+		}
+		else 
+		{
+			if($result = crear_sql_busqueda($bd))
+			{
+				$colespeciales=array();
+				$colocultar=array();
+				if(isset($_POST["pag"]) and !empty($_POST["pag"]))
+					$pag=$_POST["pag"];
+				if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
+					$cantxpag=$_POST["cantxpag"];
+				$colocultar[0]="id_fabricante";
+				if(isset($pag) and isset($cantxpag))
+					mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
+				else
+					mostrar_busqueda($result,$colespeciales,$colocultar,$bd);
+			}
+			else
+			{
+				?>
+				<script language='JavaScript' type='text/JavaScript'>
+					alertify.alert("","LA CONSULTA NO GENERO RESULTADOS").set('label', 'Aceptar');
+				</script>
+				<?php
+			}
 		}
 	}
 ?>

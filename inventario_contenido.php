@@ -291,6 +291,50 @@
 		ajax.send();
 	}
 
+	function enviardatos_modificar_fabricantes()
+	{
+		ajax=objetoAjax();
+		$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+		ajax.open("POST","inventario_contenido_lista_fabricantes.php",true);
+		ajax.onreadystatechange = function() 
+		{
+			if (ajax.readyState == 1)
+			{
+				$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+			}
+			if (ajax.readyState == 4)
+			{
+				$.post("inventario_contenido_lista_fabricantes.php",$("#fmodificar_fabricante").serialize(),function(data)
+				{
+					$("#divformulariolistafabicantes").show();
+					$("#divformulariolistafabicantes").html(data);
+					$("#loader").hide();
+				});
+			}
+		} 
+		ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+		ajax.send();
+	}
+
+	function confirmar_modificar_fabricante()
+	{
+		let valido = true;
+		let cambio = false;
+		$('#mfabricante_nombre').val($.trim($('#mfabricante_nombre').val()));
+		if ($("#ofabricante_nombre").val() != $("#mfabricante_nombre").val())
+		{
+			if ($("#mfabricante_nombre").val() === '')
+			{
+				valido=false;
+				alertify.alert("","EL FABRICANTE NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+			}
+			if(valido)
+				alertify.confirm('','¿Desea Guardar los cambios?', function(){ alertify.success('Sí');document.getElementById('guardar_modificar_fabricante').value="true";enviardatos_modificar_fabricantes(); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
+		}
+		else
+			alertify.alert("","NO HUBO CAMBIO EN LOS DATOS").set('label', 'Aceptar');
+	}
+
 	function select_fabricantes_reload()
 	{
 		$("#fabricante_id").empty();

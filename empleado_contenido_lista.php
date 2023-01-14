@@ -394,7 +394,6 @@
 				?>
 			</form>
 			<?php
-			//pg_free_result($result);
 		}
 		else
 			unset($result);
