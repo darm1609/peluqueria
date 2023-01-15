@@ -143,7 +143,7 @@
 		$sql = "";
 		if (strlen($_POST["buscar_productos"]))
 		{
-			$sql = "SELECT p.id_producto id, f.nombre fabricante, p.nombre producto
+			$sql = "SELECT p.id_producto id, f.nombre fabricante, p.nombre producto, p.medida
 			FROM 
 			productos p INNER JOIN fabricantes f on f.id_fabricante = p.id_fabricante
 			WHERE
@@ -152,7 +152,7 @@
 		}
 		else
 		{
-			$sql = "SELECT p.id_producto id, f.nombre fabricante, p.nombre producto
+			$sql = "SELECT p.id_producto id, f.nombre fabricante, p.nombre producto, p.medida
 			FROM 
 			productos p INNER JOIN fabricantes f on f.id_fabricante = p.id_fabricante;";
 		}
@@ -185,7 +185,8 @@
 			p.id_producto,
 			p.id_fabricante,
 			f.nombre fabricante,
-			p.nombre producto
+			p.nombre producto,
+			p.medida
 		FROM
 			productos p
 			INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante
@@ -246,6 +247,24 @@
 					</div>
 				</div>
 				<div class="w3-row w3-section">
+				<label for="medida" class='w3-text-blue'><b>Medida</b></label>
+				<div class="w3-rest">
+					<?php
+						echo "<input type='hidden' id='omedida' name='omedida' value='".$row[0]["medida"]."'>";
+					?>
+					<select class="w3-input w3-border" id="mmedida" name="mmedida">
+						<option value=""></option>
+						<option value="unidad" <?php if ($row[0]["medida"] == "unidad") echo "selected"; ?>>Unidad</option>
+						<option value="miligramos" <?php if ($row[0]["medida"] == "miligramos") echo "selected"; ?>>Miligramos</option>
+						<option value="gramos" <?php if ($row[0]["medida"] == "gramos") echo "selected"; ?>>Gramos</option>
+						<option value="Kilogramos" <?php if ($row[0]["medida"] == "kilogramos") echo "selected"; ?>>Kilogramos</option>
+						<option value="litros" <?php if ($row[0]["medida"] == "litros") echo "selected"; ?>>Litros</option>
+						<option value="mililitros" <?php if ($row[0]["medida"] == "mililitros") echo "selected"; ?>>Mililitros</option>
+						<option value="onzas" <?php if ($row[0]["medida"] == "onzas") echo "selected"; ?>>Onzas</option>
+					</select>
+				</div>
+			</div>
+				<div class="w3-row w3-section">
 					<p>
 					<div class="w3-half">
 						<input type="button" class="w3-button w3-block w3-red" onclick="return enviardatos_modificar_productos();" value="Cancelar">
@@ -266,7 +285,7 @@
 	function guardar_modificar_producto($bd)
 	{
 		global $basedatos;
-		if($bd->actualizar_datos(1,2,$basedatos,"productos","id_producto",$_POST["id_producto"],"id_fabricante",$_POST["ofabricante_id"],$_POST["mfabricante_id"],"nombre",$_POST["oproductos_nombre"],$_POST["mproductos_nombre"]))
+		if($bd->actualizar_datos(1,3,$basedatos,"productos","id_producto",$_POST["id_producto"],"id_fabricante",$_POST["ofabricante_id"],$_POST["mfabricante_id"],"nombre",$_POST["oproductos_nombre"],$_POST["mproductos_nombre"],"medida",$_POST["omedida"],$_POST["mmedida"]))
 			return true;
 		else
 			return false;

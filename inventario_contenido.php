@@ -89,6 +89,11 @@
 			valido=false;
 			alertify.alert("","EL PRODUCTO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
 		}
+		if($("#medida").val() === '')
+		{
+			valido=false;
+			alertify.alert("","DEBE SELECCIONAR UNA MEDIDA").set('label', 'Aceptar');
+		}
 		if(valido)
 			$("#fagregar_productos").submit();
 	}
@@ -121,11 +126,6 @@
 		{
 			valido = false;
 			alertify.alert("","DEBE SELECCIONAR UN PRODUCTO").set('label', 'Aceptar');
-		}
-		if (!$('#medida').val().length)
-		{
-			valido = false;
-			alertify.alert("","DEBE SELECCIONAR UNA MEDIDA").set('label', 'Aceptar');
 		}
 		if (!$('#cantidad').val().length)
 		{
@@ -385,6 +385,15 @@
 				alertify.alert("","EL PRODUCTO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
 			}
 		}
+		if ($("#omedida").val() != $("#mmedida").val())
+		{
+			cambio = true;
+			if ($("#mmedida").val() === '')
+			{
+				valido=false;
+				alertify.alert("","DEBE SELECCIONAR UNA MEDIDA").set('label', 'Aceptar');
+			}
+		}
 
 		if (!cambio)
 		{
@@ -410,7 +419,7 @@
 	function guardar_productos($bd)
 	{
 		global $basedatos;
-		if ($bd->insertar_datos(2,$basedatos,"productos","id_fabricante","nombre",$_POST["fabricante_id"],$_POST["productos_nombre"]))
+		if ($bd->insertar_datos(3,$basedatos,"productos","id_fabricante","nombre","medida",$_POST["fabricante_id"],$_POST["productos_nombre"],$_POST["medida"]))
 			return true;
 		else
 			return false;
@@ -428,7 +437,7 @@
 	function guardar_movimientos($bd)
 	{
 		global $basedatos;
-		if ($bd->insertar_datos(6,$basedatos,"productos_movimientos","id_producto","fecha_num","fecha","entrada_salida","cantidad","medida",$_POST["producto_id"],time(),$_POST["fecha_str"],$_POST["entrada_salida"],$_POST["cantidad"],$_POST["medida"]))
+		if ($bd->insertar_datos(5,$basedatos,"productos_movimientos","id_producto","fecha_num","fecha","entrada_salida","cantidad",$_POST["producto_id"],time(),$_POST["fecha_str"],$_POST["entrada_salida"],$_POST["cantidad"]))
 			return true;
 		else
 			return false;
@@ -526,6 +535,21 @@
 				</div>
 			</div>
 			<div class="w3-row w3-section">
+				<label for="medida" class='w3-text-blue'><b>Medida</b></label>
+				<div class="w3-rest">
+					<select class="w3-input w3-border" id="medida" name="medida">
+						<option value=""></option>
+						<option value="unidad">Unidad</option>
+						<option value="miligramos">Miligamos</option>
+						<option value="gramos">Gramos</option>
+						<option value="Kilogramos">Kilogramos</option>
+						<option value="litros">Litros</option>
+						<option value="mililitros">Mililitros</option>
+						<option value="onzas">Onzas</option>
+					</select>
+				</div>
+			</div>
+			<div class="w3-row w3-section">
 				<input type="button" class="w3-button w3-block w3-green" onclick="submit_nuevo_producto();" value="Guardar">
 			</div>
 		</form>
@@ -569,14 +593,14 @@
 					<select class="w3-input w3-border" id="producto_id" name="producto_id">
 						<option value=''></option>
 						<?php
-							$sql = "SELECT p.id_producto id, p.nombre producto, f.nombre fabricante FROM productos p INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante;";
+							$sql = "SELECT p.id_producto id, p.nombre producto, f.nombre fabricante, p.medida FROM productos p INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante;";
 							$result = $bd->mysql->query($sql);
 							unset($sql);
 							if ($result)
 							{
 								while($row = $result->fetch_array())
 								{
-									echo"<option value='".$row["id"]."'>".$row["producto"]." (".$row["fabricante"].")</option>";
+									echo"<option value='".$row["id"]."'>".$row["producto"]." (".$row["fabricante"].") (".$row["medida"].")</option>";
 								}
 								unset($row);
 								$result->free();
@@ -595,20 +619,6 @@
 					<input class="w3-radio" type="radio" id="entrada_salida" name="entrada_salida" value="Salida">
 					Salida
 				</label>
-			</div>
-			<div class="w3-row w3-section">
-				<label for="medida" class='w3-text-blue'><b>Medida</b></label>
-				<div class="w3-rest">
-					<select class="w3-input w3-border" id="medida" name="medida">
-						<option value=""></option>
-						<option value="unidad">Unidad</option>
-						<option value="gramos">Gramos</option>
-						<option value="Kilogramos">Kilogramos</option>
-						<option value="litros">Litros</option>
-						<option value="mililitros">Mililitros</option>
-						<option value="onzas">Onzas</option>
-					</select>
-				</div>
 			</div>
 			<div class="w3-row w3-section">
 				<label for="medida" class='w3-text-blue'><b>Cantidad</b></label>

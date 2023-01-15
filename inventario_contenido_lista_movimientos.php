@@ -146,7 +146,7 @@
 				f.nombre fabricante, 
 				p.nombre producto,
 				m.entrada_salida movimiento,
-				m.medida,
+				p.medida,
 				m.cantidad
 			FROM
 				productos_movimientos m 
@@ -168,7 +168,7 @@
 				f.nombre fabricante, 
 				p.nombre producto,
 				m.entrada_salida movimiento,
-				m.medida,
+				p.medida,
 				m.cantidad
 			FROM
 			productos_movimientos m 
