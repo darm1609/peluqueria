@@ -181,14 +181,121 @@
 
 	function formulario_modificar_productos($bd)
 	{
-		echo"asdfasd"; 
+		$sql = "SELECT 
+			p.id_producto,
+			p.id_fabricante,
+			f.nombre fabricante,
+			p.nombre producto
+		FROM
+			productos p
+			INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante
+		WHERE
+			p.id_producto = '".$_POST["accion_modificar_productos"]."';";
+		$result = $bd->mysql->query($sql);
+		unset($sql);
+		if($result)
+		{
+			$row = $result->fetch_all(MYSQLI_ASSOC);
+			?>
+			<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fmodificar_producto" name="fmodificar_producto" method="post">
+				<?php
+					if(isset($_POST["buscar_productos"])) echo"<input type='hidden' id='buscar_productos' name='buscar_productos' value='".$_POST["buscar_productos"]."'>";
+					if(isset($_POST["cantxpag"])) echo"<input type='hidden' id='cantxpag' name='cantxpag' value='".$_POST["cantxpag"]."'>";
+					if(isset($_POST["pag"])) echo"<input type='hidden' id='pag' name='pag' value='".$_POST["pag"]."'>";
+					if(isset($_POST["mostrarxpag"])) echo"<input type='hidden' id='mostrarxpag' name='mostrarxpag' value='".$_POST["mostrarxpag"]."'>";
+					echo"<input type='hidden' id='id_producto' name='id_producto' value='".$_POST["accion_modificar_productos"]."'>";
+					echo"<input type='hidden' id='guardar_modificar_producto' name='guardar_modificar_producto' value=''>";
+				?>
+				<div class="w3-row w3-section">
+					<label for="trabajo" class='w3-text-blue'><b>Fabricantes</b></label>
+					<div class="w3-rest" id="select_fabricantes_reload">
+						<?php
+							echo "<input type='hidden' id='ofabricante_id' name='ofabricante_id' value='".$row[0]["id_fabricante"]."'>";
+						?>
+						<select class="w3-input w3-border" id="mfabricante_id" name="mfabricante_id">
+							<option value=''></option>
+							<?php
+								$sql = "SELECT * FROM fabricantes;";
+								$result2 = $bd->mysql->query($sql);
+								unset($sql);
+								if ($result2)
+								{
+									while($row2 = $result2->fetch_array())
+									{
+										if ($row2["id_fabricante"] == $row[0]["id_fabricante"])
+											echo"<option value='".$row2["id_fabricante"]."' selected>".$row2["nombre"]."</option>";
+										else
+											echo"<option value='".$row2["id_fabricante"]."'>".$row2["nombre"]."</option>";
+									}
+									unset($row2);
+									$result2->free();
+								}
+								else
+									unset($result2);
+							?>
+						</select>
+					</div>
+				</div>
+				<div class="w3-row w3-section">
+					<label for="trabajo" class='w3-text-blue'><b>Nombre&nbsp;del&nbsp;producto</b></label>
+					<div class="w3-rest">
+						<?php
+							echo "<input type='hidden' id='oproductos_nombre' name='oproductos_nombre' value='".$row[0]["producto"]."'>";
+						?>
+						<input class="w3-input w3-border" id="mproductos_nombre" name="mproductos_nombre" type="text" placeholder="Producto" value="<?php echo $row[0]["producto"]; ?>">
+					</div>
+				</div>
+				<div class="w3-row w3-section">
+					<p>
+					<div class="w3-half">
+						<input type="button" class="w3-button w3-block w3-red" onclick="return enviardatos_modificar_productos();" value="Cancelar">
+					</div>
+					<div class="w3-half">
+						<input type="button" class="w3-button w3-block w3-green" onclick="return confirmar_modificar_productos();" value="Guardar">
+					</div>
+					</p>
+				</div>
+			</form>
+			<?php
+			$result->free();
+		}
+		else
+			unset($result);
+	}
+
+	function guardar_modificar_producto($bd)
+	{
+		global $basedatos;
+		if($bd->actualizar_datos(1,2,$basedatos,"productos","id_producto",$_POST["id_producto"],"id_fabricante",$_POST["ofabricante_id"],$_POST["mfabricante_id"],"nombre",$_POST["oproductos_nombre"],$_POST["mproductos_nombre"]))
+			return true;
+		else
+			return false;
 	}
 
 	global $servidor, $puerto, $usuario, $pass, $basedatos;
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 	if($bd->conectado)
 	{
-		if(isset($_POST["accion_modificar_productos"]) and !empty($_POST["accion_modificar_productos"]))
+		if(isset($_POST["guardar_modificar_producto"]) and !empty($_POST["guardar_modificar_producto"]))
+		{
+			if (guardar_modificar_producto($bd))
+			{
+				?>
+				<script language='JavaScript' type='text/JavaScript'>
+					alertify.alert("","LOS DATOS SE MODIFICARON SATISFACTORIAMENTE").set('label', 'Aceptar');
+				</script>
+				<?php
+			}
+			else
+			{
+				?>
+				<script language='JavaScript' type='text/JavaScript'>
+					alertify.alert("","ERROR AL MODIFICAR LOS DATOS").set('label', 'Aceptar');
+				</script>
+				<?php
+			}
+		}
+		elseif(isset($_POST["accion_modificar_productos"]) and !empty($_POST["accion_modificar_productos"]))
 		{
 			formulario_modificar_productos($bd);
 		}

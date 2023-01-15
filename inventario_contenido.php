@@ -335,9 +335,65 @@
 			alertify.alert("","NO HUBO CAMBIO EN LOS DATOS").set('label', 'Aceptar');
 	}
 
-	function select_fabricantes_reload()
+	function enviardatos_modificar_productos()
 	{
-		$("#fabricante_id").empty();
+		ajax=objetoAjax();
+		$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+		ajax.open("POST","inventario_contenido_lista_productos.php",true);
+		ajax.onreadystatechange = function() 
+		{
+			if (ajax.readyState == 1)
+			{
+				$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+			}
+			if (ajax.readyState == 4)
+			{
+				$.post("inventario_contenido_lista_productos.php",$("#fmodificar_producto").serialize(),function(data)
+				{
+					$("#divformulariolistaproductos").show();
+					$("#divformulariolistaproductos").html(data);
+					$("#loader").hide();
+				});
+			}
+		} 
+		ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+		ajax.send();
+	}
+
+	function confirmar_modificar_productos()
+	{
+		let valido = true;
+		let cambio = false;
+		
+		$('#mproductos_nombre').val($.trim($('#mproductos_nombre').val()));
+		
+		if ($("#ofabricante_id").val() != $("#mfabricante_id").val())
+		{
+			cambio = true;
+			if($("#mfabricante_id").val() === '')
+			{
+				valido=false;
+				alertify.alert("","DEBE SELECCIONAR UN FABRICANTE").set('label', 'Aceptar');
+			}
+		}
+		if ($("#oproductos_nombre").val() != $("#mproductos_nombre").val())
+		{
+			cambio = true;
+			if ($("#mproductos_nombre").val() === '')
+			{
+				valido=false;
+				alertify.alert("","EL PRODUCTO NO PUEDE ESTAR VACIO").set('label', 'Aceptar');
+			}
+		}
+
+		if (!cambio)
+		{
+			alertify.alert("","NO HUBO CAMBIO EN LOS DATOS").set('label', 'Aceptar');
+			return;
+		}
+			
+		if(valido)
+			alertify.confirm('','¿Desea Guardar los cambios?', function(){ alertify.success('Sí');document.getElementById('guardar_modificar_producto').value="true";enviardatos_modificar_productos(); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
 	}
 
 </script>
@@ -439,7 +495,7 @@
 		</div>
 		<form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fagregar_productos" name="fagregar_productos" method="post" style="display:none;">
 			<div class="w3-row w3-section">
-				<label for="trabajo" class='w3-text-blue'><b>Fabricante</b></label>
+				<label for="trabajo" class='w3-text-blue'><b>Fabricantes</b></label>
 				<div class="w3-rest" id="select_fabricantes_reload">
 					<select class="w3-input w3-border" id="fabricante_id" name="fabricante_id">
 						<option value=''></option>
@@ -451,12 +507,13 @@
 							{
 								while($row = $result->fetch_array())
 								{
-									echo"<option value='".$row["id_fabricante"]."'>".$row["nombre"]." ".$row["apellido"]."</option>";
+									echo"<option value='".$row["id_fabricante"]."'>".$row["nombre"]."</option>";
 								}
 								unset($row);
 								$result->free();
 							}
-							unset($result);
+							else
+								unset($result);
 						?>
 					</select>
 				</div>
