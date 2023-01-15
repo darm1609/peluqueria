@@ -396,6 +396,11 @@
 			alertify.confirm('','¿Desea Guardar los cambios?', function(){ alertify.success('Sí');document.getElementById('guardar_modificar_producto').value="true";enviardatos_modificar_productos(); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
 	}
 
+	function confirmar_eliminar_movimiento(id)
+	{
+		alertify.confirm('','¿Desea eliminar el ingreso?', function(){ alertify.success('Sí');enviardatos_lista_movimientos(); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
+	}
+
 </script>
 <header class="w3-container" style="padding-top:22px">
 	<h5><b>Administraci&oacute;n de inventario</b></h5>

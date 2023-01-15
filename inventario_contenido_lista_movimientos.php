@@ -86,7 +86,7 @@
 									if ($admin) {
 										echo"<i class='icon-cross2 icon_table' id='eliminar_<?php echo $i; ?>' name='eliminar_<?php echo $i; ?>' alt='Eliminar' title='Eliminar' ";
 										?>
-										onclick="document.getElementById('accion_eliminar').value='<?php echo $row[0]; ?>';return confirmar_eliminar('<?php echo $row[0]; ?>');"
+										onclick="document.getElementById('accion_eliminar_movimientos').value='<?php echo $row[0]; ?>';return confirmar_eliminar_movimiento('<?php echo $row[0]; ?>');"
 										<?php
 										echo"'></i>";
 										echo"&nbsp;&nbsp;";
@@ -140,12 +140,25 @@
 		$sql = "";
 		if (strlen($_POST["buscar_movimientos"]))
 		{
-			$sql = "SELECT p.id_producto id, f.nombre fabricante, p.nombre producto
-			FROM 
-			productos p INNER JOIN fabricantes f on f.id_fabricante = p.id_fabricante
+			$sql = "SELECT
+				m.id_productos_movimientos id, 
+				m.fecha,
+				f.nombre fabricante, 
+				p.nombre producto,
+				m.entrada_salida movimiento,
+				m.medida,
+				m.cantidad
+			FROM
+				productos_movimientos m 
+				INNER JOIN productos p on m.id_producto = p.id_producto
+				INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante
 			WHERE
-			f.nombre like '%".$_POST['buscar_productos']."%' or 
-			p.nombre like '%".$_POST["buscar_productos"]."%';";
+				m.fecha like '%".$_POST['buscar_movimientos']."%' or
+				f.nombre like '%".$_POST['buscar_movimientos']."%' or
+				p.nombre like '%".$_POST['buscar_movimientos']."%' or
+				m.entrada_salida like '%".$_POST['buscar_movimientos']."%' or
+				m.medida like '%".$_POST['buscar_movimientos']."%' or
+				m.cantidad like '%".$_POST['buscar_movimientos']."%';";
 		}
 		else
 		{
@@ -185,31 +198,61 @@
 		return false;
 	}
 
+	function eliminar_movimiento($bd)
+	{
+		global $basedatos;
+		if ($bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_productos_movimientos ",$_POST["accion_eliminar_movimientos"]))
+			return true;
+		return false;
+	}
+
 	global $servidor, $puerto, $usuario, $pass, $basedatos;
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 	if($bd->conectado)
 	{
-		if($result = crear_sql_busqueda($bd))
+		if(isset($_POST["accion_eliminar_movimientos"]) and !empty($_POST["accion_eliminar_movimientos"]))
 		{
-			$colespeciales=array();
-			$colocultar=array();
-			if(isset($_POST["pag"]) and !empty($_POST["pag"]))
-				$pag=$_POST["pag"];
-			if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
-				$cantxpag=$_POST["cantxpag"];
-			$colocultar[0] = "id";
-			if(isset($pag) and isset($cantxpag))
-				mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
+			if(eliminar_movimiento($bd))
+			{
+				?>
+				<script language='JavaScript' type='text/JavaScript'>
+					alertify.alert("","MOVIMIENTO ELIMINADO SATISFACTORIAMENTE").set('label', 'Aceptar');
+				</script>
+				<?php
+			}
 			else
-				mostrar_busqueda($result,$colespeciales,$colocultar,$bd);
+			{
+				?>
+				<script language='JavaScript' type='text/JavaScript'>
+					alertify.alert("","NO SE PUDO ELIINAR EL MOVIMIENTO").set('label', 'Aceptar');
+				</script>
+				<?php
+			}
 		}
 		else
 		{
-			?>
-			<script language='JavaScript' type='text/JavaScript'>
-				alertify.alert("","LA CONSULTA NO GENERO RESULTADOS").set('label', 'Aceptar');
-			</script>
-			<?php
+			if($result = crear_sql_busqueda($bd))
+			{
+				$colespeciales=array();
+				$colocultar=array();
+				if(isset($_POST["pag"]) and !empty($_POST["pag"]))
+					$pag=$_POST["pag"];
+				if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
+					$cantxpag=$_POST["cantxpag"];
+				$colocultar[0] = "id";
+				if(isset($pag) and isset($cantxpag))
+					mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
+				else
+					mostrar_busqueda($result,$colespeciales,$colocultar,$bd);
+			}
+			else
+			{
+				?>
+				<script language='JavaScript' type='text/JavaScript'>
+					alertify.alert("","LA CONSULTA NO GENERO RESULTADOS").set('label', 'Aceptar');
+				</script>
+				<?php
+			}
 		}
 	}
 ?>
