@@ -22,6 +22,11 @@
 			<form id='form_tabla_productos' name='form_tabla_productos' method='post'>
 				<?php
 					if(isset($_POST["buscar_productos"])) echo"<input type='hidden' id='buscar_productos' name='buscar_productos' value='".$_POST["buscar_productos"]."'>";
+					if(isset($_POST["cantxpag"])) echo"<input type='hidden' id='cantxpag' name='cantxpag' value='".$_POST["cantxpag"]."'>";
+					if(isset($_POST["pag"])) echo"<input type='hidden' id='pag' name='pag' value='".$_POST["pag"]."'>";
+					if(isset($_POST["mostrarxpag"])) echo"<input type='hidden' id='mostrarxpag' name='mostrarxpag' value='".$_POST["mostrarxpag"]."'>";
+					if(isset($_POST["accion_modificar_productos"])) echo"<input type='hidden' id='id_producto ' name='id_producto ' value='".$_POST["accion_modificar_productos"]."'>";
+					echo"<input type='hidden' id='guardar_modificar_producto' name='guardar_modificar_producto' value=''>";
 				?>
 				<div class="w3-row-padding">
 					<div class="w3-third">
@@ -93,7 +98,7 @@
 									}
 									echo"<i class='icon-pencil icon_table' id='editar_<?php echo $i; ?>' name='editar_<?php echo $i; ?>' alt='Modificar' title='Modificar' ";
 									?>
-									onclick="document.getElementById('accion_modificar').value='<?php echo $row[0]; ?>';return enviardatos_lista();"
+									onclick="document.getElementById('accion_modificar_productos').value='<?php echo $row[0]; ?>';return enviardatos_lista_productos();"
 									<?php
 									echo"'></i>";
 								echo"</td>";
@@ -174,31 +179,43 @@
 		return false;
 	}
 
+	function formulario_modificar_productos($bd)
+	{
+		echo"asdfasd"; 
+	}
+
 	global $servidor, $puerto, $usuario, $pass, $basedatos;
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 	if($bd->conectado)
 	{
-		if($result = crear_sql_busqueda($bd))
+		if(isset($_POST["accion_modificar_productos"]) and !empty($_POST["accion_modificar_productos"]))
 		{
-			$colespeciales=array();
-			$colocultar=array();
-			if(isset($_POST["pag"]) and !empty($_POST["pag"]))
-				$pag=$_POST["pag"];
-			if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
-				$cantxpag=$_POST["cantxpag"];
-			$colocultar[0] = "id";
-			if(isset($pag) and isset($cantxpag))
-				mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
-			else
-				mostrar_busqueda($result,$colespeciales,$colocultar,$bd);
+			formulario_modificar_productos($bd);
 		}
 		else
 		{
-			?>
-			<script language='JavaScript' type='text/JavaScript'>
-				alertify.alert("","LA CONSULTA NO GENERO RESULTADOS").set('label', 'Aceptar');
-			</script>
-			<?php
+			if ($result = crear_sql_busqueda($bd))
+			{
+				$colespeciales=array();
+				$colocultar=array();
+				if(isset($_POST["pag"]) and !empty($_POST["pag"]))
+					$pag=$_POST["pag"];
+				if(isset($_POST["cantxpag"]) and !empty($_POST["cantxpag"]))
+					$cantxpag=$_POST["cantxpag"];
+				$colocultar[0] = "id";
+				if(isset($pag) and isset($cantxpag))
+					mostrar_busqueda($result,$colespeciales,$colocultar,$bd,$pag,$cantxpag);
+				else
+					mostrar_busqueda($result,$colespeciales,$colocultar,$bd);
+			}
+			else
+			{
+				?>
+				<script language='JavaScript' type='text/JavaScript'>
+					alertify.alert("","LA CONSULTA NO GENERO RESULTADOS").set('label', 'Aceptar');
+				</script>
+				<?php
+			}
 		}
 	}
 ?>
