@@ -405,10 +405,6 @@
 <header class="w3-container" style="padding-top:22px">
 	<h5><b>Administraci&oacute;n de inventario</b></h5>
 </header>
-<!-- <form id="flistac" name="flistac" method="post">
-	<input type="hidden" id="telf_eliminar" name="telf_eliminar">
-	<input type="hidden" id="telf_editar" name="telf_editar">
-</form> -->
 <?php
 
 	function guardar_productos($bd)
