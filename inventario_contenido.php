@@ -584,7 +584,7 @@
 			<div class="w3-row w3-section">
 				<label for="fecha" class='w3-text-blue'><b>Fecha</b></label>
 				<div class="w3-rest">
-                    <input type='date' class='w3-input w3-border' id='fecha' name='fecha'>
+					<input type='date' class='w3-input w3-border' id='fecha' name='fecha'>
 				</div>
 			</div>
 			<div class="w3-row w3-section">

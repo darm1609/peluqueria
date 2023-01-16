@@ -15,6 +15,14 @@
 			else
 				$("#monto_deuda_div").hide();
 		});
+
+		$("#agregar_movimiento_inventario").on("click",function(){
+			if ($("#agregar_movimiento_inventario").is(":checked")) {
+				$("#div_movimiento_inventario").show("swing");
+			} else {
+				$("#div_movimiento_inventario").hide("linear");
+			}
+		});
 		
 		$(function() {
 			$("#fecha_ingreso").datepicker({
@@ -334,6 +342,7 @@
 			}
 			if (!$valido) //Devolver todos los cambios
 			{
+				$bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_ingreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"ingreso_transferencia","id_ingreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"ingreso_debito","id_ingreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"ingreso_efectivo","id_ingreso",$insert_id);
@@ -465,6 +474,88 @@
 					</div>
 				</div>
 			</div>
+			<!--Movimiento de inventario-->
+			<div class="w3-row w3-section">
+				<div class="w3-cell">
+					<div class="w3-container">
+						<input class="w3-check" type="checkbox" id="agregar_movimiento_inventario" name="agregar_movimiento_inventario" value="1">
+						<label for="agregar_movimiento_inventario">&nbsp;&nbsp;&nbsp;Agregar movimiento de inventario</label>
+					</div>
+				</div>
+			</div>
+			<?php
+				$sql = "SELECT p.id_producto id, CONCAT(p.nombre,' (',f.nombre,')',' ',p.medida) nombre FROM productos p INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante;";
+				$result = $bd->mysql->query($sql);
+				unset($sql);
+				if($result)
+				{
+					$arreglo=array();
+					$i=0;
+					while($row = $result->fetch_array())
+					{
+						$arreglo[$i][0]=$row["id"];
+						$arreglo[$i][1]=$row["nombre"];
+						$i++;
+					}
+					$result->free();
+				}
+				else
+					unset($result);
+				$arreglo=json_encode($arreglo);
+			?>
+			<div class="w3-row w3-section">
+				<p>
+					Agragar movimiento de inventario:
+					<?php
+						echo"<i class='icon-plus4 icon_mas' onclick='agregar_campos_nuevo_principal(".$arreglo.");'></i>";
+					?>
+					&nbsp;
+					<i class="icon-minus3 icon_menos" onclick="eliminar_campos_movimientos();"></i>
+				</p>
+			</div>
+			<div id="div_movimientos_inventario"></div>
+			<div id="div_movimiento_inventario" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin">
+				<div class="w3-row w3-section">
+					<label for="producto_id" class='w3-text-blue'><b>Producto</b></label>
+					<div class="w3-rest">
+						<select class="w3-input w3-border" id="producto_id_mi" name="producto_id_mi">
+							<option value=''></option>
+							<?php
+								$sql = "SELECT p.id_producto id, p.nombre producto, f.nombre fabricante, p.medida FROM productos p INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante;";
+								$result = $bd->mysql->query($sql);
+								unset($sql);
+								if ($result)
+								{
+									while($row = $result->fetch_array())
+									{
+										echo"<option value='".$row["id"]."'>".$row["producto"]." (".$row["fabricante"].") (".$row["medida"].")</option>";
+									}
+									unset($row);
+									$result->free();
+								}
+								unset($result);
+							?>
+						</select>
+					</div>
+				</div>
+				<div class="w3-row w3-section">
+					<label>
+						<input class="w3-radio" type="radio" id="entrada_salida_mi" name="entrada_salida_mi" value="Entrada" checked>
+						Entrada
+					</label>
+					<label>
+						<input class="w3-radio" type="radio" id="entrada_salida_mi" name="entrada_salida_mi" value="Salida">
+						Salida
+					</label>
+				</div>
+				<div class="w3-row w3-section">
+					<label for="medida" class='w3-text-blue'><b>Cantidad</b></label>
+					<div class="w3-rest">
+						<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="cantidad_mi" name="cantidad_mi" placeholder="Cantidad" min=0>
+					</div>
+				</div>
+			</div>
+			<!--Fin Movimiento de inventario-->
 			<label for="observacion"><b>Comentario</b></label>
 			<div class="w3-row">
 				<div class="w3-rest">
