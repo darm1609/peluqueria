@@ -280,6 +280,52 @@
 		}
 	}
 
+	var nextinput_nuevo_principal=0;
+
+	function agregar_campos_movimientos(arreglo)
+	{
+		let n = arreglo.length;
+		nextinput_nuevo_principal++;
+		campo="<div id='contenido_inventario_"+nextinput_nuevo_principal+"' class=\"w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin\">";
+		campo+="<input type=\"hidden\" id=\"movimientos_num\" name=\"movimientos_num\" value='"+nextinput_nuevo_principal+"'>";
+		campo+="<div class=\"w3-row w3-section\">";
+		campo+="<label for=\"producto_id\" class='w3-text-blue'><b>Producto</b></label>";
+		campo+="<div class=\"w3-rest\">";
+		campo+="<select class=\"w3-input w3-border\" id=\"producto_id_mi_"+nextinput_nuevo_principal+"\" name=\"producto_id_mi_"+nextinput_nuevo_principal+"\">";
+		campo+="<option value=''></option>";
+		let i;
+		for(i=0;i<n;i++)
+		{
+			campo+="<option value='"+arreglo[i][0]+"'>"+arreglo[i][1]+"</option>";
+		}
+		campo+="</select>";
+		campo+="</div>";
+		campo+="</div>";
+		campo+="<div class=\"w3-row w3-section\">";
+		campo+="<label>";
+		campo+="<input class=\"w3-radio\" type=\"radio\" id=\"entrada_salida_mi_"+nextinput_nuevo_principal+"\" name=\"entrada_salida_mi_"+nextinput_nuevo_principal+"\" value=\"Salida\" checked>";
+		campo+="Salida";
+		campo+="</label>";
+		campo+="</div>";
+		campo+="<div class=\"w3-row w3-section\">";
+		campo+="<label for=\"medida\" class=\"w3-text-blue\"><b>Cantidad</b></label>";
+		campo+="<div class=\"w3-rest\">";
+		campo+="<input type=\"number\" class=\"w3-input w3-border\" inputmode=\"decimal\" data-type=\"currency\" id=\"cantidad_mi_"+nextinput_nuevo_principal+"\" name=\"cantidad_mi_"+nextinput_nuevo_principal+"\" placeholder=\"Cantidad\" min=0>";
+		campo+="</div>";
+		campo+="</div>";
+		campo+="</div>";
+		$("#div_movimientos_inventario").append(campo);
+	}
+
+	function eliminar_campos_movimientos()
+	{
+		if(nextinput_nuevo_principal>=1)
+		{
+			$("#contenido_inventario_"+nextinput_nuevo_principal).remove();
+			nextinput_nuevo_principal--;
+		}
+	}
+
 </script>
 <header class="w3-container" style="padding-top:22px">
 	<h5><b>Administraci&oacute;n de Ingresos</b></h5>
@@ -288,72 +334,72 @@
 
 	function guardar($bd)
 	{
-		global $basedatos;
-		$fecha = $_POST["fecha_ingreso"];
-		//$fecha_num=time();
-		$fecha_num = strtotime($_POST["fecha_ingreso"][6].$_POST["fecha_ingreso"][7].$_POST["fecha_ingreso"][8].$_POST["fecha_ingreso"][9]."-".$_POST["fecha_ingreso"][3].$_POST["fecha_ingreso"][4]."-".$_POST["fecha_ingreso"][0].$_POST["fecha_ingreso"][1]);
-		$efectivo = 0;
-		$transferencia = 0;
-		$debito = 0;
-		$deuda = 0;
-		if (!empty($_POST["monto_transferencia"]))
-			$transferencia = 1;
-		if (!empty($_POST["monto_datafono"]))
-			$debito = 1;
-		if (!empty($_POST["monto_efectivo"]))
-			$efectivo = 1;
-		if (!empty($_POST["monto_deuda"]))
-			$deuda = 1;
-		$monto_transferencia = str_replace(",","",$_POST["monto_transferencia"]);
-		$monto_efectivo = str_replace(",","",$_POST["monto_efectivo"]);
-		$monto_datafono = str_replace(",","",$_POST["monto_datafono"]);
-		$monto_deuda = str_replace(",","",$_POST["monto_deuda"]);
-		if($bd->insertar_datos(11,$basedatos,"ingreso","id_motivo_ingreso","cliente_telf","fecha","fecha_num","efectivo","transferencia","debito","deuda","empleado_telf","login","observacion",$_POST["id_motivo_ingreso"],$_POST["cliente_telf"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,$deuda,$_POST["empleado_telf"],$_SESSION["login"],$_POST["observacion"]))
-		{
-			$insert_id = $bd->ultimo_result;
-			$valido = false;
-			if ($transferencia == 1)
-			{
-				if ($bd->insertar_datos(3,$basedatos,"ingreso_transferencia","id_ingreso","monto","referencia",$insert_id,$monto_transferencia,$_POST["referencia"]))
-					$valido = true;
-				else
-					$valido = false;
-			}
-			if ($debito == 1)
-			{
-				if ($bd->insertar_datos(2,$basedatos,"ingreso_debito","id_ingreso","monto",$insert_id,$monto_datafono))
-					$valido = true;
-				else
-					$valido = false;
-			}
-			if ($efectivo == 1)
-			{
-				if ($bd->insertar_datos(2,$basedatos,"ingreso_efectivo","id_ingreso","monto",$insert_id,$monto_efectivo))
-					$valido = true;
-				else
-					$valido = false;
-			}
-			if ($deuda == 1)
-			{
-				if ($bd->insertar_datos(4,$basedatos,"ingreso_deuda","id_ingreso","monto","monto_pagado","pagada",$insert_id,$monto_deuda,0,0))
-					$valido = true;
-				else
-					$valido = false;
-			}
-			if (!$valido) //Devolver todos los cambios
-			{
-				$bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_ingreso",$insert_id);
-				$bd->eliminar_datos(1,$basedatos,"ingreso_transferencia","id_ingreso",$insert_id);
-				$bd->eliminar_datos(1,$basedatos,"ingreso_debito","id_ingreso",$insert_id);
-				$bd->eliminar_datos(1,$basedatos,"ingreso_efectivo","id_ingreso",$insert_id);
-				$bd->eliminar_datos(1,$basedatos,"ingreso_deuda","id_ingreso",$insert_id);
-				$bd->eliminar_datos(1,$basedatos,"ingreso","id_ingreso",$insert_id);
-				return false;
-			}
-			return true;
-		}
-		else
-			return false;
+		print_r($_POST);
+		// global $basedatos;
+		// $fecha = $_POST["fecha_ingreso"];
+		// $fecha_num = strtotime($_POST["fecha_ingreso"][6].$_POST["fecha_ingreso"][7].$_POST["fecha_ingreso"][8].$_POST["fecha_ingreso"][9]."-".$_POST["fecha_ingreso"][3].$_POST["fecha_ingreso"][4]."-".$_POST["fecha_ingreso"][0].$_POST["fecha_ingreso"][1]);
+		// $efectivo = 0;
+		// $transferencia = 0;
+		// $debito = 0;
+		// $deuda = 0;
+		// if (!empty($_POST["monto_transferencia"]))
+		// 	$transferencia = 1;
+		// if (!empty($_POST["monto_datafono"]))
+		// 	$debito = 1;
+		// if (!empty($_POST["monto_efectivo"]))
+		// 	$efectivo = 1;
+		// if (!empty($_POST["monto_deuda"]))
+		// 	$deuda = 1;
+		// $monto_transferencia = str_replace(",","",$_POST["monto_transferencia"]);
+		// $monto_efectivo = str_replace(",","",$_POST["monto_efectivo"]);
+		// $monto_datafono = str_replace(",","",$_POST["monto_datafono"]);
+		// $monto_deuda = str_replace(",","",$_POST["monto_deuda"]);
+		// if($bd->insertar_datos(11,$basedatos,"ingreso","id_motivo_ingreso","cliente_telf","fecha","fecha_num","efectivo","transferencia","debito","deuda","empleado_telf","login","observacion",$_POST["id_motivo_ingreso"],$_POST["cliente_telf"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,$deuda,$_POST["empleado_telf"],$_SESSION["login"],$_POST["observacion"]))
+		// {
+		// 	$insert_id = $bd->ultimo_result;
+		// 	$valido = false;
+		// 	if ($transferencia == 1)
+		// 	{
+		// 		if ($bd->insertar_datos(3,$basedatos,"ingreso_transferencia","id_ingreso","monto","referencia",$insert_id,$monto_transferencia,$_POST["referencia"]))
+		// 			$valido = true;
+		// 		else
+		// 			$valido = false;
+		// 	}
+		// 	if ($debito == 1)
+		// 	{
+		// 		if ($bd->insertar_datos(2,$basedatos,"ingreso_debito","id_ingreso","monto",$insert_id,$monto_datafono))
+		// 			$valido = true;
+		// 		else
+		// 			$valido = false;
+		// 	}
+		// 	if ($efectivo == 1)
+		// 	{
+		// 		if ($bd->insertar_datos(2,$basedatos,"ingreso_efectivo","id_ingreso","monto",$insert_id,$monto_efectivo))
+		// 			$valido = true;
+		// 		else
+		// 			$valido = false;
+		// 	}
+		// 	if ($deuda == 1)
+		// 	{
+		// 		if ($bd->insertar_datos(4,$basedatos,"ingreso_deuda","id_ingreso","monto","monto_pagado","pagada",$insert_id,$monto_deuda,0,0))
+		// 			$valido = true;
+		// 		else
+		// 			$valido = false;
+		// 	}
+		// 	if (!$valido) //Devolver todos los cambios
+		// 	{
+		// 		$bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_ingreso",$insert_id);
+		// 		$bd->eliminar_datos(1,$basedatos,"ingreso_transferencia","id_ingreso",$insert_id);
+		// 		$bd->eliminar_datos(1,$basedatos,"ingreso_debito","id_ingreso",$insert_id);
+		// 		$bd->eliminar_datos(1,$basedatos,"ingreso_efectivo","id_ingreso",$insert_id);
+		// 		$bd->eliminar_datos(1,$basedatos,"ingreso_deuda","id_ingreso",$insert_id);
+		// 		$bd->eliminar_datos(1,$basedatos,"ingreso","id_ingreso",$insert_id);
+		// 		return false;
+		// 	}
+		// 	return true;
+		// }
+		// else
+		// 	return false;
 	}
 	
 	function formulario_agregar_ingreso($bd)
@@ -475,14 +521,6 @@
 				</div>
 			</div>
 			<!--Movimiento de inventario-->
-			<div class="w3-row w3-section">
-				<div class="w3-cell">
-					<div class="w3-container">
-						<input class="w3-check" type="checkbox" id="agregar_movimiento_inventario" name="agregar_movimiento_inventario" value="1">
-						<label for="agregar_movimiento_inventario">&nbsp;&nbsp;&nbsp;Agregar movimiento de inventario</label>
-					</div>
-				</div>
-			</div>
 			<?php
 				$sql = "SELECT p.id_producto id, CONCAT(p.nombre,' (',f.nombre,')',' ',p.medida) nombre FROM productos p INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante;";
 				$result = $bd->mysql->query($sql);
@@ -507,54 +545,13 @@
 				<p>
 					Agragar movimiento de inventario:
 					<?php
-						echo"<i class='icon-plus4 icon_mas' onclick='agregar_campos_nuevo_principal(".$arreglo.");'></i>";
+						echo"<i class='icon-plus4 icon_mas' onclick='agregar_campos_movimientos(".$arreglo.");'></i>";
 					?>
 					&nbsp;
 					<i class="icon-minus3 icon_menos" onclick="eliminar_campos_movimientos();"></i>
 				</p>
 			</div>
 			<div id="div_movimientos_inventario"></div>
-			<div id="div_movimiento_inventario" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin">
-				<div class="w3-row w3-section">
-					<label for="producto_id" class='w3-text-blue'><b>Producto</b></label>
-					<div class="w3-rest">
-						<select class="w3-input w3-border" id="producto_id_mi" name="producto_id_mi">
-							<option value=''></option>
-							<?php
-								$sql = "SELECT p.id_producto id, p.nombre producto, f.nombre fabricante, p.medida FROM productos p INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante;";
-								$result = $bd->mysql->query($sql);
-								unset($sql);
-								if ($result)
-								{
-									while($row = $result->fetch_array())
-									{
-										echo"<option value='".$row["id"]."'>".$row["producto"]." (".$row["fabricante"].") (".$row["medida"].")</option>";
-									}
-									unset($row);
-									$result->free();
-								}
-								unset($result);
-							?>
-						</select>
-					</div>
-				</div>
-				<div class="w3-row w3-section">
-					<label>
-						<input class="w3-radio" type="radio" id="entrada_salida_mi" name="entrada_salida_mi" value="Entrada" checked>
-						Entrada
-					</label>
-					<label>
-						<input class="w3-radio" type="radio" id="entrada_salida_mi" name="entrada_salida_mi" value="Salida">
-						Salida
-					</label>
-				</div>
-				<div class="w3-row w3-section">
-					<label for="medida" class='w3-text-blue'><b>Cantidad</b></label>
-					<div class="w3-rest">
-						<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="cantidad_mi" name="cantidad_mi" placeholder="Cantidad" min=0>
-					</div>
-				</div>
-			</div>
 			<!--Fin Movimiento de inventario-->
 			<label for="observacion"><b>Comentario</b></label>
 			<div class="w3-row">
