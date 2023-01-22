@@ -20,6 +20,27 @@
 		if ($valida)
 			if(!$bd->eliminar_datos(1,$basedatos,"egreso","id_egreso",$_POST["accion_eliminar"]))
 				$valida = false;
+		
+		$sql = "select id_productos_movimientos_relaciones, id_productos_movimientos, id_ingreso from productos_movimientos_relaciones where id_egreso = '".$_POST["accion_eliminar"]."';";
+		$result = $bd->mysql->query($sql);
+		unset($sql);
+		if ($result)
+		{
+			$row = $result->fetch_all(MYSQLI_ASSOC);
+			$result->free();
+			if (is_array(($row)))
+			{
+				foreach ($row as $val)
+				{
+					$bd->eliminar_datos(1,$basedatos,"productos_movimientos_relaciones","id_productos_movimientos_relaciones",$val["id_productos_movimientos_relaciones"]);
+					$bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_productos_movimientos",$val["id_productos_movimientos"]);
+				}
+			}
+			unset($row);
+		}
+		else
+			unset($result);
+
 		return $valida;
 	}
 

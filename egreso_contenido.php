@@ -21,9 +21,47 @@
 		});
 	});
 
+	function convertCommasToDots(str) {
+		return str.replace(/,/g, ".");
+	}
+
 	function submit_egreso()
 	{
 		var valido=new Boolean(true);
+
+		if (valido)
+		{
+			let movimientos = $("#movimientos_num").val();
+			if (movimientos > 0)
+			{
+				for (let movimiento = 1; movimiento <= movimientos; movimiento++)
+				{
+					if ($("#producto_id_mi_"+movimiento).val() == "")
+					{
+						valido=false;
+						alertify.alert("","DEBE SELECCIONAR UN PRODUCTO").set('label', 'Aceptar');
+					}
+					if ($("#cantidad_mi_"+movimiento).val() == "")
+					{
+						valido=false;
+						alertify.alert("","CANTIDAD DE MOVIMIENTO DE INVENTARIO NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+					}
+					else
+					{
+						if (!isNaN($("#cantidad_mi_"+movimiento).val())) 
+						{
+							$("#cantidad_mi_"+movimiento).val(convertCommasToDots($("#cantidad_mi_"+movimiento).val()));
+						} 
+						else 
+						{
+							valido = false;
+							alertify.alert("","CANTIDAD DE MOVIMIENTO DE INVENTARIO NO VALIDA").set('label', 'Aceptar');
+						}
+					}
+				}
+			}
+		}
+
 		if(document.getElementById('fecha').value=='')
 		{
 			valido=false;
@@ -222,6 +260,53 @@
 		alertify.confirm('','¿Desea Eliminar?', function(){ alertify.success('Sí');enviardatos_lista(); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
 	}
 
+	var nextinput_nuevo_principal=0;
+
+	function agregar_campos_movimientos(arreglo)
+	{
+		let n = arreglo.length;
+		nextinput_nuevo_principal++;
+		$("#movimientos_num").val(nextinput_nuevo_principal);
+		campo="<div id='contenido_inventario_"+nextinput_nuevo_principal+"' class=\"w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin\">";
+		campo+="<div class=\"w3-row w3-section\">";
+		campo+="<label for=\"producto_id\" class='w3-text-blue'><b>Producto</b></label>";
+		campo+="<div class=\"w3-rest\">";
+		campo+="<select class=\"w3-input w3-border\" id=\"producto_id_mi_"+nextinput_nuevo_principal+"\" name=\"producto_id_mi_"+nextinput_nuevo_principal+"\">";
+		campo+="<option value=''></option>";
+		let i;
+		for(i=0;i<n;i++)
+		{
+			campo+="<option value='"+arreglo[i][0]+"'>"+arreglo[i][1]+"</option>";
+		}
+		campo+="</select>";
+		campo+="</div>";
+		campo+="</div>";
+		campo+="<div class=\"w3-row w3-section\">";
+		campo+="<label>";
+		campo+="<input class=\"w3-radio\" type=\"radio\" id=\"entrada_salida_mi_"+nextinput_nuevo_principal+"\" name=\"entrada_salida_mi_"+nextinput_nuevo_principal+"\" value=\"Entrada\" checked>";
+		campo+="Entrada";
+		campo+="</label>";
+		campo+="</div>";
+		campo+="<div class=\"w3-row w3-section\">";
+		campo+="<label for=\"medida\" class=\"w3-text-blue\"><b>Cantidad</b></label>";
+		campo+="<div class=\"w3-rest\">";
+		campo+="<input type=\"number\" class=\"w3-input w3-border\" inputmode=\"decimal\" data-type=\"currency\" id=\"cantidad_mi_"+nextinput_nuevo_principal+"\" name=\"cantidad_mi_"+nextinput_nuevo_principal+"\" placeholder=\"Cantidad\" min=0>";
+		campo+="</div>";
+		campo+="</div>";
+		campo+="</div>";
+		$("#div_movimientos_inventario").append(campo);
+	}
+
+	function eliminar_campos_movimientos()
+	{
+		if(nextinput_nuevo_principal>=1)
+		{
+			$("#contenido_inventario_"+nextinput_nuevo_principal).remove();
+			nextinput_nuevo_principal--;
+			$("#movimientos_num").val(nextinput_nuevo_principal);
+		}
+	}
+
 </script>
 <header class="w3-container" style="padding-top:22px">
 	<h5><b>Administraci&oacute;n de Egresos</b></h5>
@@ -304,12 +389,29 @@
 				else
 					$valido = false;
 			}
+			if ($valido)
+			{
+				$movimientos = $_POST["movimientos_num"];
+				for ($i = 1; $i <= $movimientos; $i++)
+				{
+					if ($bd->insertar_datos(5,$basedatos,"productos_movimientos","id_producto","fecha_num","fecha","entrada_salida","cantidad",$_POST["producto_id_mi_".$i],$fecha_num,$fecha,$_POST["entrada_salida_mi_".$i],$_POST["cantidad_mi_".$i]))
+					{
+						$insert_producto_movimiento_id = $bd->ultimo_result;
+						if ($bd->insertar_datos(2,$basedatos,"productos_movimientos_relaciones","id_productos_movimientos","id_egreso",$insert_producto_movimiento_id,$insert_id))
+							$valido = true;
+						else
+							$valido = false;
+					}
+				}
+			}
 			if (!$valido) //Devolver todos los cambios
 			{
 				$bd->eliminar_datos(1,$basedatos,"egreso_debito","id_egreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"egreso_transferencia","id_egreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"egreso_efectivo","id_egreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"egreso","id_egreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_productos_movimientos",$insert_producto_movimiento_id);
+				$bd->eliminar_datos(1,$basedatos,"productos_movimientos_relaciones","id_egreso",$insert_id);
 				return false;
 			}
 			return true;
@@ -318,7 +420,7 @@
 			return false;
 	}
 
-	function formulario_agregar_egreso()
+	function formulario_agregar_egreso($bd)
 	{
 		?>
 		<form class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin" id="fagregar" name="fagregar" method="post">
@@ -359,6 +461,40 @@
 					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
 				</div>
 			</div>
+			<!--Movimiento de inventario-->
+			<?php
+				$sql = "SELECT p.id_producto id, CONCAT(p.nombre,' (',f.nombre,')',' ',p.medida) nombre FROM productos p INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante;";
+				$result = $bd->mysql->query($sql);
+				unset($sql);
+				if($result)
+				{
+					$arreglo=array();
+					$i=0;
+					while($row = $result->fetch_array())
+					{
+						$arreglo[$i][0]=$row["id"];
+						$arreglo[$i][1]=$row["nombre"];
+						$i++;
+					}
+					$result->free();
+				}
+				else
+					unset($result);
+				$arreglo=json_encode($arreglo);
+			?>
+			<div class="w3-row w3-section">
+				<input type="hidden" id="movimientos_num" name="movimientos_num" value="0">
+				<p>
+					Agragar movimiento de inventario:
+					<?php
+						echo"<i class='icon-plus4 icon_mas' onclick='agregar_campos_movimientos(".$arreglo.");'></i>";
+					?>
+					&nbsp;
+					<i class="icon-minus3 icon_menos" onclick="eliminar_campos_movimientos();"></i>
+				</p>
+			</div>
+			<div id="div_movimientos_inventario"></div>
+			<!--Fin Movimiento de inventario-->
 			<div class="w3-row w3-section">
 				<input type="button" class="w3-button w3-block w3-green" onclick="submit_egreso();" value="Guardar">
 			</div>
@@ -400,7 +536,7 @@
 			</div>
 			<?php
 			echo"<div id='divfagregar' class='w3-container' style='display:none;'>";
-				formulario_agregar_egreso();
+				formulario_agregar_egreso($bd);
 			echo"</div>";
 			formulario_busqueda($bd);
 			echo"<div id='loader'></div>";
