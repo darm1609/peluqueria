@@ -78,7 +78,6 @@
 	{
 		global $basedatos;
 		$valida = true;
-
 		if (!$bd->eliminar_datos(1,$basedatos,"vale_pago_efectivo","id_vale_pago",$_POST["accion_eliminar"]))
 			$valida = false;
 		if ($valida)
@@ -90,6 +89,25 @@
 		if ($valida)
 			if(!$bd->eliminar_datos(1,$basedatos,"vale_pago","id_vale_pago",$_POST["accion_eliminar"]))
 				$valida = false;
+		$sql = "select id_productos_movimientos_relaciones, id_productos_movimientos, id_ingreso from productos_movimientos_relaciones where id_vale_pago = '".$_POST["accion_eliminar"]."';";
+		$result = $bd->mysql->query($sql);
+		unset($sql);
+		if ($result)
+		{
+			$row = $result->fetch_all(MYSQLI_ASSOC);
+			$result->free();
+			if (is_array(($row)))
+			{
+				foreach ($row as $val)
+				{
+					$bd->eliminar_datos(1,$basedatos,"productos_movimientos_relaciones","id_productos_movimientos_relaciones",$val["id_productos_movimientos_relaciones"]);
+					$bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_productos_movimientos",$val["id_productos_movimientos"]);
+				}
+			}
+			unset($row);
+		}
+		else
+			unset($result);			
 		return $valida;
 	}
 
@@ -323,12 +341,32 @@
 				else
 					$valido = false;
 			}
+			if ($_POST["vale_pago"] == "gastos_de_peluqueria")
+			{
+				if ($valido)
+				{
+					$movimientos = $_POST["movimientos_num"];
+					for ($i = 1; $i <= $movimientos; $i++)
+					{
+						if ($bd->insertar_datos(5,$basedatos,"productos_movimientos","id_producto","fecha_num","fecha","entrada_salida","cantidad",$_POST["producto_id_mi_".$i],$fecha_num,$fecha,$_POST["entrada_salida_mi_".$i],$_POST["cantidad_mi_".$i]))
+						{
+							$insert_producto_movimiento_id = $bd->ultimo_result;
+							if ($bd->insertar_datos(2,$basedatos,"productos_movimientos_relaciones","id_productos_movimientos","id_vale_pago",$insert_producto_movimiento_id,$insert_id))
+								$valido = true;
+							else
+								$valido = false;
+						}
+					}
+				}
+			}
 			if (!$valido) //Devolver todos los cambios
 			{
 				$bd->eliminar_datos(1,$basedatos,"vale_pago_dueño_por_trabajo_por_empleado","id_ingreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"vale_pago_transferencia","id_ingreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"vale_pago_efectivo","id_ingreso",$insert_id);
 				$bd->eliminar_datos(1,$basedatos,"vale_pago","id_ingreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_productos_movimientos",$insert_producto_movimiento_id);
+				$bd->eliminar_datos(1,$basedatos,"productos_movimientos_relaciones","id_vale_pago",$insert_id);
 				return false;
 			}
 			return true;
@@ -380,7 +418,7 @@
 				{
 					?>
 					<label>
-						<input class="w3-radio" type="radio" id="vale_pago_gastos" name="vale_pago" class="vale_pago_tipo" value="gastos_de_peluqueria" onclick="mostrarMovimientos();">
+						<input class="w3-radio" type="radio" id="vale_pago_gasto" name="vale_pago" class="vale_pago_tipo" value="gastos_de_peluqueria" onclick="mostrarMovimientos();">
 						Gastos de peluquer&iacute;a
 					</label>
 					<?php

@@ -131,9 +131,47 @@
 		ajax.send();
 	}
 
+	function convertCommasToDots(str) {
+		return str.replace(/,/g, ".");
+	}
+
 	function submit_vale_pago()
 	{
 		var valido=new Boolean(true);
+
+		if (valido && $("#vale_pago_gasto").is(":checked"))
+		{
+			let movimientos = $("#movimientos_num").val();
+			if (movimientos > 0)
+			{
+				for (let movimiento = 1; movimiento <= movimientos; movimiento++)
+				{
+					if ($("#producto_id_mi_"+movimiento).val() == "")
+					{
+						valido=false;
+						alertify.alert("","DEBE SELECCIONAR UN PRODUCTO").set('label', 'Aceptar');
+					}
+					if ($("#cantidad_mi_"+movimiento).val() == "")
+					{
+						valido=false;
+						alertify.alert("","CANTIDAD DE MOVIMIENTO DE INVENTARIO NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+					}
+					else
+					{
+						if (!isNaN($("#cantidad_mi_"+movimiento).val())) 
+						{
+							$("#cantidad_mi_"+movimiento).val(convertCommasToDots($("#cantidad_mi_"+movimiento).val()));
+						} 
+						else 
+						{
+							valido = false;
+							alertify.alert("","CANTIDAD DE MOVIMIENTO DE INVENTARIO NO VALIDA").set('label', 'Aceptar');
+						}
+					}
+				}
+			}
+		}
+
 		if(document.getElementById('fecha').value=='')
 		{
 			valido=false;
