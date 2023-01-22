@@ -25,7 +25,7 @@
 				else '' 
 			end debito_monto
 		from 
-			ingreso i 
+			ingreso i
 			left join ingreso_debito id on id.id_ingreso = i.id_ingreso 
 			left join ingreso_efectivo ie on ie.id_ingreso = i.id_ingreso
 			left join ingreso_transferencia it on it.id_ingreso = i.id_ingreso
