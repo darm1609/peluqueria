@@ -136,9 +136,47 @@
 		}
 	}
 
+	function convertCommasToDots(str) {
+		return str.replace(/,/g, ".");
+	}
+
 	function submit_ingreso() 
 	{
 		var valido = new Boolean(true);
+
+		if (valido)
+		{
+			let movimientos = $("#movimientos_num").val();
+			if (movimientos > 0)
+			{
+				for (let movimiento = 1; movimiento <= movimientos; movimiento++)
+				{
+					if ($("#producto_id_mi_"+movimiento).val() == "")
+					{
+						valido=false;
+						alertify.alert("","DEBE SELECCIONAR UN PRODUCTO").set('label', 'Aceptar');
+					}
+					if ($("#cantidad_mi_"+movimiento).val() == "")
+					{
+						valido=false;
+						alertify.alert("","CANTIDAD DE MOVIMIENTO DE INVENTARIO NO PUEDE ESTAR VACIA").set('label', 'Aceptar');
+					}
+					else
+					{
+						if (!isNaN($("#cantidad_mi_"+movimiento).val())) 
+						{
+							$("#cantidad_mi_"+movimiento).val(convertCommasToDots($("#cantidad_mi_"+movimiento).val()));
+						} 
+						else 
+						{
+							valido = false;
+							alertify.alert("","CANTIDAD DE MOVIMIENTO DE INVENTARIO NO VALIDA").set('label', 'Aceptar');
+						}
+					}
+				}
+			}
+		}
+
 		$('#fecha_ingreso').val($('#fecha_ingreso').val().trim());
 		if(!$('#fecha_ingreso').val().length)
 		{
@@ -286,8 +324,8 @@
 	{
 		let n = arreglo.length;
 		nextinput_nuevo_principal++;
+		$("#movimientos_num").val(nextinput_nuevo_principal);
 		campo="<div id='contenido_inventario_"+nextinput_nuevo_principal+"' class=\"w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin\">";
-		campo+="<input type=\"hidden\" id=\"movimientos_num\" name=\"movimientos_num\" value='"+nextinput_nuevo_principal+"'>";
 		campo+="<div class=\"w3-row w3-section\">";
 		campo+="<label for=\"producto_id\" class='w3-text-blue'><b>Producto</b></label>";
 		campo+="<div class=\"w3-rest\">";
@@ -323,6 +361,7 @@
 		{
 			$("#contenido_inventario_"+nextinput_nuevo_principal).remove();
 			nextinput_nuevo_principal--;
+			$("#movimientos_num").val(nextinput_nuevo_principal);
 		}
 	}
 
@@ -542,6 +581,7 @@
 				$arreglo=json_encode($arreglo);
 			?>
 			<div class="w3-row w3-section">
+				<input type="hidden" id="movimientos_num" name="movimientos_num" value="0">
 				<p>
 					Agragar movimiento de inventario:
 					<?php
