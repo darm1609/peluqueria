@@ -373,72 +373,88 @@
 
 	function guardar($bd)
 	{
-		print_r($_POST);
-		// global $basedatos;
-		// $fecha = $_POST["fecha_ingreso"];
-		// $fecha_num = strtotime($_POST["fecha_ingreso"][6].$_POST["fecha_ingreso"][7].$_POST["fecha_ingreso"][8].$_POST["fecha_ingreso"][9]."-".$_POST["fecha_ingreso"][3].$_POST["fecha_ingreso"][4]."-".$_POST["fecha_ingreso"][0].$_POST["fecha_ingreso"][1]);
-		// $efectivo = 0;
-		// $transferencia = 0;
-		// $debito = 0;
-		// $deuda = 0;
-		// if (!empty($_POST["monto_transferencia"]))
-		// 	$transferencia = 1;
-		// if (!empty($_POST["monto_datafono"]))
-		// 	$debito = 1;
-		// if (!empty($_POST["monto_efectivo"]))
-		// 	$efectivo = 1;
-		// if (!empty($_POST["monto_deuda"]))
-		// 	$deuda = 1;
-		// $monto_transferencia = str_replace(",","",$_POST["monto_transferencia"]);
-		// $monto_efectivo = str_replace(",","",$_POST["monto_efectivo"]);
-		// $monto_datafono = str_replace(",","",$_POST["monto_datafono"]);
-		// $monto_deuda = str_replace(",","",$_POST["monto_deuda"]);
-		// if($bd->insertar_datos(11,$basedatos,"ingreso","id_motivo_ingreso","cliente_telf","fecha","fecha_num","efectivo","transferencia","debito","deuda","empleado_telf","login","observacion",$_POST["id_motivo_ingreso"],$_POST["cliente_telf"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,$deuda,$_POST["empleado_telf"],$_SESSION["login"],$_POST["observacion"]))
-		// {
-		// 	$insert_id = $bd->ultimo_result;
-		// 	$valido = false;
-		// 	if ($transferencia == 1)
-		// 	{
-		// 		if ($bd->insertar_datos(3,$basedatos,"ingreso_transferencia","id_ingreso","monto","referencia",$insert_id,$monto_transferencia,$_POST["referencia"]))
-		// 			$valido = true;
-		// 		else
-		// 			$valido = false;
-		// 	}
-		// 	if ($debito == 1)
-		// 	{
-		// 		if ($bd->insertar_datos(2,$basedatos,"ingreso_debito","id_ingreso","monto",$insert_id,$monto_datafono))
-		// 			$valido = true;
-		// 		else
-		// 			$valido = false;
-		// 	}
-		// 	if ($efectivo == 1)
-		// 	{
-		// 		if ($bd->insertar_datos(2,$basedatos,"ingreso_efectivo","id_ingreso","monto",$insert_id,$monto_efectivo))
-		// 			$valido = true;
-		// 		else
-		// 			$valido = false;
-		// 	}
-		// 	if ($deuda == 1)
-		// 	{
-		// 		if ($bd->insertar_datos(4,$basedatos,"ingreso_deuda","id_ingreso","monto","monto_pagado","pagada",$insert_id,$monto_deuda,0,0))
-		// 			$valido = true;
-		// 		else
-		// 			$valido = false;
-		// 	}
-		// 	if (!$valido) //Devolver todos los cambios
-		// 	{
-		// 		$bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_ingreso",$insert_id);
-		// 		$bd->eliminar_datos(1,$basedatos,"ingreso_transferencia","id_ingreso",$insert_id);
-		// 		$bd->eliminar_datos(1,$basedatos,"ingreso_debito","id_ingreso",$insert_id);
-		// 		$bd->eliminar_datos(1,$basedatos,"ingreso_efectivo","id_ingreso",$insert_id);
-		// 		$bd->eliminar_datos(1,$basedatos,"ingreso_deuda","id_ingreso",$insert_id);
-		// 		$bd->eliminar_datos(1,$basedatos,"ingreso","id_ingreso",$insert_id);
-		// 		return false;
-		// 	}
-		// 	return true;
-		// }
-		// else
-		// 	return false;
+		global $basedatos;
+		$fecha = $_POST["fecha_ingreso"];
+		$fecha_num = strtotime($_POST["fecha_ingreso"][6].$_POST["fecha_ingreso"][7].$_POST["fecha_ingreso"][8].$_POST["fecha_ingreso"][9]."-".$_POST["fecha_ingreso"][3].$_POST["fecha_ingreso"][4]."-".$_POST["fecha_ingreso"][0].$_POST["fecha_ingreso"][1]);
+		$efectivo = 0;
+		$transferencia = 0;
+		$debito = 0;
+		$deuda = 0;
+		if (!empty($_POST["monto_transferencia"]))
+			$transferencia = 1;
+		if (!empty($_POST["monto_datafono"]))
+			$debito = 1;
+		if (!empty($_POST["monto_efectivo"]))
+			$efectivo = 1;
+		if (!empty($_POST["monto_deuda"]))
+			$deuda = 1;
+		$monto_transferencia = str_replace(",","",$_POST["monto_transferencia"]);
+		$monto_efectivo = str_replace(",","",$_POST["monto_efectivo"]);
+		$monto_datafono = str_replace(",","",$_POST["monto_datafono"]);
+		$monto_deuda = str_replace(",","",$_POST["monto_deuda"]);
+		if($bd->insertar_datos(11,$basedatos,"ingreso","id_motivo_ingreso","cliente_telf","fecha","fecha_num","efectivo","transferencia","debito","deuda","empleado_telf","login","observacion",$_POST["id_motivo_ingreso"],$_POST["cliente_telf"],$fecha,$fecha_num,$efectivo,$transferencia,$debito,$deuda,$_POST["empleado_telf"],$_SESSION["login"],$_POST["observacion"]))
+		{
+			$insert_id = $bd->ultimo_result;
+			$valido = false;
+			if ($transferencia == 1)
+			{
+				if ($bd->insertar_datos(3,$basedatos,"ingreso_transferencia","id_ingreso","monto","referencia",$insert_id,$monto_transferencia,$_POST["referencia"]))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if ($debito == 1)
+			{
+				if ($bd->insertar_datos(2,$basedatos,"ingreso_debito","id_ingreso","monto",$insert_id,$monto_datafono))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if ($efectivo == 1)
+			{
+				if ($bd->insertar_datos(2,$basedatos,"ingreso_efectivo","id_ingreso","monto",$insert_id,$monto_efectivo))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if ($deuda == 1)
+			{
+				if ($bd->insertar_datos(4,$basedatos,"ingreso_deuda","id_ingreso","monto","monto_pagado","pagada",$insert_id,$monto_deuda,0,0))
+					$valido = true;
+				else
+					$valido = false;
+			}
+			if ($valido)
+			{
+				$movimientos = $_POST["movimientos_num"];
+				for ($i = 1; $i <= $movimientos; $i++)
+				{
+					if ($bd->insertar_datos(5,$basedatos,"productos_movimientos","id_producto","fecha_num","fecha","entrada_salida","cantidad",$_POST["producto_id_mi_".$i],$fecha_num,$fecha,$_POST["entrada_salida_mi_".$i],$_POST["cantidad_mi_".$i]))
+					{
+						$insert_producto_movimiento_id = $bd->ultimo_result;
+						if ($bd->insertar_datos(2,$basedatos,"productos_movimientos_relaciones","id_productos_movimientos","id_ingreso",$insert_producto_movimiento_id,$insert_id))
+							$valido = true;
+						else
+							$valido = false;
+					}
+				}
+			}
+			if (!$valido) //Devolver todos los cambios
+			{
+				$bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_ingreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"ingreso_transferencia","id_ingreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"ingreso_debito","id_ingreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"ingreso_efectivo","id_ingreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"ingreso_deuda","id_ingreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"ingreso_deuda","id_ingreso",$insert_id);
+				$bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_productos_movimientos",$insert_producto_movimiento_id);
+				$bd->eliminar_datos(1,$basedatos,"productos_movimientos_relaciones","id_ingreso",$insert_id);
+				return false;
+			}
+			return true;
+		}
+		else
+			return false;
 	}
 	
 	function formulario_agregar_ingreso($bd)
