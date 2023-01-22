@@ -8,6 +8,64 @@
 			});
 		});
 	});
+
+	function ocultarMovimientos()
+	{
+		$("#movimientos").hide("linear");
+	}
+
+	function mostrarMovimientos()
+	{
+		$("#movimientos").show("swing");
+	}
+
+	var nextinput_nuevo_principal=0;
+
+	function agregar_campos_movimientos(arreglo)
+	{
+		let n = arreglo.length;
+		nextinput_nuevo_principal++;
+		$("#movimientos_num").val(nextinput_nuevo_principal);
+		campo="<div id='contenido_inventario_"+nextinput_nuevo_principal+"' class=\"w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin\">";
+		campo+="<div class=\"w3-row w3-section\">";
+		campo+="<label for=\"producto_id\" class='w3-text-blue'><b>Producto</b></label>";
+		campo+="<div class=\"w3-rest\">";
+		campo+="<select class=\"w3-input w3-border\" id=\"producto_id_mi_"+nextinput_nuevo_principal+"\" name=\"producto_id_mi_"+nextinput_nuevo_principal+"\">";
+		campo+="<option value=''></option>";
+		let i;
+		for(i=0;i<n;i++)
+		{
+			campo+="<option value='"+arreglo[i][0]+"'>"+arreglo[i][1]+"</option>";
+		}
+		campo+="</select>";
+		campo+="</div>";
+		campo+="</div>";
+		campo+="<div class=\"w3-row w3-section\">";
+		campo+="<label>";
+		campo+="<input class=\"w3-radio\" type=\"radio\" id=\"entrada_salida_mi_"+nextinput_nuevo_principal+"\" name=\"entrada_salida_mi_"+nextinput_nuevo_principal+"\" value=\"Salida\" checked>";
+		campo+="Salida";
+		campo+="</label>";
+		campo+="</div>";
+		campo+="<div class=\"w3-row w3-section\">";
+		campo+="<label for=\"medida\" class=\"w3-text-blue\"><b>Cantidad</b></label>";
+		campo+="<div class=\"w3-rest\">";
+		campo+="<input type=\"number\" class=\"w3-input w3-border\" inputmode=\"decimal\" data-type=\"currency\" id=\"cantidad_mi_"+nextinput_nuevo_principal+"\" name=\"cantidad_mi_"+nextinput_nuevo_principal+"\" placeholder=\"Cantidad\" min=0>";
+		campo+="</div>";
+		campo+="</div>";
+		campo+="</div>";
+		$("#div_movimientos_inventario").append(campo);
+	}
+
+	function eliminar_campos_movimientos()
+	{
+		if(nextinput_nuevo_principal>=1)
+		{
+			$("#contenido_inventario_"+nextinput_nuevo_principal).remove();
+			nextinput_nuevo_principal--;
+			$("#movimientos_num").val(nextinput_nuevo_principal);
+		}
+	}
+
 </script>
 <?php
 	session_start();
@@ -296,11 +354,11 @@
 			</div>
 			<div class="w3-row w3-section">
 				<label>
-					<input class="w3-radio" type="radio" id="vale_pago" name="vale_pago" value="vale" checked>
+					<input class="w3-radio" type="radio" id="vale_pago_vale" name="vale_pago" class="vale_pago_tipo" value="vale" onclick="ocultarMovimientos();" checked>
 					Vale
 				</label>
 				<label>
-					<input class="w3-radio" type="radio" id="vale_pago" name="vale_pago" value="pago">
+					<input class="w3-radio" type="radio" id="vale_pago_pago" name="vale_pago" class="vale_pago_tipo" value="pago" onclick="ocultarMovimientos();">
 					Pago
 				</label>
 			<?php
@@ -322,7 +380,7 @@
 				{
 					?>
 					<label>
-						<input class="w3-radio" type="radio" id="vale_pago" name="vale_pago" value="gastos_de_peluqueria">
+						<input class="w3-radio" type="radio" id="vale_pago_gastos" name="vale_pago" class="vale_pago_tipo" value="gastos_de_peluqueria" onclick="mostrarMovimientos();">
 						Gastos de peluquer&iacute;a
 					</label>
 					<?php
@@ -370,6 +428,42 @@
 					<input type="text" class="w3-input w3-border" inputmode="decimal" data-type="currency" id="monto_efectivo" name="monto_efectivo" placeholder="Monto" min=1>
 				</div>
 			</div>
+			<!--Movimiento de inventario-->
+			<?php
+				$sql = "SELECT p.id_producto id, CONCAT(p.nombre,' (',f.nombre,')',' ',p.medida) nombre FROM productos p INNER JOIN fabricantes f on p.id_fabricante = f.id_fabricante;";
+				$result = $bd->mysql->query($sql);
+				unset($sql);
+				if($result)
+				{
+					$arreglo=array();
+					$i=0;
+					while($row = $result->fetch_array())
+					{
+						$arreglo[$i][0]=$row["id"];
+						$arreglo[$i][1]=$row["nombre"];
+						$i++;
+					}
+					$result->free();
+				}
+				else
+					unset($result);
+				$arreglo=json_encode($arreglo);
+			?>
+			<div id="movimientos" style="display: none;">
+				<div class="w3-row w3-section">
+					<input type="hidden" id="movimientos_num" name="movimientos_num" value="0">
+					<p>
+						Agragar movimiento de inventario:
+						<?php
+							echo"<i class='icon-plus4 icon_mas' onclick='agregar_campos_movimientos(".$arreglo.");'></i>";
+						?>
+						&nbsp;
+						<i class="icon-minus3 icon_menos" onclick="eliminar_campos_movimientos();"></i>
+					</p>
+				</div>
+				<div id="div_movimientos_inventario"></div>
+			</div>
+			<!--Fin Movimiento de inventario-->
 			<div class="w3-row w3-section">
 				<p>
 				<div class="w3-half">
