@@ -480,7 +480,7 @@
 				}
 				if (ajax.readyState == 4)
 				{
-					$.post("inventario_contenido_lista_reporte.php",$("#fbusqueda").serialize(),function(data)
+					$.post("inventario_contenido_lista_reporte.php",$("#fbusqueda_reporte").serialize(),function(data)
 				    {
 				    	$("#divformulariolistareporte").show();
 						$("#divformulariolistareporte").html(data);
@@ -491,6 +491,31 @@
 			ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
 			ajax.send();
         }
+	}
+
+	function enviardatos_lista_reporte()
+	{
+		ajax=objetoAjax();
+		$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+		ajax.open("POST","inventario_contenido_lista_reporte.php",true);
+		ajax.onreadystatechange = function() 
+		{
+			if (ajax.readyState == 1)
+			{
+				$('#loader').html('<div style="width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+			}
+			if (ajax.readyState == 4)
+			{
+				$.post("inventario_contenido_lista_reporte.php",$("#form_tabla_reporte").serialize(),function(data)
+				{
+					$("#divformulariolistareporte").show();
+					$("#divformulariolistareporte").html(data);
+					$("#loader").hide();
+				});
+			}
+		} 
+		ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+		ajax.send();
 	}
 
 </script>
@@ -720,7 +745,7 @@
 	function formulario_busqueda_reporte($bd)
 	{
 		?>
-        <form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fbusqueda" name="fbusqueda" method="post">
+        <form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fbusqueda_reporte" name="fbusqueda_reporte" method="post">
             <div class="w3-row w3-section">
                 <div class="w3-col" style="width:50px"><label for="bfecha"><i class="icon-calendar2" style="font-size:37px;"></i></label></div>
 				<div class="w3-rest">
