@@ -10,6 +10,10 @@
 				$("#div_buscar_movimientos").hide("linear");
 				$("#divformulariolistamovimientos").hide("linear");
 			}
+			if($("#div_buscar_reporte").is(':visible')){
+				$("#div_buscar_reporte").hide("linear");
+				$("#divformulariolistareporte").hide("linear");
+			}
 			$("#div_buscar_fabricantes").show("swing");
 			$("#divformulariolistafabicantes").show("swing");
 		});
@@ -22,6 +26,10 @@
 			if($("#div_buscar_movimientos").is(':visible')){
 				$("#div_buscar_movimientos").hide("linear");
 				$("#divformulariolistamovimientos").hide("linear");
+			}
+			if($("#div_buscar_reporte").is(':visible')){
+				$("#div_buscar_reporte").hide("linear");
+				$("#divformulariolistareporte").hide("linear");
 			}
 			$("#div_buscar_productos").show("swing");
 			$("#divformulariolistaproductos").show("swing");
@@ -36,8 +44,29 @@
 				$("#div_buscar_productos").hide("linear");
 				$("#divformulariolistaproductos").hide("linear");
 			}
+			if($("#div_buscar_reporte").is(':visible')){
+				$("#div_buscar_reporte").hide("linear");
+				$("#divformulariolistareporte").hide("linear");
+			}
 			$("#div_buscar_movimientos").show("swing");
 			$("#divformulariolistamovimientos").show("swing");
+		});
+
+		$("#reporte").click(function(){
+			if($("#div_buscar_fabricantes").is(':visible')){
+				$("#div_buscar_fabricantes").hide("linear");
+				$("#divformulariolistafabicantes").hide("linear");
+			}
+			if($("#div_buscar_productos").is(':visible')){
+				$("#div_buscar_productos").hide("linear");
+				$("#divformulariolistaproductos").hide("linear");
+			}
+			if($("#div_buscar_movimientos").is(':visible')){
+				$("#div_buscar_movimientos").hide("linear");
+				$("#divformulariolistamovimientos").hide("linear");
+			}
+			$("#div_buscar_reporte").show("swing");
+			$("#divformulariolistareporte").show("swing");
 		});
 
 		$("#agregar_fabricante").click(function(){
@@ -410,6 +439,60 @@
 		alertify.confirm('','¿Desea eliminar el ingreso?', function(){ alertify.success('Sí');enviardatos_lista_movimientos(); }, function(){ alertify.error('No')}).set('labels', {ok:'Sí', cancel:'No'});
 	}
 
+	function enviardatos_busqueda_reporte()
+	{
+		let valido = true;
+        let fecha = $("#bfecha").val();
+
+        if (!fecha.length)
+        {
+            valido = false;
+            alertify.alert("","DEBE SELECCIONAR UNA FECHA").set('label', 'Aceptar');
+        }
+        else 
+        {
+            let dateFecha = new Date(Date.parse(fecha) + 5 * 60 * 60 * 1000);
+            let dia  = dateFecha.getDate();
+            let mes  = dateFecha.getMonth() + 1;
+            if (Number(dia) < 10)
+                dia = "0" + dia.toString();
+            if (Number(mes) < 10)
+                mes = "0" + mes.toString();
+            let anio  = dateFecha.getFullYear();
+            let fechaFormato = mes + "/" + dia + "/" + anio.toString();
+			let fechaFormato2 = dia + "-" + mes + "-" + anio.toString();
+            let fechaUnix = Number(Date.parse(fechaFormato)) / 1000;
+			$("#bfecha2").val(fechaFormato2);
+            $("#bfecha_unix").val(fechaUnix.toString());
+        }
+
+		if (valido)
+        {
+            ajax=objetoAjax();
+			$("#loader").show();
+			$('#loader').html('<div style="display:block;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+			ajax.open("POST","inventario_contenido_lista_reporte.php",true);
+			ajax.onreadystatechange = function() 
+			{
+				if (ajax.readyState == 1)
+				{
+					$('#loader').html('<div style="position:absolute;width:100%;text-align:center;"><img src="imagenes/loader.gif"/></div>');
+				}
+				if (ajax.readyState == 4)
+				{
+					$.post("inventario_contenido_lista_reporte.php",$("#fbusqueda").serialize(),function(data)
+				    {
+				    	$("#divformulariolistareporte").show();
+						$("#divformulariolistareporte").html(data);
+				    	$("#loader").hide();
+				    });
+				}
+			} 
+			ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+			ajax.send();
+        }
+	}
+
 </script>
 <header class="w3-container" style="padding-top:22px">
 	<h5><b>Administraci&oacute;n de inventario</b></h5>
@@ -437,7 +520,8 @@
 	function guardar_movimientos($bd)
 	{
 		global $basedatos;
-		if ($bd->insertar_datos(5,$basedatos,"productos_movimientos","id_producto","fecha_num","fecha","entrada_salida","cantidad",$_POST["producto_id"],time(),$_POST["fecha_str"],$_POST["entrada_salida"],$_POST["cantidad"]))
+		$fecha_num = strtotime($_POST["fecha_str"][6].$_POST["fecha_str"][7].$_POST["fecha_str"][8].$_POST["fecha_str"][9]."-".$_POST["fecha_str"][3].$_POST["fecha_str"][4]."-".$_POST["fecha_str"][0].$_POST["fecha_str"][1]);
+		if ($bd->insertar_datos(5,$basedatos,"productos_movimientos","id_producto","fecha_num","fecha","entrada_salida","cantidad",$_POST["producto_id"],$fecha_num,$_POST["fecha_str"],$_POST["entrada_salida"],$_POST["cantidad"]))
 			return true;
 		else
 			return false;
@@ -633,6 +717,27 @@
 		<?php
 	}
 
+	function formulario_busqueda_reporte($bd)
+	{
+		?>
+        <form class="w3-container w3-card-4 w3-light-grey w3-margin" id="fbusqueda" name="fbusqueda" method="post">
+            <div class="w3-row w3-section">
+                <div class="w3-col" style="width:50px"><label for="bfecha"><i class="icon-calendar2" style="font-size:37px;"></i></label></div>
+				<div class="w3-rest">
+					<input type="hidden" id="bfecha2" name="bfecha2">
+                    <input type="hidden" id="bfecha_unix" name="bfecha_unix">
+                    <input type='date' class='w3-input w3-border' id='bfecha' name='bfecha'>
+				</div>
+            </div>
+            <div class="w3-row w3-section">
+                <div class="w3-row w3-section">
+                    <input class="w3-button w3-block w3-dulcevanidad" type="button" id="enviar" name="enviar" value="Consultar" onclick="return enviardatos_busqueda_reporte();">
+                </div>
+            </div>
+        </form>
+        <?php
+	}
+
 	global $servidor, $puerto, $usuario, $pass, $basedatos;
 	$bd=new BaseDatos($servidor,$puerto,$usuario,$pass,$basedatos);
 	if ($bd->conectado)
@@ -651,6 +756,9 @@
 					<div class="w3-cell">
 						<button id='movimientos' class="w3-button w3-dulcevanidad">Movimientos</button>
 					</div>
+					<div class="w3-cell">
+						<button id='reporte' class="w3-button w3-dulcevanidad">Reporte</button>
+					</div>
 				</div>
 			</div>
 			<?php
@@ -664,10 +772,14 @@
 			echo"<div id='div_buscar_movimientos' class='w3-container' style='display:none;'>";
 				formulario_busqueda_movimientos($bd);
 			echo"</div>";
+			echo"<div id='div_buscar_reporte' class='w3-container' style='display:none;'>";
+				formulario_busqueda_reporte($bd);
+			echo"</div>";
 			echo"<div id='loader'></div>";
 			echo"<div id='divformulariolistafabicantes' style='display:none;'></div>";
 			echo"<div id='divformulariolistaproductos' style='display:none;'></div>";
 			echo"<div id='divformulariolistamovimientos' style='display:none;'></div>";
+			echo"<div id='divformulariolistareporte' style='display:none;'></div>";
 			
 			if (isset($_POST["fabricante_nombre"]))//Agregar fabricante
 			{
