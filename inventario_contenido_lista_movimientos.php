@@ -202,7 +202,8 @@
 	{
 		global $basedatos;
 		if ($bd->eliminar_datos(1,$basedatos,"productos_movimientos","id_productos_movimientos ",$_POST["accion_eliminar_movimientos"]))
-			return true;
+			if ($bd->eliminar_datos(1,$basedatos,"productos_movimientos_relaciones","id_productos_movimientos ",$_POST["accion_eliminar_movimientos"]))
+				return true;
 		return false;
 	}
 

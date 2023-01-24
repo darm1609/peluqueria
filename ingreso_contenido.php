@@ -322,6 +322,7 @@
 
 	function agregar_campos_movimientos(arreglo)
 	{
+		console.log(arreglo)
 		let n = arreglo.length;
 		nextinput_nuevo_principal++;
 		$("#movimientos_num").val(nextinput_nuevo_principal);
