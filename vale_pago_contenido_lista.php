@@ -42,8 +42,8 @@
 		campo+="</div>";
 		campo+="<div class=\"w3-row w3-section\">";
 		campo+="<label>";
-		campo+="<input class=\"w3-radio\" type=\"radio\" id=\"entrada_salida_mi_"+nextinput_nuevo_principal+"\" name=\"entrada_salida_mi_"+nextinput_nuevo_principal+"\" value=\"Salida\" checked>";
-		campo+="Salida";
+		campo+="<input class=\"w3-radio\" type=\"radio\" id=\"entrada_salida_mi_"+nextinput_nuevo_principal+"\" name=\"entrada_salida_mi_"+nextinput_nuevo_principal+"\" value=\"Entrada\" checked>";
+		campo+="Entrada";
 		campo+="</label>";
 		campo+="</div>";
 		campo+="<div class=\"w3-row w3-section\">";
