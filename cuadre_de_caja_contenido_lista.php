@@ -455,7 +455,8 @@
             e.genero,
             e.correo,
             e.login,
-            e.dueño
+            e.dueño,
+            e.visible
         from
             empleado e;";
         $result = $bd->mysql->query($sql);
@@ -2490,22 +2491,25 @@
                         <?php
                             foreach ($array_empleados as $empleado)
                             {
-                                if ($empleado["dueño"] == 1)
+                                if ($empleado["visible"] == 1) 
                                 {
-                                    echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
-                                    echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
-                                    if (GananciaDelDueñoSeparada())
-                                        echo "<td class='table-celda-numerica' nowrap><b>Por&nbsp;empleado:</b>&nbsp;".money_format('%.2n', total_dueño_por_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."&nbsp;<b>|</b>&nbsp;<b>Por&nbsp;Trabajos&nbsp;Realizados:</b>&nbsp;".money_format('%.2n', total_dueño_por_trabajos_realizados($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
+                                    if ($empleado["dueño"] == 1)
+                                    {
+                                        echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
+                                        echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
+                                        if (GananciaDelDueñoSeparada())
+                                            echo "<td class='table-celda-numerica' nowrap><b>Por&nbsp;empleado:</b>&nbsp;".money_format('%.2n', total_dueño_por_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."&nbsp;<b>|</b>&nbsp;<b>Por&nbsp;Trabajos&nbsp;Realizados:</b>&nbsp;".money_format('%.2n', total_dueño_por_trabajos_realizados($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
+                                        else
+                                            echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_dueño($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
+                                        echo "</tr>";
+                                    }
                                     else
-                                        echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_dueño($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta))."</td>";
-                                    echo "</tr>";
-                                }
-                                else
-                                {
-                                    echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
-                                    echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
-                                    echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta, $empleado["dueño"]))."</td>";
-                                    echo "</tr>";
+                                    {
+                                        echo "<tr style='cursor:pointer;' onclick=\"document.getElementById('modal_detalle_empleado_".$empleado["empleado_telf"]."').style.display='block'\">";
+                                        echo "<td class='table-celda-texto'>".$empleado["nombre"]." ".$empleado["apellido"]."</td>";
+                                        echo "<td class='table-celda-numerica' nowrap>".money_format('%.2n', total_empleado($empleado["empleado_telf"], $array_ingresos, $array_egresos, $array_porcentajes, $array_porcentajes_motivo, $fecha_hasta, $fecha_num_consulta_hasta, $empleado["dueño"]))."</td>";
+                                        echo "</tr>";
+                                    }
                                 }
                             }
                         ?>
