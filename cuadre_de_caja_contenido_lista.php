@@ -1139,6 +1139,7 @@
             $total_ganancia_dueño_por_trabajo_efectivo -= $total_egreso_pago_a_dueño_por_trabajos_efectivo;
             $total_ganancia_dueño_por_trabajo_transferencia -= $total_egreso_pago_a_dueño_por_trabajos_transferencia;
             $total_ganancia_dueño_por_trabajo -= $total_egreso_pago_a_dueño_por_trabajos;
+            //$total_ganancia_dueño_por_trabajo += ($total_ganancia_dueño_por_trabajo_efectivo) + ($total_ganancia_dueño_por_trabajo_transferencia);
         }
 
         ?>
@@ -1617,7 +1618,8 @@
                             </tr>
                             <tr>
                                 <td>Total:</td>
-                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_dueño_por_trabajo); ?></td>
+                                <!-- <td align="right" nowrap><?php //echo money_format('%.2n', $total_ganancia_dueño_por_trabajo); ?></td> -->
+                                <td align="right" nowrap><?php echo money_format('%.2n', $total_ganancia_dueño_por_trabajo_efectivo + $total_ganancia_dueño_por_trabajo_datafono + $total_ganancia_dueño_por_trabajo_transferencia); ?></td>
                             </tr>
                         </table>
                     </div>
