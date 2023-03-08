@@ -478,7 +478,7 @@
 					<select class="w3-select" id="empleado_telf" name="empleado_telf">
 						<option value="">Empleado</option>
 						<?php
-							$sql="SELECT empleado_telf, nombre, apellido FROM empleado;";
+							$sql="SELECT empleado_telf, nombre, apellido FROM empleado WHERE visible = 1;";
 							$result = $bd->mysql->query($sql);
 							unset($sql);
 							if($result)
@@ -502,7 +502,7 @@
 					<select class="w3-select" id="id_motivo_ingreso" name="id_motivo_ingreso">
 						<option value="">Tipo de Trabajo</option>
 						<?php
-							$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso order by motivo asc;";
+							$sql="SELECT id_motivo_ingreso, motivo FROM motivo_ingreso WHERE visible = 1 order by motivo asc;";
 							$result = $bd->mysql->query($sql);
 							unset($sql);
 							if($result)
