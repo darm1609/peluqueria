@@ -1491,26 +1491,26 @@
                     <div id="modal_descripcion_ganancia_peluqueria" class="w3-modal">
                         <div class="w3-modal-content">
                             <div onclick="document.getElementById('modal_descripcion_ganancia_peluqueria').style.display='none'" class='w3-button w3-display-topright'>&times;</div>
-                            <div class="w3-display-topleft" style="padding: 1em;"><b>Porcentaje de materia prima de mano y/o pies</b><br><br> 
+                            <div class="w3-display-topleft" style="padding: 1em;"><b>Ganancia del la peluqueria por trabajos realizados</b><br><br> 
                             </div>
                             <br><br>
                             <div style='padding: 1em;'>
                             <?php
-                                if (GananciaDePeluqueriaMenosEgresos())
-                                {
-                                    echo "Se refiere al dinero que ingresa a la peluquer&iacute;a por trabajos realizados del tipo <b>General Manos y/o Pies</b>";
-                                }
-                                else
-                                {
+                                // if (GananciaDePeluqueriaMenosEgresos())
+                                // {
+                                //     echo "Se refiere al dinero que ingresa a la peluquer&iacute;a por trabajos realizados del tipo <b>General Manos y/o Pies</b>";
+                                // }
+                                // else
+                                // {
                                     echo "Se refiere al dinero que ingresa a la peluquer&iacute;a por trabajos realizados";
-                                }
+                                //}
                             ?>
                             </div>
                         </div>
                     </div>
                     <div style="background-color: #569568; color: #ffffff; margin: 0.5em; padding-left: 0.5em; padding-right: 0.5em; padding-bottom: 0.5em;" onclick="document.getElementById('modal_descripcion_ganancia_peluqueria').style.display='block';">
                         <div class="w3-row w3-section" style='font-weight: bolder; text-align: center;'>
-                            Porcentaje de materia prima de mano y/o pies
+                            Ganancia del la peluqueria por trabajos realizados
                         </div>
                         <table border="0" width="100%">
                             <tr>
